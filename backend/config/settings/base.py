@@ -14,6 +14,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "unsafe-default-override-me")
 DEBUG = os.environ.get("DEBUG", "False").lower() in ("1", "true", "yes")
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get("ALLOWED_HOSTS", "").split(",") if h.strip()]
+CSRF_TRUSTED_ORIGINS = [
+    o.strip() for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()
+]
 
 # ─── Apps ──────────────────────────────────────────────────────
 INSTALLED_APPS = [
