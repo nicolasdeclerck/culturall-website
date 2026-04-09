@@ -40,7 +40,7 @@ jobs:
           script_stop: true
           script: |
             set -e
-            cd ~/culturall-website
+            cd ~/n8n-traefik/repos/culturall-website
 
             echo "==> Pulling latest compose files from main..."
             git pull origin main
