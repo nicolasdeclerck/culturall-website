@@ -66,6 +66,7 @@ export default function ProjectsOverlay({ open, onClose }: ProjectsOverlayProps)
       setVisible(false);
       setSelectedProject(null);
       setDetailVisible(false);
+      setSelectedTag(null);
       document.body.style.overflow = '';
     }
   }, [open]);
