@@ -1,33 +1,15 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+const VIDEO_ID = '0L8953RVKGU';
 
 export default function Home() {
-  const [today, setToday] = useState('');
-  const [todayISO, setTodayISO] = useState('');
-
-  useEffect(() => {
-    const now = new Date();
-    setToday(
-      now.toLocaleDateString('fr-FR', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    );
-    setTodayISO(now.toISOString().split('T')[0]);
-  }, []);
-
   return (
-    <main style={{ fontFamily: 'system-ui, sans-serif', padding: '2rem' }}>
-      <h1>Hello, World!</h1>
-      {today && <p>Nous sommes le <time dateTime={todayISO}>{today}</time>.</p>}
-      <p>Bienvenue sur <strong>culturall-website</strong> — Next.js 14 + Django/Wagtail.</p>
-      <p>
-        Backend : <a href="http://localhost:8000/">localhost:8000</a> ·{' '}
-        <a href="http://localhost:8000/admin/">Wagtail admin</a>
-      </p>
-    </main>
+    <div className="landing">
+      <div className="landing-video">
+        <iframe
+          src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1&mute=1&loop=1&playlist=${VIDEO_ID}&controls=0&rel=0&modestbranding=1&playsinline=1`}
+          allow="autoplay; encrypted-media"
+          title="Vidéo de fond Cultur'all"
+        />
+      </div>
+    </div>
   );
 }

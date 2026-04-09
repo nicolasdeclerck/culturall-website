@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import Header from './components/Header';
 
 export const metadata: Metadata = {
-  title: 'culturall-website',
-  description: 'Site vitrine — Next.js + Django/Wagtail',
+  title: { default: "Cultur'all", template: "%s — Cultur'all" },
+  description: "Cultur'all — Site vitrine",
 };
 
 export default function RootLayout({
@@ -13,7 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body>{children}</body>
+      <body>
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }

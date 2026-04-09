@@ -25,26 +25,45 @@ Types d'accès :
 
 ## 1. Navigation et layout
 
-### NAV-01 [PUBLIC] — Affichage de la page d'accueil
+### NAV-01 [PUBLIC] — Affichage de la landing page avec vidéo plein écran
 1. Ouvrir `${BASE_URL}/`
-2. Vérifier la présence du header
-3. Vérifier la présence du footer
+2. Vérifier la présence d'une vidéo en arrière-plan occupant tout l'écran
+3. Vérifier que la vidéo est en lecture automatique et sans son (muted)
+4. Vérifier la présence du header avec le titre « Cultur'all » à gauche
+5. Vérifier la présence du menu de navigation à droite avec les liens « À propos » et « Contact »
 
-**Résultat attendu** : la page s'affiche sans erreur, header et footer visibles.
+**Résultat attendu** : la landing page s'affiche avec la vidéo plein écran en fond, le header est visible par-dessus la vidéo.
 
-### NAV-03 [PUBLIC] — Affichage de la date du jour
+### NAV-02 [PUBLIC] — Navigation vers la page À propos
 1. Ouvrir `${BASE_URL}/`
-2. Vérifier la présence d'un élément affichant la date du jour
-3. Vérifier que la date correspond au jour courant (format français, ex : « mercredi 9 avril 2025 »)
+2. Cliquer sur le lien « À propos » dans le header
+3. Vérifier que l'URL est `${BASE_URL}/a-propos`
+4. Vérifier que la page À propos s'affiche avec un titre
 
-**Résultat attendu** : la date du jour est affichée sur la page d'accueil au format français.
+**Résultat attendu** : navigation fonctionnelle vers la page À propos.
 
-### NAV-02 [PUBLIC] — Navigation responsive
-1. Ouvrir `${BASE_URL}/` en viewport mobile
-2. Cliquer sur le menu burger
-3. Vérifier que le menu s'ouvre
+### NAV-03 [PUBLIC] — Navigation vers la page Contact
+1. Ouvrir `${BASE_URL}/`
+2. Cliquer sur le lien « Contact » dans le header
+3. Vérifier que l'URL est `${BASE_URL}/contact`
+4. Vérifier que la page Contact s'affiche avec un titre
 
-**Résultat attendu** : menu mobile fonctionnel.
+**Résultat attendu** : navigation fonctionnelle vers la page Contact.
+
+### NAV-04 [PUBLIC] — Header visible sur toutes les pages
+1. Ouvrir `${BASE_URL}/a-propos`
+2. Vérifier la présence du header avec « Cultur'all » et les liens de navigation
+3. Ouvrir `${BASE_URL}/contact`
+4. Vérifier la présence du header avec « Cultur'all » et les liens de navigation
+
+**Résultat attendu** : le header est présent et fonctionnel sur toutes les pages.
+
+### NAV-05 [PUBLIC] — Navigation responsive
+1. Ouvrir `${BASE_URL}/` en viewport mobile (375px)
+2. Vérifier que le header reste visible et lisible
+3. Vérifier que les liens de navigation sont accessibles
+
+**Résultat attendu** : la landing page et la navigation sont utilisables sur mobile.
 
 ## 2. Authentification
 
