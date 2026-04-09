@@ -81,17 +81,69 @@ Types d'accès :
 
 **Résultat attendu** : session terminée, accès aux pages [AUTH] redirigé vers la connexion.
 
-## 3. Parcours principal
+## 3. Projets
+
+### PROJ-01 [PUBLIC] — Ouverture de l'overlay Nos Projets
+1. Ouvrir `${BASE_URL}/`
+2. Cliquer sur le lien « Nos Projets » dans le header
+3. Vérifier que l'overlay de projets apparaît avec une transition progressive
+4. Vérifier que la page d'accueil en arrière-plan devient plus sombre
+5. Vérifier que les projets s'affichent sous forme de cartes à bords arrondis
+
+**Résultat attendu** : l'overlay s'ouvre avec une animation fluide, les cartes de projets sont visibles.
+
+### PROJ-02 [PUBLIC] — Affichage des cartes de projets
+1. Ouvrir l'overlay Nos Projets (cliquer sur « Nos Projets » dans le header)
+2. Vérifier que chaque carte affiche le titre au centre et le type (tag) au milieu
+3. Vérifier que les cartes ont des bords arrondis
+
+**Résultat attendu** : les cartes de projets affichent titre et type avec le style attendu.
+
+### PROJ-03 [PUBLIC] — Ouverture d'un projet en vue détail
+1. Ouvrir l'overlay Nos Projets
+2. Cliquer sur une carte de projet
+3. Vérifier que la carte s'agrandit en plein écran avec une transition progressive
+4. Vérifier qu'à gauche s'affichent les informations textuelles (titre, description, tags)
+5. Vérifier qu'à droite s'affiche la vidéo YouTube intégrée
+6. Vérifier la présence du lien « Retour aux projets » en haut
+
+**Résultat attendu** : la vue détail s'ouvre en plein écran avec les informations et la vidéo.
+
+### PROJ-04 [PUBLIC] — Retour depuis la vue détail vers la liste
+1. Ouvrir un projet en vue détail
+2. Cliquer sur « Retour aux projets »
+3. Vérifier le retour à la liste des projets avec une transition progressive
+
+**Résultat attendu** : retour fluide à la liste des projets.
+
+### PROJ-05 [PUBLIC] — Fermeture de l'overlay projets
+1. Ouvrir l'overlay Nos Projets
+2. Fermer l'overlay (bouton fermer ou clic en dehors)
+3. Vérifier que l'overlay se ferme avec une transition progressive
+4. Vérifier que la page d'accueil retrouve sa luminosité normale
+
+**Résultat attendu** : l'overlay se ferme proprement et la landing page revient à l'état normal.
+
+### PROJ-06 [AUTH] — Ajout d'un projet via l'admin Wagtail
+1. Se connecter à `${BASE_URL}/admin/`
+2. Naviguer vers la section Snippets > Projets
+3. Cliquer sur « Ajouter »
+4. Remplir titre, description, tags (ex: « Clip »), lien YouTube
+5. Sauvegarder
+6. Vérifier que le projet apparaît dans la liste admin
+7. Ouvrir l'overlay Nos Projets côté public
+8. Vérifier que le nouveau projet apparaît
+
+**Résultat attendu** : le projet est créé via l'admin et visible côté public.
+
+## 4. Parcours principal
 
 ### E2E-01 [AUTH] — Parcours end-to-end principal
-1. Se connecter
-2. Réaliser l'action principale du produit
-3. Vérifier la création/modification effective
+1. Se connecter à l'admin Wagtail
+2. Créer un nouveau projet via Snippets > Projets
+3. Ouvrir l'overlay Nos Projets côté public
+4. Vérifier la présence du projet créé
+5. Cliquer sur le projet pour voir la vue détail
+6. Vérifier les informations et la vidéo
 
-**Résultat attendu** : parcours complet sans erreur.
-
----
-
-> Remplace ces sections par les scénarios spécifiques à ton produit.
-> Garde la structure (`## section`, `### ID [TYPE] — titre`, étapes numérotées,
-> ligne `**Résultat attendu**`) pour que les skills puissent parser le fichier.
+**Résultat attendu** : parcours complet de création et consultation d'un projet sans erreur.
