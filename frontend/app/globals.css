@@ -436,20 +436,32 @@ body {
 /* Responsive */
 @media (max-width: 768px) {
   .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
+    justify-content: space-between;
+    align-items: stretch;
     padding: 1rem 1.5rem;
+    pointer-events: none;
+  }
+
+  .header-title {
+    align-self: flex-start;
+    pointer-events: auto;
   }
 
   .header-nav {
     flex-direction: column;
-    align-items: center;
+    align-items: flex-end;
     gap: 0.75rem;
+    pointer-events: auto;
   }
 
   .page {
-    padding-top: 10rem;
+    padding-top: 5rem;
   }
 
   .project-detail__content {
