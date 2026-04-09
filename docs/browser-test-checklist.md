@@ -129,17 +129,17 @@ Types d'accès :
 2. Cliquer sur le lien « Nos Projets » dans le header
 3. Vérifier que l'overlay de projets apparaît avec une transition progressive
 4. Vérifier que la page d'accueil en arrière-plan devient plus sombre
-5. Vérifier que les projets s'affichent sous forme de cartes à bords arrondis
+5. Vérifier que les projets s'affichent sous forme de cartes à bords carrés sans bordure
 
-**Résultat attendu** : l'overlay s'ouvre avec une animation fluide, les cartes de projets sont visibles.
+**Résultat attendu** : l'overlay s'ouvre avec une animation fluide, les cartes de projets sont visibles avec des bords carrés.
 
 ### PROJ-02 [PUBLIC] — Affichage des cartes de projets avec miniature
 1. Ouvrir l'overlay Nos Projets (cliquer sur « Nos Projets » dans le header)
 2. Vérifier que chaque carte affiche une image miniature en fond
-3. Vérifier que le titre et le type (tag) sont masqués par défaut (non visibles sur la carte au repos)
-4. Vérifier que les cartes ont des bords arrondis et une taille augmentée
+3. Vérifier que le titre et le type (tag) sont masqués par défaut sur desktop (non visibles sur la carte au repos)
+4. Vérifier que les cartes ont des bords carrés, pas de bordure visible
 
-**Résultat attendu** : les cartes de projets affichent la miniature en fond, le titre et le tag sont masqués au repos.
+**Résultat attendu** : les cartes de projets affichent la miniature en fond, le titre et le tag sont masqués au repos sur desktop, les cartes ont des bords carrés.
 
 ### PROJ-03 [PUBLIC] — Ouverture d'un projet en vue détail
 1. Ouvrir l'overlay Nos Projets
@@ -189,6 +189,33 @@ Types d'accès :
 **Résultat attendu** : au survol, l'image se floute et s'assombrit, le titre et le tag apparaissent avec une transition fluide.
 
 ## 5. Parcours principal
+
+### PROJ-08 [PUBLIC] — Filtrage des projets par tags
+1. Ouvrir l'overlay Nos Projets (cliquer sur « Nos Projets » dans le header)
+2. Vérifier que des boutons de filtrage par tags apparaissent au-dessus de la grille de projets
+3. Vérifier qu'un bouton « Tous » est présent et actif par défaut
+4. Cliquer sur un tag spécifique (ex : « Clip »)
+5. Vérifier que seuls les projets ayant ce tag sont affichés
+6. Cliquer sur « Tous »
+7. Vérifier que tous les projets sont de nouveau affichés
+
+**Résultat attendu** : le filtrage par tags fonctionne dynamiquement, les projets sont filtrés instantanément.
+
+### PROJ-09 [PUBLIC] — Affichage mobile des cartes de projets
+1. Ouvrir `${BASE_URL}/` en viewport mobile (375px de large)
+2. Cliquer sur « Nos Projets » dans le header
+3. Vérifier que les cartes ont une hauteur réduite par rapport au desktop
+4. Vérifier que le titre et le tag sont visibles sans hover, alignés sur la gauche
+5. Vérifier que la miniature est bien assombrie pour rendre le texte lisible
+
+**Résultat attendu** : en mobile, les cartes sont compactes avec titre/tag visibles alignés à gauche sur fond assombri.
+
+### PROJ-10 [PUBLIC] — Scroll dans l'overlay projets
+1. Ouvrir l'overlay Nos Projets (s'assurer qu'il y a suffisamment de projets pour dépasser l'écran)
+2. Vérifier que l'overlay est scrollable verticalement
+3. Scroller vers le bas et vérifier que les projets supplémentaires sont visibles
+
+**Résultat attendu** : l'overlay permet le défilement vertical quand le contenu dépasse la hauteur de l'écran.
 
 ### E2E-01 [AUTH] — Parcours end-to-end principal
 1. Se connecter à l'admin Wagtail
