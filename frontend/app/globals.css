@@ -250,6 +250,21 @@ body {
   transform: translateY(0);
 }
 
+/* Cards without thumbnail — show tag and title normally */
+.project-card--no-thumbnail .project-card__tag,
+.project-card--no-thumbnail .project-card__title {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.project-card--no-thumbnail .project-card__tag {
+  opacity: 0.7;
+}
+
+.project-card--no-thumbnail:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
 /* Project detail */
 .project-detail {
   position: fixed;

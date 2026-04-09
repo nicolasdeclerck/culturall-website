@@ -120,17 +120,19 @@ export default function ProjectsOverlay({ open, onClose }: ProjectsOverlayProps)
               {projects.map((project) => (
                 <button
                   key={project.id}
-                  className="project-card"
+                  className={`project-card ${!project.thumbnail_url ? 'project-card--no-thumbnail' : ''}`}
                   onClick={() => handleSelectProject(project)}
                 >
                   {project.thumbnail_url && (
-                    <img
-                      src={project.thumbnail_url}
-                      alt=""
-                      className="project-card__thumbnail"
-                    />
+                    <>
+                      <img
+                        src={project.thumbnail_url}
+                        alt=""
+                        className="project-card__thumbnail"
+                      />
+                      <div className="project-card__overlay" />
+                    </>
                   )}
-                  <div className="project-card__overlay" />
                   <span className="project-card__tag">
                     {project.tags[0] || ''}
                   </span>
