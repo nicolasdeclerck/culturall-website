@@ -129,12 +129,13 @@ Types d'accès :
 
 **Résultat attendu** : l'overlay s'ouvre avec une animation fluide, les cartes de projets sont visibles.
 
-### PROJ-02 [PUBLIC] — Affichage des cartes de projets
+### PROJ-02 [PUBLIC] — Affichage des cartes de projets avec miniature
 1. Ouvrir l'overlay Nos Projets (cliquer sur « Nos Projets » dans le header)
-2. Vérifier que chaque carte affiche le titre au centre et le type (tag) au milieu
-3. Vérifier que les cartes ont des bords arrondis
+2. Vérifier que chaque carte affiche une image miniature en fond
+3. Vérifier que le titre et le type (tag) sont masqués par défaut (non visibles sur la carte au repos)
+4. Vérifier que les cartes ont des bords arrondis et une taille augmentée
 
-**Résultat attendu** : les cartes de projets affichent titre et type avec le style attendu.
+**Résultat attendu** : les cartes de projets affichent la miniature en fond, le titre et le tag sont masqués au repos.
 
 ### PROJ-03 [PUBLIC] — Ouverture d'un projet en vue détail
 1. Ouvrir l'overlay Nos Projets
@@ -161,17 +162,27 @@ Types d'accès :
 
 **Résultat attendu** : l'overlay se ferme proprement et la landing page revient à l'état normal.
 
-### PROJ-06 [AUTH] — Ajout d'un projet via l'admin Wagtail
+### PROJ-06 [AUTH] — Ajout d'un projet avec miniature via l'admin Wagtail
 1. Se connecter à `${BASE_URL}/admin/`
 2. Naviguer vers la section Snippets > Projets
 3. Cliquer sur « Ajouter »
 4. Remplir titre, description, tags (ex: « Clip »), lien YouTube
-5. Sauvegarder
-6. Vérifier que le projet apparaît dans la liste admin
-7. Ouvrir l'overlay Nos Projets côté public
-8. Vérifier que le nouveau projet apparaît
+5. Ajouter une miniature via le sélecteur d'images Wagtail
+6. Sauvegarder
+7. Vérifier que le projet apparaît dans la liste admin
+8. Ouvrir l'overlay Nos Projets côté public
+9. Vérifier que le nouveau projet apparaît avec sa miniature en fond de carte
 
-**Résultat attendu** : le projet est créé via l'admin et visible côté public.
+**Résultat attendu** : le projet est créé via l'admin avec miniature et visible côté public avec l'image en fond de carte.
+
+### PROJ-07 [PUBLIC] — Effet hover sur les cartes de projets
+1. Ouvrir l'overlay Nos Projets (cliquer sur « Nos Projets » dans le header)
+2. Passer la souris sur une carte de projet
+3. Vérifier que l'image de fond se floute (effet blur)
+4. Vérifier que l'image de fond s'assombrit
+5. Vérifier que le titre et le type (tag) du projet apparaissent au centre de la carte
+
+**Résultat attendu** : au survol, l'image se floute et s'assombrit, le titre et le tag apparaissent avec une transition fluide.
 
 ## 5. Parcours principal
 
