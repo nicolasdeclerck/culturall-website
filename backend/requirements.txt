@@ -1,5 +1,6 @@
 Django>=5.1,<5.2
 wagtail>=6.3,<7.0
+django-taggit>=6.1,<7.0
 psycopg2-binary>=2.9,<3.0
 dj-database-url>=2.2,<3.0
 gunicorn>=22.0,<23.0

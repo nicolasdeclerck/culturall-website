@@ -1,4 +1,5 @@
 import django.db.models.deletion
+import modelcluster.contrib.taggit
 import modelcluster.fields
 from django.db import migrations, models
 
@@ -8,7 +9,10 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("taggit", "0006_rename_taggeditem_content_type_object_id_taggit_lege"),
+        (
+            "taggit",
+            "0006_rename_taggeditem_content_type_object_id_taggit_tagg_content_8fc721_idx",
+        ),
     ]
 
     operations = [
@@ -70,5 +74,16 @@ class Migration(migrations.Migration):
             options={
                 "abstract": False,
             },
+        ),
+        migrations.AddField(
+            model_name="project",
+            name="tags",
+            field=modelcluster.contrib.taggit.ClusterTaggableManager(
+                blank=True,
+                help_text="A comma-separated list of tags.",
+                through="projects.ProjectTag",
+                to="taggit.Tag",
+                verbose_name="Tags",
+            ),
         ),
     ]
