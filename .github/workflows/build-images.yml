@@ -51,11 +51,12 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./backend
+          file: ./docker/django/Dockerfile
           target: production
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-django:${{ steps.meta.outputs.tag }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-django:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/django:${{ steps.meta.outputs.tag }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/django:latest
           cache-from: type=gha,scope=django
           cache-to: type=gha,mode=max,scope=django
 
@@ -63,11 +64,12 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
+          file: ./docker/nextjs/Dockerfile
           target: production
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-nextjs:${{ steps.meta.outputs.tag }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-nextjs:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/nextjs:${{ steps.meta.outputs.tag }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/nextjs:latest
           cache-from: type=gha,scope=nextjs
           cache-to: type=gha,mode=max,scope=nextjs
 
