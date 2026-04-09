@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import include, path
@@ -37,3 +39,6 @@ urlpatterns = [
     # Décommente quand un HomePage existe et retire la route `hello` ci-dessus.
     # path("", include(wagtail_urls)),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
