@@ -5,6 +5,8 @@ from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
+from home.views import contact_submit
+
 
 def hello(request):
     return HttpResponse(
@@ -19,6 +21,9 @@ urlpatterns = [
     # HelloWorld root view — à remplacer par les pages Wagtail (voir plus bas)
     # quand un HomePage aura été créé.
     path("", hello),
+
+    # API
+    path("api/contact/", contact_submit, name="contact-submit"),
 
     path("django-admin/", admin.site.urls),
     path("admin/", include(wagtailadmin_urls)),

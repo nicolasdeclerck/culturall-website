@@ -97,3 +97,80 @@ body {
   opacity: 0.85;
   line-height: 1.7;
 }
+
+/* Contact form */
+.contact-form {
+  max-width: 640px;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.contact-field label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.contact-field input,
+.contact-field textarea {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-family: inherit;
+  color: #fff;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  transition: border-color 0.2s;
+}
+
+.contact-field input:focus,
+.contact-field textarea:focus {
+  outline: none;
+  border-color: #666;
+}
+
+.contact-field textarea {
+  resize: vertical;
+}
+
+.contact-error {
+  font-size: 0.85rem;
+  color: #f87171;
+}
+
+.contact-success {
+  padding: 0.75rem 1rem;
+  background: #166534;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.contact-submit {
+  align-self: flex-start;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000;
+  background: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.contact-submit:hover {
+  opacity: 0.85;
+}
+
+.contact-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
