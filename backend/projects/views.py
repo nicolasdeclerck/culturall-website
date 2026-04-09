@@ -1,10 +1,10 @@
-import json
-
 from django.http import JsonResponse
+from django.views.decorators.http import require_GET
 
 from .models import Project
 
 
+@require_GET
 def project_list(request):
     """Return all projects as JSON."""
     projects = Project.objects.prefetch_related("tags").all()
