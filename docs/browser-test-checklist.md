@@ -58,16 +58,15 @@ Types d'accès :
 
 **Résultat attendu** : le header est présent et fonctionnel sur toutes les pages.
 
-### NAV-05 [PUBLIC] — Navigation responsive (menu vertical sous le titre)
+### NAV-05 [PUBLIC] — Navigation responsive (titre en haut à gauche, menu en bas à droite)
 1. Ouvrir `${BASE_URL}/` en viewport mobile (375px de large)
-2. Vérifier que le header s'affiche en disposition verticale (titre au-dessus, navigation en dessous)
-3. Vérifier que le titre « Cultur'all » est centré ou aligné
-4. Vérifier que les liens de navigation (« Nos Projets », « À propos », « Contact ») sont disposés verticalement sous le titre
-5. Vérifier que chaque lien de navigation est cliquable et fonctionne
-6. Naviguer vers `${BASE_URL}/a-propos` et vérifier que le header responsive est identique
-7. Naviguer vers `${BASE_URL}/contact` et vérifier que le header responsive est identique
+2. Vérifier que le titre « Cultur'all » est positionné en haut à gauche de l'écran
+3. Vérifier que les liens de navigation (« Nos Projets », « À propos », « Contact ») sont disposés verticalement en bas à droite de l'écran
+4. Vérifier que chaque lien de navigation est cliquable et fonctionne
+5. Naviguer vers `${BASE_URL}/a-propos` et vérifier que le header responsive est identique
+6. Naviguer vers `${BASE_URL}/contact` et vérifier que le header responsive est identique
 
-**Résultat attendu** : sur mobile, le menu apparaît à la verticale en dessous du titre du site, tous les liens restent fonctionnels.
+**Résultat attendu** : sur mobile, le titre est en haut à gauche, le menu apparaît à la verticale en bas à droite, tous les liens restent fonctionnels.
 
 ## 2. Formulaire de contact
 
