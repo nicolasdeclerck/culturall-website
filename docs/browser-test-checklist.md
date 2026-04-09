@@ -46,9 +46,9 @@ Types d'accès :
 1. Ouvrir `${BASE_URL}/`
 2. Cliquer sur le lien « Contact » dans le header
 3. Vérifier que l'URL est `${BASE_URL}/contact`
-4. Vérifier que la page Contact s'affiche avec un titre
+4. Vérifier que la page Contact s'affiche avec un titre et un formulaire de contact
 
-**Résultat attendu** : navigation fonctionnelle vers la page Contact.
+**Résultat attendu** : navigation fonctionnelle vers la page Contact avec formulaire visible.
 
 ### NAV-04 [PUBLIC] — Header visible sur toutes les pages
 1. Ouvrir `${BASE_URL}/a-propos`
@@ -65,7 +65,44 @@ Types d'accès :
 
 **Résultat attendu** : la landing page et la navigation sont utilisables sur mobile.
 
-## 2. Authentification
+## 2. Formulaire de contact
+
+### CONTACT-01 [PUBLIC] — Affichage du formulaire de contact
+1. Ouvrir `${BASE_URL}/contact`
+2. Vérifier la présence d'un formulaire avec les champs : Nom, Email, Sujet, Message
+3. Vérifier la présence d'un bouton d'envoi
+4. Vérifier que les champs sont vides par défaut
+
+**Résultat attendu** : le formulaire de contact s'affiche avec tous les champs attendus.
+
+### CONTACT-02 [PUBLIC] — Soumission du formulaire avec succès
+1. Ouvrir `${BASE_URL}/contact`
+2. Remplir le champ Nom avec « Test Utilisateur »
+3. Remplir le champ Email avec « test@example.com »
+4. Remplir le champ Sujet avec « Demande de test »
+5. Remplir le champ Message avec « Ceci est un message de test. »
+6. Cliquer sur le bouton d'envoi
+7. Vérifier qu'un message de confirmation s'affiche (ex : « Votre message a bien été envoyé »)
+
+**Résultat attendu** : le formulaire est soumis, un message de succès s'affiche, les champs sont réinitialisés.
+
+### CONTACT-03 [PUBLIC] — Validation des champs obligatoires
+1. Ouvrir `${BASE_URL}/contact`
+2. Cliquer sur le bouton d'envoi sans remplir les champs
+3. Vérifier qu'un message d'erreur s'affiche pour les champs requis
+
+**Résultat attendu** : le formulaire n'est pas soumis, des messages d'erreur de validation sont visibles.
+
+### CONTACT-04 [AUTH] — Visibilité des soumissions dans l'admin Django
+1. Soumettre un formulaire de contact via `${BASE_URL}/contact` (cf. CONTACT-02)
+2. Ouvrir `${BASE_URL}/django-admin/`
+3. Se connecter avec les identifiants admin
+4. Naviguer vers la section « Demandes de contact » (ou « Contact submissions »)
+5. Vérifier que la soumission apparaît dans la liste avec les bonnes données
+
+**Résultat attendu** : la soumission de contact est visible dans l'admin Django avec toutes les informations saisies.
+
+## 3. Authentification
 
 ### AUTH-01 [PUBLIC] — Connexion utilisateur valide
 1. Ouvrir `${BASE_URL}/admin/login/`
@@ -81,7 +118,7 @@ Types d'accès :
 
 **Résultat attendu** : session terminée, accès aux pages [AUTH] redirigé vers la connexion.
 
-## 3. Projets
+## 4. Projets
 
 ### PROJ-01 [PUBLIC] — Ouverture de l'overlay Nos Projets
 1. Ouvrir `${BASE_URL}/`
@@ -136,7 +173,7 @@ Types d'accès :
 
 **Résultat attendu** : le projet est créé via l'admin et visible côté public.
 
-## 4. Parcours principal
+## 5. Parcours principal
 
 ### E2E-01 [AUTH] — Parcours end-to-end principal
 1. Se connecter à l'admin Wagtail
