@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface Project {
   id: number;
@@ -28,10 +28,13 @@ export default function ProjectsOverlay({ open, onClose }: ProjectsOverlayProps)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [visible, setVisible] = useState(false);
   const [detailVisible, setDetailVisible] = useState(false);
+  const rafRef = useRef<number>(0);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   const handleClose = useCallback(() => {
     setVisible(false);
-    setTimeout(onClose, 400);
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(onClose, 400);
   }, [onClose]);
 
   useEffect(() => {
@@ -49,10 +52,12 @@ export default function ProjectsOverlay({ open, onClose }: ProjectsOverlayProps)
           if (err.name !== 'AbortError') setProjects([]);
         })
         .finally(() => setLoading(false));
-      requestAnimationFrame(() => setVisible(true));
+      rafRef.current = requestAnimationFrame(() => setVisible(true));
       document.body.style.overflow = 'hidden';
       return () => {
         controller.abort();
+        cancelAnimationFrame(rafRef.current);
+        clearTimeout(timeoutRef.current);
         document.body.style.overflow = '';
       };
     } else {
@@ -145,8 +150,8 @@ export default function ProjectsOverlay({ open, onClose }: ProjectsOverlayProps)
               {videoId && (
                 <iframe
                   src={`https://www.youtube.com/embed/${videoId}`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  sandbox="allow-scripts allow-same-origin allow-presentation"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                  sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
                   loading="lazy"
                   allowFullScreen
                   title={selectedProject.title}
