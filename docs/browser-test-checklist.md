@@ -32,6 +32,13 @@ Types d'accès :
 
 **Résultat attendu** : la page s'affiche sans erreur, header et footer visibles.
 
+### NAV-03 [PUBLIC] — Affichage de la date du jour
+1. Ouvrir `${BASE_URL}/`
+2. Vérifier la présence d'un élément affichant la date du jour
+3. Vérifier que la date correspond au jour courant (format français, ex : « mercredi 9 avril 2025 »)
+
+**Résultat attendu** : la date du jour est affichée sur la page d'accueil au format français.
+
 ### NAV-02 [PUBLIC] — Navigation responsive
 1. Ouvrir `${BASE_URL}/` en viewport mobile
 2. Cliquer sur le menu burger
