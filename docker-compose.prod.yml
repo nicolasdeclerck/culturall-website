@@ -20,7 +20,7 @@
 # Placeholders à remplacer :
 #   culturall-website.nickorp.com            : domaine principal de l'app (ex: studio.example.com)
 #   media.culturall-website.nickorp.com      : sous-domaine des médias    (ex: media.studio.example.com)
-#   traefik_default   : nom du network Traefik externe (ex: traefik_default)
+#   n8n-traefik_default   : nom du network Traefik externe (ex: n8n-traefik_default)
 #   culturall-website   : nom du projet docker compose (ex: studio-site)
 #   myresolver     : nom du resolver Let's Encrypt côté Traefik (ex: myresolver)
 
@@ -37,7 +37,7 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=traefik_default"
+      - "traefik.docker.network=n8n-traefik_default"
 
       # Routeur backend — admin/api/static (Django + Wagtail + whitenoise)
       - "traefik.http.routers.culturall-website-back.rule=Host(`culturall-website.nickorp.com`) && (PathPrefix(`/admin`) || PathPrefix(`/api`) || PathPrefix(`/static`))"
@@ -62,7 +62,7 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=traefik_default"
+      - "traefik.docker.network=n8n-traefik_default"
 
       # Routeur frontend — catch-all (priorité plus basse que /admin /api /static)
       - "traefik.http.routers.culturall-website-front.rule=Host(`culturall-website.nickorp.com`)"
@@ -88,7 +88,7 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=traefik_default"
+      - "traefik.docker.network=n8n-traefik_default"
 
       # MinIO sur sous-domaine dédié — préfixe = bucket name
       # URL publique : https://media.culturall-website.nickorp.com/<bucket>/<key>
@@ -126,4 +126,4 @@ volumes:
 networks:
   traefik:
     external: true
-    name: traefik_default
+    name: n8n-traefik_default
