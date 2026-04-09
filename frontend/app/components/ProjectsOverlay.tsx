@@ -29,6 +29,7 @@ export default function ProjectsOverlay({ open, onClose }: ProjectsOverlayProps)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [visible, setVisible] = useState(false);
   const [detailVisible, setDetailVisible] = useState(false);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const rafRef = useRef<number>(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
@@ -65,6 +66,7 @@ export default function ProjectsOverlay({ open, onClose }: ProjectsOverlayProps)
       setVisible(false);
       setSelectedProject(null);
       setDetailVisible(false);
+      setSelectedTag(null);
       document.body.style.overflow = '';
     }
   }, [open]);
@@ -94,6 +96,11 @@ export default function ProjectsOverlay({ open, onClose }: ProjectsOverlayProps)
 
   if (!open) return null;
 
+  const allTags = Array.from(new Set(projects.flatMap((p) => p.tags))).sort();
+  const filteredProjects = selectedTag
+    ? projects.filter((p) => p.tags.includes(selectedTag))
+    : projects;
+
   const videoId = selectedProject ? extractYouTubeId(selectedProject.youtube_url) : null;
 
   return (
@@ -116,8 +123,28 @@ export default function ProjectsOverlay({ open, onClose }: ProjectsOverlayProps)
           ) : projects.length === 0 ? (
             <p className="projects-list__message">Aucun projet pour le moment.</p>
           ) : (
+            <>
+            {allTags.length > 0 && (
+              <div className="projects-filters">
+                <button
+                  className={`projects-filters__btn ${selectedTag === null ? 'projects-filters__btn--active' : ''}`}
+                  onClick={() => setSelectedTag(null)}
+                >
+                  Tous
+                </button>
+                {allTags.map((tag) => (
+                  <button
+                    key={tag}
+                    className={`projects-filters__btn ${selectedTag === tag ? 'projects-filters__btn--active' : ''}`}
+                    onClick={() => setSelectedTag(tag)}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="projects-grid">
-              {projects.map((project) => (
+              {filteredProjects.map((project) => (
                 <button
                   key={project.id}
                   className={`project-card ${!project.thumbnail_url ? 'project-card--no-thumbnail' : ''}`}
@@ -140,6 +167,7 @@ export default function ProjectsOverlay({ open, onClose }: ProjectsOverlayProps)
                 </button>
               ))}
             </div>
+            </>
           )}
         </div>
       ) : (
