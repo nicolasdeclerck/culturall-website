@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Contact — Cultur'all",
+  title: 'Contact',
 };
 
 export default function Contact() {

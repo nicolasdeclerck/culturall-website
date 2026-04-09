@@ -3,7 +3,7 @@ import './globals.css';
 import Header from './components/Header';
 
 export const metadata: Metadata = {
-  title: "Cultur'all",
+  title: { default: "Cultur'all", template: "%s — Cultur'all" },
   description: "Cultur'all — Site vitrine",
 };
 
