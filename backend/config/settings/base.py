@@ -18,6 +18,7 @@ ALLOWED_HOSTS = [h.strip() for h in os.environ.get("ALLOWED_HOSTS", "").split(",
 # ─── Apps ──────────────────────────────────────────────────────
 INSTALLED_APPS = [
     "home",
+    "projects",
 
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",

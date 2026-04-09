@@ -5,6 +5,8 @@ from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
+from projects.views import project_list
+
 
 def hello(request):
     return HttpResponse(
@@ -23,6 +25,9 @@ urlpatterns = [
     path("django-admin/", admin.site.urls),
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
+
+    # API
+    path("api/projects/", project_list, name="project-list"),
 
     # Catch-all Wagtail (page tree) — désactivé tant que la racine est `hello`.
     # Décommente quand un HomePage existe et retire la route `hello` ci-dessus.
