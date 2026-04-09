@@ -7,7 +7,7 @@ from .models import Project
 @require_GET
 def project_list(request):
     """Return all projects as JSON."""
-    projects = Project.objects.prefetch_related("tags").all()
+    projects = Project.objects.prefetch_related("tags").select_related("thumbnail").all()
     data = [
         {
             "id": project.pk,
@@ -15,6 +15,13 @@ def project_list(request):
             "description": project.description,
             "youtube_url": project.youtube_url,
             "tags": [tag.name for tag in project.tags.all()],
+            "thumbnail_url": (
+                request.build_absolute_uri(
+                    project.thumbnail.get_rendition("fill-600x400").url
+                )
+                if project.thumbnail
+                else None
+            ),
         }
         for project in projects
     ]

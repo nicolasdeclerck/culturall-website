@@ -4,6 +4,7 @@ from modelcluster.models import ClusterableModel
 from modelcluster.tags import ClusterTaggableManager
 from taggit.models import TaggedItemBase
 from wagtail.admin.panels import FieldPanel
+from wagtail.images import get_image_model_string
 from wagtail.snippets.models import register_snippet
 
 
@@ -25,6 +26,14 @@ class Project(ClusterableModel):
         blank=True,
         verbose_name="Tags",
     )
+    thumbnail = models.ForeignKey(
+        get_image_model_string(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        verbose_name="Miniature",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     panels = [
@@ -32,6 +41,7 @@ class Project(ClusterableModel):
         FieldPanel("description"),
         FieldPanel("tags"),
         FieldPanel("youtube_url"),
+        FieldPanel("thumbnail"),
     ]
 
     class Meta:
