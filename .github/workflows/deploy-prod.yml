@@ -1,0 +1,81 @@
+name: Deploy to Production
+
+# Tire les images pré-buildées par build-images.yml depuis GHCR et les
+# déploie sur le VPS. PAS de build sur le VPS.
+#
+# Reverse proxy : Traefik EXTERNE (déjà déployé sur le VPS, partagé avec
+# d'autres apps via le network défini par traefik_default). Les services
+# django, nextjs et minio s'enregistrent auprès de Traefik via labels.
+#
+# Déclenchements :
+#   - Manuel via UI ou `gh workflow run`
+#   - Automatique : depuis build-images.yml (workflow_dispatch avec image_tag)
+#
+# Placeholders à remplacer :
+#   culturall-website        : nom court du repo (ex: studio-site)
+#   culturall-website  : nom du projet docker compose (ex: studio-site)
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Tag des images à déployer (ex: a1b2c3d4e5f6 ou 'latest')"
+        required: true
+        default: "latest"
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ubuntu
+          key: ${{ secrets.VPS_SSH_KEY }}
+          envs: IMAGE_TAG
+          script_stop: true
+          script: |
+            set -e
+            cd ~/culturall-website
+
+            echo "==> Pulling latest compose files from main..."
+            git pull origin main
+
+            COMPOSE_CMD="docker compose -p culturall-website \
+              -f docker-compose.base.yml \
+              -f docker-compose.prod.yml \
+              --env-file .env.prod"
+
+            echo "==> Updating IMAGE_TAG in .env.prod (current : $IMAGE_TAG)..."
+            grep -q '^IMAGE_TAG=' .env.prod \
+              && sed -i "s|^IMAGE_TAG=.*|IMAGE_TAG=$IMAGE_TAG|" .env.prod \
+              || echo "IMAGE_TAG=$IMAGE_TAG" >> .env.prod
+
+            echo "==> Logging in to GHCR..."
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io \
+              -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+
+            echo "==> Pulling pre-built images..."
+            $COMPOSE_CMD pull django nextjs
+
+            echo "==> Restarting services with new images..."
+            # nginx est désactivé en prod (Traefik fait le reverse proxy)
+            $COMPOSE_CMD up -d --force-recreate --no-build django nextjs minio postgres
+
+            echo "==> Running Django/Wagtail migrations..."
+            $COMPOSE_CMD exec -T django python manage.py migrate --noinput
+
+            echo "==> Collecting static files..."
+            $COMPOSE_CMD exec -T django python manage.py collectstatic --noinput
+
+            echo "==> Updating Wagtail search index..."
+            $COMPOSE_CMD exec -T django python manage.py update_index || true
+
+            echo "==> Pruning old images..."
+            docker image prune -af --filter "until=168h" || true
+
+            echo "==> Deployment complete!"

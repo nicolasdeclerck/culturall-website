@@ -1,0 +1,92 @@
+# Services communs à tous les environnements (dev/preprod/prod/test).
+# Utilisé en empilement avec un compose d'override :
+#
+#   docker compose -p culturall-website \
+#     -f docker-compose.base.yml \
+#     -f docker-compose.dev.yml \
+#     --env-file .env.dev \
+#     up
+#
+# Placeholders à remplacer :
+#   culturall-website  : nom du projet docker compose (ex: studio-site)
+#   app_test_db      : nom de la base par défaut
+
+services:
+  django:
+    build:
+      context: ./backend
+      dockerfile: ../docker/django/Dockerfile
+    environment:
+      - DJANGO_SECRET_KEY
+      - DEBUG
+      - ALLOWED_HOSTS
+      - DATABASE_URL
+      - MINIO_ROOT_USER
+      - MINIO_ROOT_PASSWORD
+      - MINIO_ENDPOINT_URL
+      - MINIO_BUCKET_NAME
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_started
+
+  nextjs:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/nextjs/Dockerfile
+    environment:
+      - NEXT_PUBLIC_API_URL
+      - NODE_ENV
+    depends_on:
+      - django
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER
+      - MINIO_ROOT_PASSWORD
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Init job : crée le bucket MinIO et le rend public en lecture.
+  # Tourne une fois puis s'arrête (restart: "no").
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      - MINIO_ROOT_USER
+      - MINIO_ROOT_PASSWORD
+      - MINIO_BUCKET_NAME
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD};
+      mc mb -p local/$${MINIO_BUCKET_NAME} || true;
+      mc anonymous set download local/$${MINIO_BUCKET_NAME} || true;
+      echo 'MinIO bucket ready';
+      "
+    restart: "no"
+
+  nginx:
+    image: nginx:alpine
+    depends_on:
+      - django
+      - nextjs

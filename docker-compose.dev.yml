@@ -1,0 +1,53 @@
+# Override DÉVELOPPEMENT
+# Usage : docker compose -p culturall-website \
+#           -f docker-compose.base.yml \
+#           -f docker-compose.dev.yml \
+#           --env-file .env.dev up
+#
+# Caractéristiques :
+#   - Hot reload (volumes sources montés)
+#   - Tous les ports exposés directement
+#   - Pas de Nginx
+#   - Targets de build "development"
+
+services:
+  django:
+    build:
+      target: development
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+
+  nextjs:
+    build:
+      target: development
+    command: npm run dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"
+
+  postgres:
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+
+  minio:
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_dev_data:/data
+
+  # Pas de nginx en dev — accès direct via les ports exposés
+  nginx:
+    profiles: ["disabled"]
+
+volumes:
+  postgres_dev_data:
+  minio_dev_data:

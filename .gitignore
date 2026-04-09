@@ -1,0 +1,30 @@
+# Secrets
+.env
+.env.dev
+.env.test
+.env.preprod
+.env.prod
+!.env.example
+
+# Worktrees / state
+.claude-state.json
+
+# Système
+.DS_Store
+*.log
+
+# Docker volumes (named volumes ne sont pas ici, c'est pour des fichiers locaux)
+postgres_data/
+media/
+staticfiles/
+
+# Node / Next.js
+node_modules/
+.next/
+frontend/.next/
+frontend/node_modules/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
