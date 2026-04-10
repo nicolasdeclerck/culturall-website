@@ -17,6 +17,8 @@ services:
     build:
       target: production
     command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 2
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.test
     volumes:
       - static_files:/app/staticfiles
       - media_files:/app/media
