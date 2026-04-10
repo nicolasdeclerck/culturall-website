@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
+from wagtail.rich_text import expand_db_html
 
 from .models import Project
 
@@ -12,7 +13,7 @@ def project_list(request):
         {
             "id": project.pk,
             "title": project.title,
-            "description": project.description,
+            "description": expand_db_html(project.description) if project.description else "",
             "youtube_url": project.youtube_url,
             "tags": [tag.name for tag in project.tags.all()],
             "thumbnail_url": (

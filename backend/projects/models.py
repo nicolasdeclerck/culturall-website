@@ -4,6 +4,7 @@ from modelcluster.models import ClusterableModel
 from modelcluster.tags import ClusterTaggableManager
 from taggit.models import TaggedItemBase
 from wagtail.admin.panels import FieldPanel
+from wagtail.fields import RichTextField
 from wagtail.images import get_image_model_string
 from wagtail.snippets.models import register_snippet
 
@@ -19,7 +20,7 @@ class ProjectTag(TaggedItemBase):
 @register_snippet
 class Project(ClusterableModel):
     title = models.CharField("Titre", max_length=255)
-    description = models.TextField("Description", blank=True)
+    description = RichTextField("Description", blank=True)
     youtube_url = models.URLField("Lien YouTube")
     tags = ClusterTaggableManager(
         through=ProjectTag,
