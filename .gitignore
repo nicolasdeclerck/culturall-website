@@ -1,7 +1,6 @@
 # Secrets
 .env
 .env.dev
-.env.test
 .env.preprod
 .env.prod
 !.env.example
