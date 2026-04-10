@@ -94,6 +94,17 @@ Types d'accès :
 
 **Résultat attendu** : depuis le menu hamburger, « Nos Projets » ferme le menu et ouvre l'overlay projets normalement.
 
+### NAV-08 [PUBLIC] — Navbar évolutive au scroll (fond progressif)
+1. Ouvrir `${BASE_URL}/`
+2. Vérifier que le header est visible avec un fond transparent (pas de background noir)
+3. Scroller progressivement vers le bas (au-delà de 50px)
+4. Vérifier que le header a maintenant un fond noir semi-opaque (rgba(0,0,0,0.85) ou similaire)
+5. Vérifier que la transition est progressive (pas de changement brusque)
+6. Scroller vers le haut jusqu'en position 0
+7. Vérifier que le header redevient transparent
+
+**Résultat attendu** : le header passe progressivement de transparent à noir semi-opaque au scroll, et redevient transparent en haut de page. Le contenu du menu reste lisible sur la zone réseau (fond blanc).
+
 ## 2. Formulaire de contact
 
 ### CONTACT-01 [PUBLIC] — Affichage du formulaire de contact
