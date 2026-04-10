@@ -56,6 +56,18 @@ body {
   opacity: 0.8;
 }
 
+/* Hamburger button — hidden on desktop, visible on mobile */
+.header-burger {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  z-index: 12;
+}
+
 /* Landing page */
 .landing {
   position: sticky;
@@ -622,28 +634,36 @@ body {
 /* Responsive */
 @media (max-width: 768px) {
   .header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: stretch;
     padding: 1rem 1.5rem;
-    pointer-events: none;
   }
 
-  .header-title {
-    align-self: flex-start;
+  .header-burger {
+    display: block;
     pointer-events: auto;
   }
 
   .header-nav {
+    position: fixed;
+    inset: 0;
     flex-direction: column;
-    align-items: flex-end;
-    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 11;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .header-nav--open {
+    opacity: 1;
     pointer-events: auto;
+  }
+
+  .header-nav a,
+  .header-nav .header-nav__link {
+    font-size: 1.5rem;
   }
 
   .page {

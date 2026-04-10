@@ -9,16 +9,31 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 export default function Header() {
   const [projectsOpen, setProjectsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
+    setMenuOpen(false);
     fetch(`${API_URL}/api/auth/check/`, { credentials: 'include' })
       .then((res) => res.json())
       .then((data) => setAuthenticated(data.authenticated))
       .catch(() => setAuthenticated(false));
   }, [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    document.body.style.overflow = 'hidden';
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [menuOpen]);
 
   async function handleLogout() {
     await fetch(`${API_URL}/api/auth/logout/`, {
@@ -39,10 +54,21 @@ export default function Header() {
         <Link href="/" className="header-title">
           Cultur&apos;all
         </Link>
-        <nav className="header-nav">
+        <button
+          className="header-burger"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+          aria-expanded={menuOpen}
+        >
+          <span aria-hidden="true">{menuOpen ? '✕' : '☰'}</span>
+        </button>
+        <nav className={`header-nav${menuOpen ? ' header-nav--open' : ''}`}>
           <button
             className="header-nav__link"
-            onClick={() => setProjectsOpen(true)}
+            onClick={() => {
+              setMenuOpen(false);
+              setProjectsOpen(true);
+            }}
           >
             Nos Projets
           </button>

@@ -58,15 +58,41 @@ Types d'accès :
 
 **Résultat attendu** : le header est présent et fonctionnel sur toutes les pages.
 
-### NAV-05 [PUBLIC] — Navigation responsive (titre en haut à gauche, menu en bas à droite)
+### NAV-05 [PUBLIC] — Menu hamburger sur mobile
 1. Ouvrir `${BASE_URL}/` en viewport mobile (375px de large)
 2. Vérifier que le titre « Cultur'all » est positionné en haut à gauche de l'écran
-3. Vérifier que les liens de navigation (« Nos Projets », « À propos », « Contact ») sont disposés verticalement en bas à droite de l'écran
-4. Vérifier que chaque lien de navigation est cliquable et fonctionne
-5. Naviguer vers `${BASE_URL}/a-propos` et vérifier que le header responsive est identique
-6. Naviguer vers `${BASE_URL}/contact` et vérifier que le header responsive est identique
+3. Vérifier que les liens de navigation ne sont **pas** visibles (masqués par défaut)
+4. Vérifier la présence d'un bouton hamburger (☰) en haut à droite
+5. Cliquer sur le bouton hamburger
+6. Vérifier que le menu s'ouvre en plein écran avec les 3 entrées : « Nos Projets », « À propos », « Contact »
+7. Cliquer sur « À propos »
+8. Vérifier que le menu se ferme et que la navigation vers `${BASE_URL}/a-propos` fonctionne
+9. Revenir sur `${BASE_URL}/` et rouvrir le menu hamburger
+10. Cliquer sur « Contact »
+11. Vérifier que le menu se ferme et que la navigation vers `${BASE_URL}/contact` fonctionne
 
-**Résultat attendu** : sur mobile, le titre est en haut à gauche, le menu apparaît à la verticale en bas à droite, tous les liens restent fonctionnels.
+**Résultat attendu** : sur mobile, le menu est masqué derrière un bouton hamburger, il s'ouvre en plein écran et se referme après navigation.
+
+### NAV-06 [PUBLIC] — Fermeture du menu hamburger par le bouton croix
+1. Ouvrir `${BASE_URL}/` en viewport mobile (375px de large)
+2. Cliquer sur le bouton hamburger
+3. Vérifier que le menu plein écran s'affiche
+4. Cliquer sur le bouton de fermeture (✕)
+5. Vérifier que le menu se referme
+6. Vérifier que la page d'accueil est toujours visible normalement
+
+**Résultat attendu** : le menu hamburger peut être fermé sans naviguer, retour à la page précédente.
+
+### NAV-07 [PUBLIC] — Ouverture de l'overlay Nos Projets depuis le menu hamburger mobile
+1. Ouvrir `${BASE_URL}/` en viewport mobile (375px de large)
+2. Cliquer sur le bouton hamburger
+3. Cliquer sur « Nos Projets »
+4. Vérifier que le menu hamburger se ferme
+5. Vérifier que l'overlay des projets s'ouvre par-dessus la page d'accueil (comme avant)
+6. Fermer l'overlay des projets
+7. Vérifier que la page d'accueil est visible normalement
+
+**Résultat attendu** : depuis le menu hamburger, « Nos Projets » ferme le menu et ouvre l'overlay projets normalement.
 
 ## 2. Formulaire de contact
 
