@@ -7,6 +7,7 @@ from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
+from home.auth_views import auth_check, auth_login, auth_logout
 from home.views import contact_submit
 from projects.views import project_list
 
@@ -24,6 +25,11 @@ urlpatterns = [
     # HelloWorld root view — à remplacer par les pages Wagtail (voir plus bas)
     # quand un HomePage aura été créé.
     path("", hello),
+
+    # API — Auth
+    path("api/auth/check/", auth_check, name="auth-check"),
+    path("api/auth/login/", auth_login, name="auth-login"),
+    path("api/auth/logout/", auth_logout, name="auth-logout"),
 
     # API
     path("api/contact/", contact_submit, name="contact-submit"),

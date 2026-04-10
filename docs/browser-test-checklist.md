@@ -105,21 +105,65 @@ Types d'accès :
 
 **Résultat attendu** : la soumission de contact est visible dans l'admin Django avec toutes les informations saisies.
 
-## 3. Authentification
+## 3. Authentification et protection par mot de passe
 
-### AUTH-01 [PUBLIC] — Connexion utilisateur valide
-1. Ouvrir `${BASE_URL}/admin/login/`
-2. Remplir email + mot de passe valides
-3. Soumettre le formulaire
-4. Vérifier la redirection vers la page authentifiée
+### AUTH-01 [PUBLIC] — Redirection vers la page de login quand la protection est activée
+1. S'assurer que le paramètre « Authentification requise » est activé dans l'admin Wagtail (Paramètres > Paramètres du site)
+2. Ouvrir `${BASE_URL}/` dans un navigateur sans session
+3. Vérifier la redirection automatique vers `${BASE_URL}/login`
+4. Vérifier que la page de login s'affiche avec un formulaire (champs Nom d'utilisateur et Mot de passe)
 
-**Résultat attendu** : utilisateur connecté, redirection correcte.
+**Résultat attendu** : l'utilisateur non connecté est redirigé vers `/login` avec un formulaire de connexion.
 
-### AUTH-02 [AUTH] — Déconnexion
-1. Cliquer sur le bouton de déconnexion
-2. Vérifier la redirection vers l'accueil public
+### AUTH-02 [PUBLIC] — Connexion avec identifiants valides
+1. Ouvrir `${BASE_URL}/login`
+2. Remplir le champ « Nom d'utilisateur » avec `testuser`
+3. Remplir le champ « Mot de passe » avec `Testpass123!`
+4. Cliquer sur le bouton « Se connecter »
+5. Vérifier la redirection vers la page d'accueil `${BASE_URL}/`
+6. Vérifier que la page d'accueil s'affiche normalement (vidéo, header)
 
-**Résultat attendu** : session terminée, accès aux pages [AUTH] redirigé vers la connexion.
+**Résultat attendu** : connexion réussie, redirection vers l'accueil, contenu accessible.
+
+### AUTH-03 [PUBLIC] — Connexion avec identifiants invalides
+1. Ouvrir `${BASE_URL}/login`
+2. Remplir le champ « Nom d'utilisateur » avec `wronguser`
+3. Remplir le champ « Mot de passe » avec `wrongpass`
+4. Cliquer sur le bouton « Se connecter »
+5. Vérifier qu'un message d'erreur s'affiche (ex : « Identifiants invalides »)
+6. Vérifier que l'utilisateur reste sur la page de login
+
+**Résultat attendu** : message d'erreur affiché, pas de redirection.
+
+### AUTH-04 [AUTH] — Déconnexion
+1. Se connecter avec `testuser` / `Testpass123!`
+2. Vérifier la présence d'un lien « Déconnexion » dans le header
+3. Cliquer sur « Déconnexion »
+4. Vérifier la redirection vers la page de login
+5. Tenter d'ouvrir `${BASE_URL}/` directement
+6. Vérifier la redirection vers `/login`
+
+**Résultat attendu** : session terminée, l'utilisateur est redirigé vers le login.
+
+### AUTH-05 [AUTH] — Navigation complète après connexion
+1. Se connecter avec `testuser` / `Testpass123!`
+2. Vérifier l'accès à `${BASE_URL}/`
+3. Naviguer vers `${BASE_URL}/a-propos`
+4. Naviguer vers `${BASE_URL}/contact`
+5. Ouvrir l'overlay « Nos Projets »
+6. Vérifier que toutes les pages sont accessibles sans redirection vers le login
+
+**Résultat attendu** : toutes les pages du site sont accessibles après connexion.
+
+### AUTH-06 [AUTH] — Toggle de protection dans l'admin Wagtail
+1. Se connecter à `${BASE_URL}/admin/` avec les identifiants admin
+2. Naviguer vers Paramètres > Paramètres du site
+3. Décocher « Authentification requise »
+4. Sauvegarder
+5. Ouvrir `${BASE_URL}/` dans un navigateur sans session (navigation privée)
+6. Vérifier que la page d'accueil s'affiche sans redirection vers le login
+
+**Résultat attendu** : quand la protection est désactivée, le site est accessible sans connexion.
 
 ## 4. Projets
 
