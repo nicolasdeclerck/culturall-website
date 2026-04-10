@@ -37,7 +37,7 @@ wait_for_django() {
     echo "Waiting for Django to be ready..."
     local retries=30
     while [ $retries -gt 0 ]; do
-        if $COMPOSE exec -T django python -c "import django; django.setup()" 2>/dev/null; then
+        if $COMPOSE exec -T django curl -sf http://localhost:8000/admin/login/ > /dev/null 2>&1; then
             echo "Django is ready."
             return 0
         fi
