@@ -9,6 +9,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 export default function Header() {
   const [projectsOpen, setProjectsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -39,15 +40,25 @@ export default function Header() {
         <Link href="/" className="header-title">
           Cultur&apos;all
         </Link>
-        <nav className="header-nav">
+        <button
+          className="header-burger"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+        >
+          {menuOpen ? '✕' : '☰'}
+        </button>
+        <nav className={`header-nav${menuOpen ? ' header-nav--open' : ''}`}>
           <button
             className="header-nav__link"
-            onClick={() => setProjectsOpen(true)}
+            onClick={() => {
+              setMenuOpen(false);
+              setProjectsOpen(true);
+            }}
           >
             Nos Projets
           </button>
-          <Link href="/a-propos">À propos</Link>
-          <Link href="/contact">Contact</Link>
+          <Link href="/a-propos" onClick={() => setMenuOpen(false)}>À propos</Link>
+          <Link href="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
           {authenticated && (
             <button className="header-nav__link" onClick={handleLogout}>
               Déconnexion
