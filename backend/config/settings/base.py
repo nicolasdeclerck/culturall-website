@@ -20,6 +20,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 # ─── Apps ──────────────────────────────────────────────────────
 INSTALLED_APPS = [
+    "blog",
     "home",
     "network",
     "projects",
