@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import ProjectsOverlay from './ProjectsOverlay';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+const SCROLL_THRESHOLD = 50;
 
 export default function Header() {
   const [projectsOpen, setProjectsOpen] = useState(false);
@@ -16,8 +17,15 @@ export default function Header() {
   const router = useRouter();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    handleScroll();
+    let current = window.scrollY > SCROLL_THRESHOLD;
+    setScrolled(current);
+    const handleScroll = () => {
+      const next = window.scrollY > SCROLL_THRESHOLD;
+      if (next !== current) {
+        current = next;
+        setScrolled(next);
+      }
+    };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
