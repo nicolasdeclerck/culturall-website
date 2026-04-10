@@ -22,8 +22,10 @@ CSRF_TRUSTED_ORIGINS = [
 INSTALLED_APPS = [
     "home",
     "projects",
+    "site_settings",
 
     "wagtail.contrib.forms",
+    "wagtail.contrib.settings",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
     "wagtail.sites",
@@ -59,6 +61,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    "config.middleware.LoginRequiredMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
