@@ -289,9 +289,10 @@ Types d'accès :
 2. Scroller vers le bas depuis la vidéo de fond
 3. Vérifier que la section Réseau apparaît en scrollant par-dessus la vidéo
 4. Vérifier que la vidéo reste fixe en arrière-plan pendant le scroll
-5. Vérifier que les logos des membres du réseau s'affichent
+5. Vérifier que la section Réseau a un fond blanc
+6. Vérifier que les logos des membres du réseau s'affichent en entier (pas de troncature, même pour les logos non carrés)
 
-**Résultat attendu** : la section Réseau s'affiche au scroll, la vidéo reste fixe derrière, les logos des membres sont visibles.
+**Résultat attendu** : la section Réseau s'affiche au scroll sur fond blanc, la vidéo reste fixe derrière, les logos des membres sont visibles en entier sans troncature.
 
 ### NET-02 [PUBLIC] — Filtrage des membres du réseau par type
 1. Ouvrir `${BASE_URL}/`
