@@ -11,8 +11,16 @@ export default function Header() {
   const [projectsOpen, setProjectsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     setMenuOpen(false);
@@ -50,7 +58,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="header">
+      <header className={`header${scrolled ? ' header--scrolled' : ''}`}>
         <Link href="/" className="header-title">
           Cultur&apos;all
         </Link>
