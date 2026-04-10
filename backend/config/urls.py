@@ -9,6 +9,7 @@ from wagtail.documents import urls as wagtaildocs_urls
 
 from home.auth_views import auth_check, auth_login, auth_logout
 from home.views import contact_submit
+from network.views import network_member_list
 from projects.views import project_list
 
 
@@ -39,6 +40,7 @@ urlpatterns = [
     path("documents/", include(wagtaildocs_urls)),
 
     # API
+    path("api/network/", network_member_list, name="network-member-list"),
     path("api/projects/", project_list, name="project-list"),
 
     # Catch-all Wagtail (page tree) — désactivé tant que la racine est `hello`.

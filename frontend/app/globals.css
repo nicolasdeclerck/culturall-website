@@ -58,10 +58,12 @@ body {
 
 /* Landing page */
 .landing {
-  position: relative;
+  position: sticky;
+  top: 0;
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  z-index: 0;
 }
 
 .landing-video {
@@ -534,6 +536,88 @@ body {
   border-radius: 0.5rem;
 }
 
+/* Network section */
+.network-section {
+  position: relative;
+  z-index: 1;
+  background: #111;
+  padding: 4rem 2rem;
+  min-height: 50vh;
+}
+
+.network-section__title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 2rem;
+  color: #fff;
+}
+
+.network-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.network-filters__btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-family: inherit;
+}
+
+.network-filters__btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.network-filters__btn--active {
+  background: #fff;
+  color: #000;
+}
+
+.network-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.network-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  transition: background 0.2s ease;
+}
+
+.network-card:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.network-card__logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.network-card__name {
+  font-size: 0.85rem;
+  text-align: center;
+  opacity: 0.7;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .header {
@@ -608,5 +692,14 @@ body {
 
   .project-card:hover .project-card__thumbnail {
     filter: none;
+  }
+
+  .network-section {
+    padding: 3rem 1rem;
+  }
+
+  .network-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
   }
 }
