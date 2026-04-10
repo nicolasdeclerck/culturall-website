@@ -1,9 +1,38 @@
+import io
+
 import pytest
+from django.core.files.images import ImageFile
 from django.test import Client
+from wagtail.images.models import Image
 
 from network.models import NetworkMember
 
 pytestmark = pytest.mark.django_db
+
+
+def _create_test_image(name="test.png"):
+    """Create a minimal 1x1 PNG image for testing."""
+    # Minimal valid 1x1 white PNG
+    import struct
+    import zlib
+
+    def _chunk(chunk_type, data):
+        c = chunk_type + data
+        return struct.pack(">I", len(data)) + c + struct.pack(">I", zlib.crc32(c) & 0xFFFFFFFF)
+
+    header = b"\x89PNG\r\n\x1a\n"
+    ihdr = _chunk(b"IHDR", struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0))
+    raw = zlib.compress(b"\x00\xff\xff\xff")
+    idat = _chunk(b"IDAT", raw)
+    iend = _chunk(b"IEND", b"")
+    png_data = header + ihdr + idat + iend
+
+    f = io.BytesIO(png_data)
+    f.name = name
+    image = Image(title=name)
+    image.file = ImageFile(f, name=name)
+    image.save()
+    return image
 
 
 class TestNetworkMemberListView:
@@ -43,6 +72,18 @@ class TestNetworkMemberListView:
         data = resp.json()
         assert data[0]["name"] == "Alpha"
         assert data[1]["name"] == "Zebra"
+
+    def test_member_with_logo(self, client: Client):
+        image = _create_test_image("logo.png")
+        NetworkMember.objects.create(
+            name="Avec Logo", member_type="Partenaire", logo=image
+        )
+
+        resp = client.get(self.url)
+        member = resp.json()[0]
+
+        assert member["logo_url"] is not None
+        assert "logo" in member["logo_url"]
 
     def test_post_not_allowed(self, client: Client):
         resp = client.post(self.url)

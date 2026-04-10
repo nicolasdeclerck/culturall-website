@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface NetworkMember {
   id: number;
@@ -17,8 +17,13 @@ export default function NetworkSection() {
 
   useEffect(() => {
     fetch(`${API_URL}/api/network/`, { credentials: 'include' })
-      .then((res) => res.json())
-      .then((data) => setMembers(data))
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) setMembers(data);
+      })
       .catch(() => {});
   }, []);
 
@@ -28,9 +33,7 @@ export default function NetworkSection() {
     ? members.filter((m) => m.member_type === activeType)
     : members;
 
-  const handleFilter = useCallback((type: string | null) => {
-    setActiveType(type);
-  }, []);
+  const handleFilter = (type: string | null) => setActiveType(type);
 
   if (members.length === 0) return null;
 
