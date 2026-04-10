@@ -281,3 +281,57 @@ Types d'accès :
 6. Vérifier les informations et la vidéo
 
 **Résultat attendu** : parcours complet de création et consultation d'un projet sans erreur.
+
+## 6. Section Réseau
+
+### NET-01 [PUBLIC] — Affichage de la section Réseau sur la landing page
+1. Ouvrir `${BASE_URL}/`
+2. Scroller vers le bas depuis la vidéo de fond
+3. Vérifier que la section Réseau apparaît en scrollant par-dessus la vidéo
+4. Vérifier que la vidéo reste fixe en arrière-plan pendant le scroll
+5. Vérifier que les logos des membres du réseau s'affichent
+
+**Résultat attendu** : la section Réseau s'affiche au scroll, la vidéo reste fixe derrière, les logos des membres sont visibles.
+
+### NET-02 [PUBLIC] — Filtrage des membres du réseau par type
+1. Ouvrir `${BASE_URL}/`
+2. Scroller jusqu'à la section Réseau
+3. Vérifier la présence de boutons de filtrage par type au-dessus de la grille de logos
+4. Vérifier qu'un bouton « Tous » est actif par défaut
+5. Cliquer sur un type spécifique
+6. Vérifier que seuls les logos des membres de ce type sont affichés
+7. Cliquer sur « Tous »
+8. Vérifier que tous les logos sont de nouveau affichés
+
+**Résultat attendu** : le filtrage par type fonctionne dynamiquement, seuls les logos correspondants sont affichés.
+
+### NET-03 [AUTH] — Ajout d'un membre du réseau via l'admin Wagtail
+1. Se connecter à `${BASE_URL}/admin/`
+2. Naviguer vers la section Snippets > Membres du réseau
+3. Cliquer sur « Ajouter »
+4. Remplir le nom, sélectionner un type, ajouter un logo via le sélecteur d'images Wagtail
+5. Sauvegarder
+6. Vérifier que le membre apparaît dans la liste admin
+7. Ouvrir `${BASE_URL}/` côté public et scroller jusqu'à la section Réseau
+8. Vérifier que le logo du nouveau membre est visible
+
+**Résultat attendu** : le membre est créé via l'admin avec son logo, et il est visible dans la section Réseau côté public.
+
+### NET-04 [PUBLIC] — Responsive de la section Réseau sur mobile
+1. Ouvrir `${BASE_URL}/` en viewport mobile (375px de large)
+2. Scroller jusqu'à la section Réseau
+3. Vérifier que les logos s'affichent en grille adaptée au mobile
+4. Vérifier que les boutons de filtrage par type sont utilisables
+
+**Résultat attendu** : la section Réseau est utilisable et lisible sur mobile.
+
+### E2E-02 [AUTH] — Parcours end-to-end création et consultation d'un membre du réseau
+1. Se connecter à l'admin Wagtail
+2. Créer un nouveau membre du réseau via Snippets > Membres du réseau (nom, logo, type)
+3. Ouvrir `${BASE_URL}/` côté public
+4. Scroller jusqu'à la section Réseau
+5. Vérifier la présence du logo du membre créé
+6. Filtrer par le type du membre créé
+7. Vérifier que le logo est toujours visible après filtrage
+
+**Résultat attendu** : parcours complet de création et consultation d'un membre du réseau sans erreur.
