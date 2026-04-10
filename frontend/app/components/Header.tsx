@@ -6,13 +6,29 @@ import { usePathname, useRouter } from 'next/navigation';
 import ProjectsOverlay from './ProjectsOverlay';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+const SCROLL_THRESHOLD = 50;
 
 export default function Header() {
   const [projectsOpen, setProjectsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    let current = window.scrollY > SCROLL_THRESHOLD;
+    setScrolled(current);
+    const handleScroll = () => {
+      const next = window.scrollY > SCROLL_THRESHOLD;
+      if (next !== current) {
+        current = next;
+        setScrolled(next);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     setMenuOpen(false);
@@ -50,7 +66,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="header">
+      <header className={`header${scrolled ? ' header--scrolled' : ''}`}>
         <Link href="/" className="header-title">
           Cultur&apos;all
         </Link>

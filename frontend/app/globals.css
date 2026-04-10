@@ -22,6 +22,12 @@ body {
   align-items: center;
   padding: 1.5rem 2rem;
   z-index: 10;
+  background: transparent;
+  transition: background 0.3s ease;
+}
+
+.header--scrolled {
+  background: rgba(0, 0, 0, 0.85);
 }
 
 .header-title {
