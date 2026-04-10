@@ -33,20 +33,18 @@ usage() {
     exit 1
 }
 
-wait_for_django() {
-    echo "Waiting for Django to be ready..."
+wait_for_gunicorn() {
+    echo "Waiting for Gunicorn to accept connections..."
     local retries=30
     while [ $retries -gt 0 ]; do
-        HTTP_CODE=$($COMPOSE exec -T django curl -so /dev/null -w '%{http_code}' http://localhost:8000/admin/login/ 2>/dev/null) || true
-        if [ "$HTTP_CODE" -ge 200 ] 2>/dev/null && [ "$HTTP_CODE" -lt 500 ] 2>/dev/null; then
-            echo "Django is ready (HTTP $HTTP_CODE)."
+        if $COMPOSE exec -T django curl -so /dev/null http://localhost:8000/ 2>/dev/null; then
+            echo "Gunicorn is accepting connections."
             return 0
         fi
         retries=$((retries - 1))
         sleep 2
     done
-    echo "ERROR: Django did not become ready in time."
-    echo "Last HTTP code: $HTTP_CODE"
+    echo "ERROR: Gunicorn did not become ready in time."
     $COMPOSE logs django
     exit 1
 }
@@ -119,7 +117,7 @@ cmd_up() {
     echo "Building and starting TNR environment (Next.js + Django/Wagtail + MinIO)..."
     $COMPOSE up --build -d
 
-    wait_for_django
+    wait_for_gunicorn
     run_migrations
     seed_test_data
     wait_for_nextjs
