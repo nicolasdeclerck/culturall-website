@@ -53,7 +53,7 @@ wait_for_nextjs() {
     echo "Waiting for Next.js to be ready..."
     local retries=30
     while [ $retries -gt 0 ]; do
-        if $COMPOSE exec -T nextjs wget -q -O /dev/null http://localhost:3000 2>/dev/null; then
+        if $COMPOSE exec -T nextjs node -e "fetch('http://localhost:3000').then(r=>{process.exit(r.ok?0:1)}).catch(()=>process.exit(1))" 2>/dev/null; then
             echo "Next.js is ready."
             return 0
         fi
