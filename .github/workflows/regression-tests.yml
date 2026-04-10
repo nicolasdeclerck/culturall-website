@@ -53,7 +53,7 @@ jobs:
           command_timeout: 15m
           script: |
             set -e
-            cd ~/culturall-website
+            cd ~/n8n-traefik/repos/culturall-website
             git fetch origin "${{ env.TNR_BRANCH }}"
             git checkout "${{ env.TNR_BRANCH }}"
             git pull origin "${{ env.TNR_BRANCH }}"
@@ -91,7 +91,7 @@ jobs:
           command_timeout: 5m
           script: |
             docker network disconnect culturall-website-tnr_default claude-worker || true
-            cd ~/culturall-website
+            cd ~/n8n-traefik/repos/culturall-website
             ./scripts/tnr-docker.sh down
             git checkout main || true
 

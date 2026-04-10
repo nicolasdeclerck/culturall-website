@@ -14,6 +14,14 @@
 - **DNS** : `culturall-website.nickorp.com` et `media.culturall-website.nickorp.com` doivent pointer vers l'IP du VPS
   (records A ou AAAA) avant le premier déploiement, pour que Let's Encrypt
   puisse émettre les certificats.
+- **Clone du repo sur le VPS** : le dépôt doit être cloné à `~/n8n-traefik/repos/culturall-website`
+  (ce chemin est utilisé par les workflows de déploiement, de tests browser et de TNR) :
+  ```bash
+  ssh ubuntu@<VPS_HOST>
+  mkdir -p ~/n8n-traefik/repos
+  cd ~/n8n-traefik/repos
+  git clone git@github.com:nicolasdeclerck/culturall-website.git
+  ```
 
 ## Secrets à configurer
 

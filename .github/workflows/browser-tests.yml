@@ -61,7 +61,7 @@ jobs:
           envs: BRANCH
           script: |
             set -e
-            cd ~/culturall-website
+            cd ~/n8n-traefik/repos/culturall-website
             git fetch origin "$BRANCH"
             git checkout -B "$BRANCH" "origin/$BRANCH"
             git reset --hard "origin/$BRANCH"
@@ -117,7 +117,7 @@ jobs:
           command_timeout: 5m
           script: |
             docker network disconnect culturall-website-tnr_default claude-worker 2>/dev/null || true
-            cd ~/culturall-website 2>/dev/null && ./scripts/tnr-docker.sh down 2>/dev/null || true
+            cd ~/n8n-traefik/repos/culturall-website 2>/dev/null && ./scripts/tnr-docker.sh down 2>/dev/null || true
 
       - name: Report failure summary
         if: steps.run-tests.outcome == 'failure'
