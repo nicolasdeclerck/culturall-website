@@ -32,23 +32,6 @@ class ReadOnlyPermissionPolicy(ModelPermissionPolicy):
         return super().user_has_permission(user, action)
 
 
-class ContactSubmissionViewSet(SnippetViewSet):
-    list_display = ["subject", "name", "email", "created_at"]
-    list_filter = {"created_at": ["gte", "lte"]}
-    search_fields = ["name", "email", "subject", "message"]
-    ordering = ["-created_at"]
-    icon = "mail"
-    add_to_admin_menu = True
-    menu_label = "Contacts"
-    menu_order = 300
-    inspect_view_enabled = True
-
-    @cached_property
-    def permission_policy(self):
-        return ReadOnlyPermissionPolicy(self.model)
-
-
-@register_snippet(ContactSubmissionViewSet)
 class ContactSubmission(models.Model):
     name = models.CharField("Nom", max_length=150)
     email = models.EmailField("Email")
@@ -71,3 +54,23 @@ class ContactSubmission(models.Model):
 
     def __str__(self):
         return f"{self.subject} — {self.name} ({self.created_at:%d/%m/%Y})"
+
+
+class ContactSubmissionViewSet(SnippetViewSet):
+    model = ContactSubmission
+    list_display = ["subject", "name", "email", "created_at"]
+    list_filter = {"created_at": ["gte", "lte"]}
+    search_fields = ["name", "email", "subject", "message"]
+    ordering = ["-created_at"]
+    icon = "mail"
+    add_to_admin_menu = True
+    menu_label = "Contacts"
+    menu_order = 300
+    inspect_view_enabled = True
+
+    @cached_property
+    def permission_policy(self):
+        return ReadOnlyPermissionPolicy(self.model)
+
+
+register_snippet(ContactSubmissionViewSet)
