@@ -144,11 +144,21 @@ Types d'accès :
 1. Ouvrir l'overlay Nos Projets
 2. Cliquer sur une carte de projet
 3. Vérifier que la carte s'agrandit en plein écran avec une transition progressive
-4. Vérifier qu'à gauche s'affichent les informations textuelles (titre, description, tags)
+4. Vérifier qu'à gauche s'affichent les informations textuelles (titre, description en texte riche, tags)
 5. Vérifier qu'à droite s'affiche la vidéo YouTube intégrée
 6. Vérifier la présence du lien « Retour aux projets » en haut
 
-**Résultat attendu** : la vue détail s'ouvre en plein écran avec les informations et la vidéo.
+**Résultat attendu** : la vue détail s'ouvre en plein écran avec les informations (description en texte riche formaté) et la vidéo.
+
+### PROJ-11 [PUBLIC] — Rendu du texte riche dans la description d'un projet
+1. Ouvrir l'overlay Nos Projets
+2. Cliquer sur un projet dont la description contient du texte riche (gras, italique, liste à puces, lien)
+3. Vérifier que le texte en gras s'affiche en **gras** (balise `<b>` ou `<strong>`)
+4. Vérifier que le texte en italique s'affiche en *italique* (balise `<i>` ou `<em>`)
+5. Vérifier que les listes à puces sont rendues sous forme de liste HTML (`<ul><li>`)
+6. Vérifier que les liens sont cliquables et s'ouvrent dans un nouvel onglet
+
+**Résultat attendu** : la description du projet affiche correctement le formatage riche (gras, italique, listes, liens).
 
 ### PROJ-04 [PUBLIC] — Retour depuis la vue détail vers la liste
 1. Ouvrir un projet en vue détail
@@ -165,18 +175,20 @@ Types d'accès :
 
 **Résultat attendu** : l'overlay se ferme proprement et la landing page revient à l'état normal.
 
-### PROJ-06 [AUTH] — Ajout d'un projet avec miniature via l'admin Wagtail
+### PROJ-06 [AUTH] — Ajout d'un projet avec miniature et description riche via l'admin Wagtail
 1. Se connecter à `${BASE_URL}/admin/`
 2. Naviguer vers la section Snippets > Projets
 3. Cliquer sur « Ajouter »
-4. Remplir titre, description, tags (ex: « Clip »), lien YouTube
-5. Ajouter une miniature via le sélecteur d'images Wagtail
-6. Sauvegarder
-7. Vérifier que le projet apparaît dans la liste admin
-8. Ouvrir l'overlay Nos Projets côté public
-9. Vérifier que le nouveau projet apparaît avec sa miniature en fond de carte
+4. Remplir titre, tags (ex: « Clip »), lien YouTube
+5. Dans le champ description, vérifier la présence d'un éditeur de texte riche (barre d'outils avec gras, italique, listes, liens…)
+6. Saisir du texte avec mise en forme : un mot en **gras**, un mot en *italique*, une liste à puces
+7. Ajouter une miniature via le sélecteur d'images Wagtail
+8. Sauvegarder
+9. Vérifier que le projet apparaît dans la liste admin
+10. Ouvrir l'overlay Nos Projets côté public
+11. Vérifier que le nouveau projet apparaît avec sa miniature en fond de carte
 
-**Résultat attendu** : le projet est créé via l'admin avec miniature et visible côté public avec l'image en fond de carte.
+**Résultat attendu** : le projet est créé via l'admin avec miniature, la description est saisie via un éditeur riche, et le projet est visible côté public avec l'image en fond de carte.
 
 ### PROJ-07 [PUBLIC] — Effet hover sur les cartes de projets
 1. Ouvrir l'overlay Nos Projets (cliquer sur « Nos Projets » dans le header)

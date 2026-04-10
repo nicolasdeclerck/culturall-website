@@ -183,7 +183,10 @@ export default function ProjectsOverlay({ open, onClose }: ProjectsOverlayProps)
                   <span key={`${tag}-${index}`} className="project-detail__tag">{tag}</span>
                 ))}
               </div>
-              <p className="project-detail__description">{selectedProject.description}</p>
+              <div
+                className="project-detail__description"
+                dangerouslySetInnerHTML={{ __html: selectedProject.description }}
+              />
             </div>
             <div className="project-detail__video">
               {videoId && (

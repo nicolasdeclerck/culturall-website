@@ -451,6 +451,30 @@ body {
   margin: 0;
 }
 
+.project-detail__description p {
+  margin: 0 0 0.75em;
+}
+
+.project-detail__description p:last-child {
+  margin-bottom: 0;
+}
+
+.project-detail__description ul,
+.project-detail__description ol {
+  margin: 0 0 0.75em;
+  padding-left: 1.5em;
+}
+
+.project-detail__description a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.project-detail__description a:hover {
+  opacity: 0.7;
+}
+
 .project-detail__video {
   flex: 1;
   aspect-ratio: 16 / 9;
