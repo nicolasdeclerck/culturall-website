@@ -21,6 +21,7 @@ class LoginRequiredMiddleware:
         "/admin/",
         "/django-admin/",
         "/api/auth/",
+        "/documents/",
         "/static/",
         "/media/",
     )
