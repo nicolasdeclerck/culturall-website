@@ -15,7 +15,7 @@ def network_member_list(request):
             "member_type": member.member_type,
             "logo_url": (
                 request.build_absolute_uri(
-                    member.logo.get_rendition("fill-200x200").url
+                    member.logo.get_rendition("max-200x200").url
                 )
                 if member.logo
                 else None
