@@ -15,11 +15,25 @@ export default function Header() {
   const router = useRouter();
 
   useEffect(() => {
+    setMenuOpen(false);
     fetch(`${API_URL}/api/auth/check/`, { credentials: 'include' })
       .then((res) => res.json())
       .then((data) => setAuthenticated(data.authenticated))
       .catch(() => setAuthenticated(false));
   }, [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    document.body.style.overflow = 'hidden';
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [menuOpen]);
 
   async function handleLogout() {
     await fetch(`${API_URL}/api/auth/logout/`, {
@@ -44,8 +58,9 @@ export default function Header() {
           className="header-burger"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+          aria-expanded={menuOpen}
         >
-          {menuOpen ? '✕' : '☰'}
+          <span aria-hidden="true">{menuOpen ? '✕' : '☰'}</span>
         </button>
         <nav className={`header-nav${menuOpen ? ' header-nav--open' : ''}`}>
           <button
@@ -57,8 +72,8 @@ export default function Header() {
           >
             Nos Projets
           </button>
-          <Link href="/a-propos" onClick={() => setMenuOpen(false)}>À propos</Link>
-          <Link href="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
+          <Link href="/a-propos">À propos</Link>
+          <Link href="/contact">Contact</Link>
           {authenticated && (
             <button className="header-nav__link" onClick={handleLogout}>
               Déconnexion
