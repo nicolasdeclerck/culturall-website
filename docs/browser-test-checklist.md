@@ -206,8 +206,8 @@ Types d'accès :
 
 ### PROJ-01 [PUBLIC] — Section Projets à la une sur la homepage
 1. Ouvrir `${BASE_URL}/`
-2. Scroller vers le bas après le carousel d'articles
-3. Vérifier que la section « Projets » apparaît avec un titre
+2. Scroller vers le bas après la section vidéo
+3. Vérifier que la section « Les projets à la une » apparaît avec ce titre exact
 4. Vérifier que 3 cartes de projets sont affichées horizontalement
 5. Vérifier que les 3 cartes occupent toute la largeur disponible sans écart entre elles
 6. Vérifier que chaque carte affiche la miniature du projet en fond
@@ -215,7 +215,7 @@ Types d'accès :
 8. Vérifier que le tag du projet est affiché sur la carte
 9. Vérifier la présence d'un lien « Voir tous les projets » pointant vers `/projets`
 
-**Résultat attendu** : la section Projets affiche 3 cartes pleine largeur sans écart, avec miniature, titre en surimpression et tag.
+**Résultat attendu** : la section Projets affiche le titre « Les projets à la une », 3 cartes pleine largeur sans écart, avec miniature, titre en surimpression et tag.
 
 ### PROJ-02 [PUBLIC] — Page Projets avec grille 3 colonnes
 1. Ouvrir `${BASE_URL}/projets`
@@ -347,29 +347,6 @@ Types d'accès :
 
 ## 7. Blog — Carousel et articles
 
-### BLOG-01 [PUBLIC] — Affichage du carousel d'articles sur la homepage
-1. Ouvrir `${BASE_URL}/`
-2. Scroller vers le bas après la vidéo de fond
-3. Vérifier que le carousel d'articles apparaît entre la section vidéo et la section réseau
-4. Vérifier que chaque slide affiche l'illustration de l'article et le titre en dessous
-5. Vérifier la présence de flèches de navigation gauche/droite
-6. Cliquer sur la flèche droite et vérifier que le carousel défile horizontalement
-7. Vérifier la présence du lien « Voir tous les articles » sous le carousel
-
-**Résultat attendu** : le carousel affiche les derniers articles avec illustrations et titres, navigation par flèches fonctionnelle.
-
-### BLOG-02 [PUBLIC] — Ouverture de l'overlay article depuis le carousel
-1. Ouvrir `${BASE_URL}/`
-2. Scroller jusqu'au carousel d'articles
-3. Cliquer sur un article du carousel
-4. Vérifier que l'overlay s'ouvre en plein écran avec une transition progressive
-5. Vérifier que l'overlay affiche l'illustration, le titre, le résumé et le contenu complet de l'article
-6. Vérifier que le contenu riche est correctement rendu (gras, italique, listes, liens)
-7. Fermer l'overlay (bouton fermer ou touche Escape)
-8. Vérifier que la page d'accueil est de nouveau visible
-
-**Résultat attendu** : l'overlay affiche le contenu complet de l'article et se ferme proprement.
-
 ### BLOG-03 [PUBLIC] — Navigation vers la page Blog
 1. Ouvrir `${BASE_URL}/`
 2. Vérifier la présence du lien « Blog » dans le header de navigation
@@ -409,14 +386,6 @@ Types d'accès :
 
 **Résultat attendu** : l'overlay article fonctionne depuis la page Blog comme depuis le carousel.
 
-### BLOG-07 [PUBLIC] — Responsive du carousel sur mobile
-1. Ouvrir `${BASE_URL}/` en viewport mobile (375px de large)
-2. Scroller jusqu'au carousel d'articles
-3. Vérifier que le carousel est utilisable en swipe horizontal
-4. Vérifier que les articles sont lisibles sur mobile
-
-**Résultat attendu** : le carousel d'articles est fonctionnel et lisible sur mobile.
-
 ### BLOG-08 [PUBLIC] — Responsive de la page Blog sur mobile
 1. Ouvrir `${BASE_URL}/blog` en viewport mobile (375px de large)
 2. Vérifier que la grille s'adapte en une seule colonne
@@ -431,10 +400,39 @@ Types d'accès :
 3. Créer un nouvel article avec titre, résumé, contenu riche, illustration et tags
 4. Publier l'article (statut Live)
 5. Ouvrir `${BASE_URL}/` côté public
-6. Scroller jusqu'au carousel et vérifier la présence de l'article créé
-7. Cliquer sur l'article dans le carousel et vérifier l'overlay
-8. Naviguer vers `${BASE_URL}/blog`
-9. Vérifier que l'article apparaît dans la grille
-10. Filtrer par le tag de l'article créé et vérifier qu'il reste visible
+6. Naviguer vers `${BASE_URL}/blog`
+7. Vérifier que l'article apparaît dans la grille
+8. Filtrer par le tag de l'article créé et vérifier qu'il reste visible
 
 **Résultat attendu** : parcours complet de création et consultation d'un article sans erreur.
+
+## 8. Footer
+
+### FOOTER-01 [PUBLIC] — Affichage du footer sur la homepage
+1. Ouvrir `${BASE_URL}/`
+2. Scroller jusqu'en bas de la page
+3. Vérifier la présence d'un footer
+4. Vérifier la présence d'un lien « Mentions légales » dans le footer
+5. Vérifier la présence du texte de copyright contenant « Cultur'All »
+
+**Résultat attendu** : le footer est visible en bas de page avec le lien mentions légales et le copyright.
+
+### FOOTER-02 [PUBLIC] — Footer visible sur toutes les pages
+1. Ouvrir `${BASE_URL}/a-propos`
+2. Scroller jusqu'en bas et vérifier la présence du footer
+3. Ouvrir `${BASE_URL}/contact`
+4. Scroller jusqu'en bas et vérifier la présence du footer
+5. Ouvrir `${BASE_URL}/projets`
+6. Scroller jusqu'en bas et vérifier la présence du footer
+7. Ouvrir `${BASE_URL}/blog`
+8. Scroller jusqu'en bas et vérifier la présence du footer
+
+**Résultat attendu** : le footer est présent et identique sur toutes les pages du site.
+
+### FOOTER-03 [PUBLIC] — Lien mentions légales fonctionnel
+1. Ouvrir `${BASE_URL}/`
+2. Scroller jusqu'au footer
+3. Cliquer sur le lien « Mentions légales »
+4. Vérifier que la navigation fonctionne (lien cliquable, pas d'erreur 404)
+
+**Résultat attendu** : le lien mentions légales est cliquable et mène à la page correspondante.
