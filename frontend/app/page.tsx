@@ -1,4 +1,3 @@
-import BlogCarousel from './components/BlogCarousel';
 import NetworkSection from './components/NetworkSection';
 import ProjectsSection from './components/ProjectsSection';
 
@@ -16,7 +15,6 @@ export default function Home() {
           />
         </div>
       </div>
-      <BlogCarousel />
       <ProjectsSection />
       <NetworkSection />
     </>
