@@ -3,13 +3,11 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import ProjectsOverlay from './ProjectsOverlay';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 const SCROLL_THRESHOLD = 50;
 
 export default function Header() {
-  const [projectsOpen, setProjectsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -65,40 +63,29 @@ export default function Header() {
   if (pathname === '/login') return null;
 
   return (
-    <>
-      <header className={`header${scrolled ? ' header--scrolled' : ''}`}>
-        <Link href="/" className="header-title">
-          Cultur&apos;all
-        </Link>
-        <button
-          className="header-burger"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
-          aria-expanded={menuOpen}
-        >
-          <span aria-hidden="true">{menuOpen ? '✕' : '☰'}</span>
-        </button>
-        <nav className={`header-nav${menuOpen ? ' header-nav--open' : ''}`}>
-          <button
-            className="header-nav__link"
-            onClick={() => {
-              setMenuOpen(false);
-              setProjectsOpen(true);
-            }}
-          >
-            Nos Projets
+    <header className={`header${scrolled ? ' header--scrolled' : ''}`}>
+      <Link href="/" className="header-title">
+        Cultur&apos;all
+      </Link>
+      <button
+        className="header-burger"
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+        aria-expanded={menuOpen}
+      >
+        <span aria-hidden="true">{menuOpen ? '✕' : '☰'}</span>
+      </button>
+      <nav className={`header-nav${menuOpen ? ' header-nav--open' : ''}`}>
+        <Link href="/projets" onClick={() => setMenuOpen(false)}>Nos Projets</Link>
+        <Link href="/blog" onClick={() => setMenuOpen(false)}>Blog</Link>
+        <Link href="/a-propos" onClick={() => setMenuOpen(false)}>À propos</Link>
+        <Link href="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
+        {authenticated && (
+          <button className="header-nav__link" onClick={handleLogout}>
+            Déconnexion
           </button>
-          <Link href="/blog">Blog</Link>
-          <Link href="/a-propos">À propos</Link>
-          <Link href="/contact">Contact</Link>
-          {authenticated && (
-            <button className="header-nav__link" onClick={handleLogout}>
-              Déconnexion
-            </button>
-          )}
-        </nav>
-      </header>
-      <ProjectsOverlay open={projectsOpen} onClose={() => setProjectsOpen(false)} />
-    </>
+        )}
+      </nav>
+    </header>
   );
 }
