@@ -1,4 +1,4 @@
-Django>=5.1,<5.2
+Django>=5.2,<5.3
 wagtail>=6.3,<7.0
 django-taggit>=6.1,<7.0
 psycopg2-binary>=2.9,<3.0
