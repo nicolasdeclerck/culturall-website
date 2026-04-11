@@ -88,6 +88,7 @@ export default function Header() {
           >
             Nos Projets
           </button>
+          <Link href="/blog">Blog</Link>
           <Link href="/a-propos">À propos</Link>
           <Link href="/contact">Contact</Link>
           {authenticated && (

@@ -1,3 +1,4 @@
+import BlogCarousel from './components/BlogCarousel';
 import NetworkSection from './components/NetworkSection';
 
 const VIDEO_ID = '0L8953RVKGU';
@@ -14,6 +15,7 @@ export default function Home() {
           />
         </div>
       </div>
+      <BlogCarousel />
       <NetworkSection />
     </>
   );
