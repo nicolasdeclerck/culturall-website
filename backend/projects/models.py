@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
@@ -7,6 +8,8 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
 from wagtail.images import get_image_model_string
 from wagtail.snippets.models import register_snippet
+
+MAX_FEATURED_PROJECTS = 3
 
 
 class ProjectTag(TaggedItemBase):
@@ -35,6 +38,7 @@ class Project(ClusterableModel):
         related_name="+",
         verbose_name="Miniature",
     )
+    featured = models.BooleanField("À la une", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     panels = [
@@ -43,6 +47,7 @@ class Project(ClusterableModel):
         FieldPanel("tags"),
         FieldPanel("youtube_url"),
         FieldPanel("thumbnail"),
+        FieldPanel("featured"),
     ]
 
     class Meta:
@@ -52,3 +57,14 @@ class Project(ClusterableModel):
 
     def __str__(self):
         return self.title
+
+    def clean(self):
+        super().clean()
+        if self.featured:
+            qs = Project.objects.filter(featured=True)
+            if self.pk:
+                qs = qs.exclude(pk=self.pk)
+            if qs.count() >= MAX_FEATURED_PROJECTS:
+                raise ValidationError(
+                    {"featured": f"Il ne peut y avoir plus de {MAX_FEATURED_PROJECTS} projets à la une."}
+                )

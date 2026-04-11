@@ -11,7 +11,7 @@ from blog.views import article_list
 from home.auth_views import auth_check, auth_login, auth_logout
 from home.views import contact_submit
 from network.views import network_member_list
-from projects.views import project_list
+from projects.views import project_featured, project_list
 
 
 def hello(request):
@@ -43,6 +43,7 @@ urlpatterns = [
     # API
     path("api/network/", network_member_list, name="network-member-list"),
     path("api/projects/", project_list, name="project-list"),
+    path("api/projects/featured/", project_featured, name="project-featured"),
     path("api/blog/articles/", article_list, name="article-list"),
 
     # Catch-all Wagtail (page tree) — désactivé tant que la racine est `hello`.

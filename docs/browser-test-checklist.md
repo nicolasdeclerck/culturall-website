@@ -64,14 +64,17 @@ Types d'accès :
 3. Vérifier que les liens de navigation ne sont **pas** visibles (masqués par défaut)
 4. Vérifier la présence d'un bouton hamburger (☰) en haut à droite
 5. Cliquer sur le bouton hamburger
-6. Vérifier que le menu s'ouvre en plein écran avec les 3 entrées : « Nos Projets », « À propos », « Contact »
-7. Cliquer sur « À propos »
-8. Vérifier que le menu se ferme et que la navigation vers `${BASE_URL}/a-propos` fonctionne
+6. Vérifier que le menu s'ouvre en plein écran avec les entrées : « Nos Projets », « Blog », « À propos », « Contact »
+7. Cliquer sur « Nos Projets »
+8. Vérifier que le menu se ferme et que la navigation vers `${BASE_URL}/projets` fonctionne
 9. Revenir sur `${BASE_URL}/` et rouvrir le menu hamburger
-10. Cliquer sur « Contact »
-11. Vérifier que le menu se ferme et que la navigation vers `${BASE_URL}/contact` fonctionne
+10. Cliquer sur « À propos »
+11. Vérifier que le menu se ferme et que la navigation vers `${BASE_URL}/a-propos` fonctionne
+12. Revenir sur `${BASE_URL}/` et rouvrir le menu hamburger
+13. Cliquer sur « Contact »
+14. Vérifier que le menu se ferme et que la navigation vers `${BASE_URL}/contact` fonctionne
 
-**Résultat attendu** : sur mobile, le menu est masqué derrière un bouton hamburger, il s'ouvre en plein écran et se referme après navigation.
+**Résultat attendu** : sur mobile, le menu est masqué derrière un bouton hamburger, il s'ouvre en plein écran et se referme après navigation vers les pages correspondantes.
 
 ### NAV-06 [PUBLIC] — Fermeture du menu hamburger par le bouton croix
 1. Ouvrir `${BASE_URL}/` en viewport mobile (375px de large)
@@ -83,16 +86,13 @@ Types d'accès :
 
 **Résultat attendu** : le menu hamburger peut être fermé sans naviguer, retour à la page précédente.
 
-### NAV-07 [PUBLIC] — Ouverture de l'overlay Nos Projets depuis le menu hamburger mobile
-1. Ouvrir `${BASE_URL}/` en viewport mobile (375px de large)
-2. Cliquer sur le bouton hamburger
-3. Cliquer sur « Nos Projets »
-4. Vérifier que le menu hamburger se ferme
-5. Vérifier que l'overlay des projets s'ouvre par-dessus la page d'accueil (comme avant)
-6. Fermer l'overlay des projets
-7. Vérifier que la page d'accueil est visible normalement
+### NAV-07 [PUBLIC] — Navigation vers la page Projets depuis le header
+1. Ouvrir `${BASE_URL}/`
+2. Cliquer sur le lien « Nos Projets » dans le header
+3. Vérifier que l'URL est `${BASE_URL}/projets`
+4. Vérifier que la page Projets s'affiche avec un titre et une grille de projets
 
-**Résultat attendu** : depuis le menu hamburger, « Nos Projets » ferme le menu et ouvre l'overlay projets normalement.
+**Résultat attendu** : navigation fonctionnelle vers la page Projets (pas d'overlay).
 
 ### NAV-08 [PUBLIC] — Navbar évolutive au scroll (fond progressif)
 1. Ouvrir `${BASE_URL}/`
@@ -187,7 +187,7 @@ Types d'accès :
 2. Vérifier l'accès à `${BASE_URL}/`
 3. Naviguer vers `${BASE_URL}/a-propos`
 4. Naviguer vers `${BASE_URL}/contact`
-5. Ouvrir l'overlay « Nos Projets »
+5. Naviguer vers `${BASE_URL}/projets`
 6. Vérifier que toutes les pages sont accessibles sans redirection vers le login
 
 **Résultat attendu** : toutes les pages du site sont accessibles après connexion.
@@ -204,120 +204,91 @@ Types d'accès :
 
 ## 4. Projets
 
-### PROJ-01 [PUBLIC] — Ouverture de l'overlay Nos Projets
+### PROJ-01 [PUBLIC] — Section Projets à la une sur la homepage
 1. Ouvrir `${BASE_URL}/`
-2. Cliquer sur le lien « Nos Projets » dans le header
-3. Vérifier que l'overlay de projets apparaît avec une transition progressive
-4. Vérifier que la page d'accueil en arrière-plan devient plus sombre
-5. Vérifier que les projets s'affichent sous forme de cartes à bords carrés sans bordure
+2. Scroller vers le bas après le carousel d'articles
+3. Vérifier que la section « Projets » apparaît avec un titre
+4. Vérifier que 3 cartes de projets sont affichées horizontalement
+5. Vérifier que les 3 cartes occupent toute la largeur disponible sans écart entre elles
+6. Vérifier que chaque carte affiche la miniature du projet en fond
+7. Vérifier que le titre du projet est affiché en surimpression sur la carte
+8. Vérifier que le tag du projet est affiché sur la carte
+9. Vérifier la présence d'un lien « Voir tous les projets » pointant vers `/projets`
 
-**Résultat attendu** : l'overlay s'ouvre avec une animation fluide, les cartes de projets sont visibles avec des bords carrés.
+**Résultat attendu** : la section Projets affiche 3 cartes pleine largeur sans écart, avec miniature, titre en surimpression et tag.
 
-### PROJ-02 [PUBLIC] — Affichage des cartes de projets avec miniature
-1. Ouvrir l'overlay Nos Projets (cliquer sur « Nos Projets » dans le header)
-2. Vérifier que chaque carte affiche une image miniature en fond
-3. Vérifier que le titre et le type (tag) sont masqués par défaut sur desktop (non visibles sur la carte au repos)
-4. Vérifier que les cartes ont des bords carrés, pas de bordure visible
+### PROJ-02 [PUBLIC] — Page Projets avec grille 3 colonnes
+1. Ouvrir `${BASE_URL}/projets`
+2. Vérifier que la page affiche un titre « Nos Projets »
+3. Vérifier que les projets sont affichés en grille avec 3 projets par ligne en desktop
+4. Vérifier que chaque carte affiche la miniature en fond, le titre en surimpression et le tag
+5. Vérifier la présence de boutons de filtrage par tags au-dessus de la grille
+6. Cliquer sur un tag spécifique
+7. Vérifier que seuls les projets ayant ce tag sont affichés
+8. Cliquer sur « Tous »
+9. Vérifier que tous les projets sont de nouveau affichés
 
-**Résultat attendu** : les cartes de projets affichent la miniature en fond, le titre et le tag sont masqués au repos sur desktop, les cartes ont des bords carrés.
+**Résultat attendu** : la page Projets affiche une grille 3 colonnes avec filtrage par tags fonctionnel.
 
-### PROJ-03 [PUBLIC] — Ouverture d'un projet en vue détail
-1. Ouvrir l'overlay Nos Projets
+### PROJ-03 [PUBLIC] — Clic sur un projet ouvre la vue détail
+1. Ouvrir `${BASE_URL}/projets`
 2. Cliquer sur une carte de projet
-3. Vérifier que la carte s'agrandit en plein écran avec une transition progressive
-4. Vérifier qu'à gauche s'affichent les informations textuelles (titre, description en texte riche, tags)
-5. Vérifier qu'à droite s'affiche la vidéo YouTube intégrée
-6. Vérifier la présence du lien « Retour aux projets » en haut
+3. Vérifier que la vue détail s'ouvre avec les informations textuelles (titre, description en texte riche, tags)
+4. Vérifier que la vidéo YouTube intégrée est affichée
+5. Vérifier la présence du lien « Retour aux projets »
+6. Cliquer sur « Retour aux projets »
+7. Vérifier le retour à la grille de projets
 
-**Résultat attendu** : la vue détail s'ouvre en plein écran avec les informations (description en texte riche formaté) et la vidéo.
+**Résultat attendu** : la vue détail s'ouvre avec les informations et la vidéo, retour fonctionnel à la grille.
 
-### PROJ-11 [PUBLIC] — Rendu du texte riche dans la description d'un projet
-1. Ouvrir l'overlay Nos Projets
-2. Cliquer sur un projet dont la description contient du texte riche (gras, italique, liste à puces, lien)
-3. Vérifier que le texte en gras s'affiche en **gras** (balise `<b>` ou `<strong>`)
-4. Vérifier que le texte en italique s'affiche en *italique* (balise `<i>` ou `<em>`)
-5. Vérifier que les listes à puces sont rendues sous forme de liste HTML (`<ul><li>`)
-6. Vérifier que les liens sont cliquables et s'ouvrent dans un nouvel onglet
-
-**Résultat attendu** : la description du projet affiche correctement le formatage riche (gras, italique, listes, liens).
-
-### PROJ-04 [PUBLIC] — Retour depuis la vue détail vers la liste
-1. Ouvrir un projet en vue détail
-2. Cliquer sur « Retour aux projets »
-3. Vérifier le retour à la liste des projets avec une transition progressive
-
-**Résultat attendu** : retour fluide à la liste des projets.
-
-### PROJ-05 [PUBLIC] — Fermeture de l'overlay projets
-1. Ouvrir l'overlay Nos Projets
-2. Fermer l'overlay (bouton fermer ou clic en dehors)
-3. Vérifier que l'overlay se ferme avec une transition progressive
-4. Vérifier que la page d'accueil retrouve sa luminosité normale
-
-**Résultat attendu** : l'overlay se ferme proprement et la landing page revient à l'état normal.
-
-### PROJ-06 [AUTH] — Ajout d'un projet avec miniature et description riche via l'admin Wagtail
+### PROJ-04 [AUTH] — Champ « À la une » dans l'admin Wagtail
 1. Se connecter à `${BASE_URL}/admin/`
 2. Naviguer vers la section Snippets > Projets
-3. Cliquer sur « Ajouter »
-4. Remplir titre, tags (ex: « Clip »), lien YouTube
-5. Dans le champ description, vérifier la présence d'un éditeur de texte riche (barre d'outils avec gras, italique, listes, liens…)
-6. Saisir du texte avec mise en forme : un mot en **gras**, un mot en *italique*, une liste à puces
-7. Ajouter une miniature via le sélecteur d'images Wagtail
-8. Sauvegarder
-9. Vérifier que le projet apparaît dans la liste admin
-10. Ouvrir l'overlay Nos Projets côté public
-11. Vérifier que le nouveau projet apparaît avec sa miniature en fond de carte
+3. Éditer un projet existant
+4. Vérifier la présence d'une case à cocher « À la une »
+5. Cocher « À la une » et sauvegarder
+6. Vérifier que le projet est marqué comme « À la une »
 
-**Résultat attendu** : le projet est créé via l'admin avec miniature, la description est saisie via un éditeur riche, et le projet est visible côté public avec l'image en fond de carte.
+**Résultat attendu** : le champ « À la une » est disponible et fonctionnel dans l'admin.
 
-### PROJ-07 [PUBLIC] — Effet hover sur les cartes de projets
-1. Ouvrir l'overlay Nos Projets (cliquer sur « Nos Projets » dans le header)
-2. Passer la souris sur une carte de projet
-3. Vérifier que l'image de fond se floute (effet blur)
-4. Vérifier que l'image de fond s'assombrit
-5. Vérifier que le titre et le type (tag) du projet apparaissent au centre de la carte
+### PROJ-05 [AUTH] — Validation max 3 projets « À la une »
+1. Se connecter à `${BASE_URL}/admin/`
+2. Naviguer vers la section Snippets > Projets
+3. S'assurer que 3 projets sont déjà cochés « À la une »
+4. Éditer un 4ème projet et cocher « À la une »
+5. Tenter de sauvegarder
+6. Vérifier qu'un message d'erreur clair s'affiche indiquant qu'il ne peut y avoir plus de 3 projets à la une
 
-**Résultat attendu** : au survol, l'image se floute et s'assombrit, le titre et le tag apparaissent avec une transition fluide.
+**Résultat attendu** : la sauvegarde est refusée avec un message d'erreur clair sur la limite de 3 projets à la une.
+
+### PROJ-06 [PUBLIC] — Responsive de la section Projets homepage sur mobile
+1. Ouvrir `${BASE_URL}/` en viewport mobile (375px de large)
+2. Scroller jusqu'à la section Projets
+3. Vérifier que les cartes s'adaptent au viewport mobile (pas de changement de disposition demandé)
+
+**Résultat attendu** : la section Projets est visible et utilisable sur mobile.
+
+### PROJ-07 [PUBLIC] — Responsive de la page Projets sur mobile
+1. Ouvrir `${BASE_URL}/projets` en viewport mobile (375px de large)
+2. Vérifier que la grille s'adapte au mobile (pas de changement de disposition demandé)
+3. Vérifier que les boutons de filtrage par tags sont utilisables
+
+**Résultat attendu** : la page Projets est utilisable et lisible sur mobile.
 
 ## 5. Parcours principal
 
-### PROJ-08 [PUBLIC] — Filtrage des projets par tags
-1. Ouvrir l'overlay Nos Projets (cliquer sur « Nos Projets » dans le header)
-2. Vérifier que des boutons de filtrage par tags apparaissent au-dessus de la grille de projets
-3. Vérifier qu'un bouton « Tous » est présent et actif par défaut
-4. Cliquer sur un tag spécifique (ex : « Clip »)
-5. Vérifier que seuls les projets ayant ce tag sont affichés
-6. Cliquer sur « Tous »
-7. Vérifier que tous les projets sont de nouveau affichés
-
-**Résultat attendu** : le filtrage par tags fonctionne dynamiquement, les projets sont filtrés instantanément.
-
-### PROJ-09 [PUBLIC] — Affichage mobile des cartes de projets
-1. Ouvrir `${BASE_URL}/` en viewport mobile (375px de large)
-2. Cliquer sur « Nos Projets » dans le header
-3. Vérifier que les cartes ont une hauteur réduite par rapport au desktop
-4. Vérifier que le titre et le tag sont visibles sans hover, alignés sur la gauche
-5. Vérifier que la miniature est bien assombrie pour rendre le texte lisible
-
-**Résultat attendu** : en mobile, les cartes sont compactes avec titre/tag visibles alignés à gauche sur fond assombri.
-
-### PROJ-10 [PUBLIC] — Scroll dans l'overlay projets
-1. Ouvrir l'overlay Nos Projets (s'assurer qu'il y a suffisamment de projets pour dépasser l'écran)
-2. Vérifier que l'overlay est scrollable verticalement
-3. Scroller vers le bas et vérifier que les projets supplémentaires sont visibles
-
-**Résultat attendu** : l'overlay permet le défilement vertical quand le contenu dépasse la hauteur de l'écran.
-
-### E2E-01 [AUTH] — Parcours end-to-end principal
+### E2E-01 [AUTH] — Parcours end-to-end projets
 1. Se connecter à l'admin Wagtail
-2. Créer un nouveau projet via Snippets > Projets
-3. Ouvrir l'overlay Nos Projets côté public
-4. Vérifier la présence du projet créé
-5. Cliquer sur le projet pour voir la vue détail
-6. Vérifier les informations et la vidéo
+2. Créer un nouveau projet via Snippets > Projets avec « À la une » coché
+3. Ouvrir `${BASE_URL}/` côté public
+4. Scroller jusqu'à la section Projets et vérifier la présence du projet créé parmi les 3 à la une
+5. Cliquer sur « Voir tous les projets »
+6. Vérifier la navigation vers `${BASE_URL}/projets`
+7. Vérifier la présence du projet créé dans la grille
+8. Cliquer sur le projet pour voir la vue détail
+9. Vérifier les informations et la vidéo
 
-**Résultat attendu** : parcours complet de création et consultation d'un projet sans erreur.
+**Résultat attendu** : parcours complet de création et consultation d'un projet via la homepage et la page projets sans erreur.
 
 ## 6. Section Réseau
 
