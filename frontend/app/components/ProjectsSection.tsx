@@ -38,7 +38,7 @@ export default function ProjectsSection() {
 
   return (
     <section className="projects-section">
-      <h2 className="projects-section__title">Projets</h2>
+      <h2 className="projects-section__title">Les projets à la une</h2>
       <div className="projects-section__cards">
         {projects.map((project) => (
           <Link
