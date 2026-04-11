@@ -373,3 +373,97 @@ Types d'accès :
 7. Vérifier que le logo est toujours visible après filtrage
 
 **Résultat attendu** : parcours complet de création et consultation d'un membre du réseau sans erreur.
+
+## 7. Blog — Carousel et articles
+
+### BLOG-01 [PUBLIC] — Affichage du carousel d'articles sur la homepage
+1. Ouvrir `${BASE_URL}/`
+2. Scroller vers le bas après la vidéo de fond
+3. Vérifier que le carousel d'articles apparaît entre la section vidéo et la section réseau
+4. Vérifier que chaque slide affiche l'illustration de l'article et le titre en dessous
+5. Vérifier la présence de flèches de navigation gauche/droite
+6. Cliquer sur la flèche droite et vérifier que le carousel défile horizontalement
+7. Vérifier la présence du lien « Voir tous les articles » sous le carousel
+
+**Résultat attendu** : le carousel affiche les derniers articles avec illustrations et titres, navigation par flèches fonctionnelle.
+
+### BLOG-02 [PUBLIC] — Ouverture de l'overlay article depuis le carousel
+1. Ouvrir `${BASE_URL}/`
+2. Scroller jusqu'au carousel d'articles
+3. Cliquer sur un article du carousel
+4. Vérifier que l'overlay s'ouvre en plein écran avec une transition progressive
+5. Vérifier que l'overlay affiche l'illustration, le titre, le résumé et le contenu complet de l'article
+6. Vérifier que le contenu riche est correctement rendu (gras, italique, listes, liens)
+7. Fermer l'overlay (bouton fermer ou touche Escape)
+8. Vérifier que la page d'accueil est de nouveau visible
+
+**Résultat attendu** : l'overlay affiche le contenu complet de l'article et se ferme proprement.
+
+### BLOG-03 [PUBLIC] — Navigation vers la page Blog
+1. Ouvrir `${BASE_URL}/`
+2. Vérifier la présence du lien « Blog » dans le header de navigation
+3. Cliquer sur « Blog »
+4. Vérifier que l'URL est `${BASE_URL}/blog`
+5. Vérifier que la page Blog s'affiche avec un titre et une grille d'articles
+
+**Résultat attendu** : navigation fonctionnelle vers la page Blog.
+
+### BLOG-04 [PUBLIC] — Affichage de la grille masonry sur la page Blog
+1. Ouvrir `${BASE_URL}/blog`
+2. Vérifier que les articles sont affichés en grille de type masonry (colonnes CSS)
+3. Vérifier que chaque carte affiche l'illustration de l'article
+4. Vérifier que chaque carte affiche les 500 premiers caractères du contenu sous l'illustration
+5. Vérifier que les cartes ont des hauteurs variables (layout masonry)
+
+**Résultat attendu** : la grille masonry affiche les articles avec illustrations et extraits de contenu.
+
+### BLOG-05 [PUBLIC] — Filtrage par tags sur la page Blog
+1. Ouvrir `${BASE_URL}/blog`
+2. Vérifier la présence de boutons de filtrage par tags au-dessus de la grille
+3. Vérifier qu'un bouton « Tous » est actif par défaut
+4. Cliquer sur un tag spécifique
+5. Vérifier que seuls les articles ayant ce tag sont affichés
+6. Cliquer sur « Tous »
+7. Vérifier que tous les articles sont de nouveau affichés
+
+**Résultat attendu** : le filtrage par tags fonctionne dynamiquement sur la page Blog.
+
+### BLOG-06 [PUBLIC] — Ouverture de l'overlay article depuis la page Blog
+1. Ouvrir `${BASE_URL}/blog`
+2. Cliquer sur une carte d'article
+3. Vérifier que l'overlay s'ouvre en plein écran avec le contenu complet
+4. Vérifier que l'illustration, le titre, le résumé et le contenu sont affichés
+5. Fermer l'overlay
+6. Vérifier le retour à la page Blog avec la grille visible
+
+**Résultat attendu** : l'overlay article fonctionne depuis la page Blog comme depuis le carousel.
+
+### BLOG-07 [PUBLIC] — Responsive du carousel sur mobile
+1. Ouvrir `${BASE_URL}/` en viewport mobile (375px de large)
+2. Scroller jusqu'au carousel d'articles
+3. Vérifier que le carousel est utilisable en swipe horizontal
+4. Vérifier que les articles sont lisibles sur mobile
+
+**Résultat attendu** : le carousel d'articles est fonctionnel et lisible sur mobile.
+
+### BLOG-08 [PUBLIC] — Responsive de la page Blog sur mobile
+1. Ouvrir `${BASE_URL}/blog` en viewport mobile (375px de large)
+2. Vérifier que la grille s'adapte en une seule colonne
+3. Vérifier que les boutons de filtrage par tags sont utilisables
+4. Cliquer sur une carte et vérifier l'ouverture de l'overlay
+
+**Résultat attendu** : la page Blog est utilisable et lisible sur mobile.
+
+### E2E-03 [AUTH] — Parcours end-to-end création et consultation d'un article
+1. Se connecter à `${BASE_URL}/admin/`
+2. Naviguer vers la section Snippets > Articles
+3. Créer un nouvel article avec titre, résumé, contenu riche, illustration et tags
+4. Publier l'article (statut Live)
+5. Ouvrir `${BASE_URL}/` côté public
+6. Scroller jusqu'au carousel et vérifier la présence de l'article créé
+7. Cliquer sur l'article dans le carousel et vérifier l'overlay
+8. Naviguer vers `${BASE_URL}/blog`
+9. Vérifier que l'article apparaît dans la grille
+10. Filtrer par le tag de l'article créé et vérifier qu'il reste visible
+
+**Résultat attendu** : parcours complet de création et consultation d'un article sans erreur.
