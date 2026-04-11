@@ -5,6 +5,11 @@ from wagtail.rich_text import expand_db_html
 from .models import Project
 
 
+def _base_queryset():
+    """Return the base Project queryset with common prefetches."""
+    return Project.objects.prefetch_related("tags").select_related("thumbnail")
+
+
 def _serialize_projects(request, projects):
     """Serialize a queryset of projects to a list of dicts."""
     return [
@@ -29,16 +34,13 @@ def _serialize_projects(request, projects):
 @require_GET
 def project_list(request):
     """Return all projects as JSON."""
-    projects = Project.objects.prefetch_related("tags").select_related("thumbnail").all()
-    return JsonResponse(_serialize_projects(request, projects), safe=False)
+    return JsonResponse(_serialize_projects(request, _base_queryset().all()), safe=False)
 
 
 @require_GET
 def project_featured(request):
     """Return featured projects as JSON."""
-    projects = (
-        Project.objects.filter(featured=True)
-        .prefetch_related("tags")
-        .select_related("thumbnail")
+    return JsonResponse(
+        _serialize_projects(request, _base_queryset().filter(featured=True)),
+        safe=False,
     )
-    return JsonResponse(_serialize_projects(request, projects), safe=False)

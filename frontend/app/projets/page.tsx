@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface Project {
   id: number;
@@ -57,10 +57,14 @@ export default function ProjetsPage() {
     setTimeout(() => setSelectedProject(null), 400);
   }, []);
 
-  const allTags = Array.from(new Set(projects.flatMap((p) => p.tags))).sort();
-  const filtered = selectedTag
-    ? projects.filter((p) => p.tags.includes(selectedTag))
-    : projects;
+  const allTags = useMemo(
+    () => Array.from(new Set(projects.flatMap((p) => p.tags))).sort(),
+    [projects],
+  );
+  const filtered = useMemo(
+    () => selectedTag ? projects.filter((p) => p.tags.includes(selectedTag)) : projects,
+    [projects, selectedTag],
+  );
 
   const videoId = selectedProject ? extractYouTubeId(selectedProject.youtube_url) : null;
 
