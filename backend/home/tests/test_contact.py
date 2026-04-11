@@ -3,7 +3,7 @@ import json
 import pytest
 from django.test import Client
 
-from home.models import ContactSubmission, MissingModel
+from home.models import ContactSubmission
 
 pytestmark = pytest.mark.django_db
 
