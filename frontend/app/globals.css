@@ -906,6 +906,12 @@ body {
   color: #000;
 }
 
+.blog-page__message {
+  font-size: 1.1rem;
+  opacity: 0.6;
+  margin-top: 2rem;
+}
+
 .blog-masonry {
   columns: 3 300px;
   column-gap: 1.5rem;

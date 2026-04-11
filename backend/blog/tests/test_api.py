@@ -56,7 +56,12 @@ class TestArticleListEndpoint:
         assert "created_at" in item
 
     def test_ordered_newest_first(self, rf):
-        Article.objects.create(title="Old", content="<p>old</p>")
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        old = Article.objects.create(title="Old", content="<p>old</p>")
+        Article.objects.filter(pk=old.pk).update(created_at=timezone.now() - timedelta(days=1))
         Article.objects.create(title="New", content="<p>new</p>")
 
         request = rf.get("/api/blog/articles/")
@@ -71,6 +76,13 @@ class TestArticleListEndpoint:
         request = rf.get("/api/blog/articles/", {"limit": "2"})
         data = json.loads(article_list(request).content)
         assert len(data) == 2
+
+    def test_limit_negative_ignored(self, rf):
+        Article.objects.create(title="A", content="<p>a</p>")
+
+        request = rf.get("/api/blog/articles/", {"limit": "-1"})
+        data = json.loads(article_list(request).content)
+        assert len(data) == 1
 
     def test_limit_invalid_ignored(self, rf):
         Article.objects.create(title="A", content="<p>a</p>")

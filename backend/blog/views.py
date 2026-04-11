@@ -17,7 +17,9 @@ def article_list(request):
     limit = request.GET.get("limit")
     if limit:
         try:
-            articles = articles[: int(limit)]
+            limit_val = int(limit)
+            if limit_val > 0:
+                articles = articles[:limit_val]
         except (ValueError, TypeError):
             pass
 

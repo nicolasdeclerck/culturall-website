@@ -12,7 +12,11 @@ export default function BlogCarousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/blog/articles/?limit=5`, { credentials: 'include' })
+    const controller = new AbortController();
+    fetch(`${API_URL}/api/blog/articles/?limit=5`, {
+      credentials: 'include',
+      signal: controller.signal,
+    })
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
@@ -20,7 +24,10 @@ export default function BlogCarousel() {
       .then((data) => {
         if (Array.isArray(data)) setArticles(data);
       })
-      .catch(() => {});
+      .catch((err) => {
+        if (err.name !== 'AbortError') setArticles([]);
+      });
+    return () => controller.abort();
   }, []);
 
   function scrollBy(direction: number) {
