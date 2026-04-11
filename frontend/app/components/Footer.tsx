@@ -8,7 +8,7 @@ export default function Footer() {
           Mentions légales
         </Link>
         <span className="site-footer__copyright">
-          © {new Date().getFullYear()} Cultur&apos;All. Tous droits réservés.
+          © {new Date().getFullYear()} Cultur&apos;all. Tous droits réservés.
         </span>
       </div>
     </footer>
