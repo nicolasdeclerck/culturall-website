@@ -38,6 +38,7 @@ services:
       dockerfile: ../docker/nextjs/Dockerfile
     environment:
       - NEXT_PUBLIC_API_URL
+      - INTERNAL_API_URL
       - NODE_ENV
     depends_on:
       - django
