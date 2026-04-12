@@ -2,14 +2,11 @@
 
 Ce guide décrit, pas à pas, comment utiliser l'administration du site pour
 gérer le **contenu visible par les visiteurs**. Il se concentre sur les
-**Fragments** (appelés *Snippets* dans Wagtail) : ce sont les briques de
-contenu réutilisables qui alimentent la page d'accueil, la page Blog, la page
-Projets et la section Réseau.
+**Fragments** : ce sont les briques de contenu réutilisables qui alimentent la
+page d'accueil, la page Blog, la page Projets et la section Réseau.
 
-> **À propos des captures d'écran** : les images référencées dans ce document
-> sont à déposer dans `docs/admin-guide/screenshots/` avec le nom de fichier
-> indiqué sous chaque capture. Chaque légende décrit précisément ce que doit
-> montrer l'image.
+> Les captures d'écran de ce guide ont été prises sur une instance de
+> développement avec un jeu de données d'exemple.
 
 ---
 
@@ -29,39 +26,35 @@ Projets et la section Réseau.
 3. Cliquez sur **Se connecter**.
 
 ![Écran de connexion Wagtail](./admin-guide/screenshots/01-login.png)
-*Capture à fournir : page `/admin/login/` avec les champs "Nom d'utilisateur",
-"Mot de passe" et le bouton "Se connecter".*
 
 ### 1.2. Tableau de bord
 
 Après connexion, vous arrivez sur le tableau de bord Wagtail. Le menu
-vertical à gauche permet de naviguer entre les sections.
+vertical à gauche donne accès aux sections **Pages**, **Images**,
+**Contacts**, **Documents**, **Fragments**, **Rapports**, **Paramètres** et
+**Aide**.
 
 ![Tableau de bord Wagtail](./admin-guide/screenshots/02-dashboard.png)
-*Capture à fournir : vue globale du tableau de bord avec le menu latéral
-gauche (Pages, Images, Documents, Snippets, Paramètres).*
 
 ---
 
-## 2. Comprendre les « Fragments » (Snippets)
+## 2. Comprendre les « Fragments »
 
 Les **Fragments** sont les contenus réutilisables affichés sur le site public.
-Ils se trouvent dans le menu latéral **Snippets**.
+On y accède via l'entrée **Fragments** du menu latéral.
 
-| Fragment              | Où il s'affiche sur le site                                     |
-| --------------------- | --------------------------------------------------------------- |
-| **Articles**          | Page `/blog` + carrousel en page d'accueil                      |
-| **Projets**           | Page `/projets` + section « Les projets à la une » (accueil)    |
-| **Membres du réseau** | Section « Notre Réseau » en page d'accueil                      |
-| **Contacts**          | **Lecture seule** — soumissions du formulaire de contact        |
+| Fragment                | Où il s'affiche sur le site                                     |
+| ----------------------- | --------------------------------------------------------------- |
+| **Articles**            | Page `/blog` + carrousel en page d'accueil                      |
+| **Projets**             | Page `/projets` + section « Les projets à la une » (accueil)    |
+| **Membres du réseau**   | Section « Notre Réseau » en page d'accueil                      |
+| **Demandes de contact** | **Lecture seule** — soumissions du formulaire de contact (aussi accessibles via l'entrée **Contacts** du menu principal) |
 
-![Menu Snippets déplié](./admin-guide/screenshots/03-snippets-menu.png)
-*Capture à fournir : menu latéral avec "Snippets" cliqué, montrant les
-sous-entrées Articles / Projets / Membres du réseau / Contacts.*
+![Liste des Fragments](./admin-guide/screenshots/03-snippets-menu.png)
 
-> **Règle générale** : un fragment modifié/créé est immédiatement visible
-> côté site (pas de cache long). Soyez prudent avant de cliquer sur
-> *Enregistrer*.
+> **Règle générale** : dès qu'un fragment est **publié / enregistré sans
+> brouillon**, il est immédiatement visible côté site (pas de cache long).
+> Relisez-vous avant de cliquer sur le bouton de publication.
 
 ---
 
@@ -69,8 +62,8 @@ sous-entrées Articles / Projets / Membres du réseau / Contacts.*
 
 ### 3.1. Créer un article
 
-1. Menu latéral → **Snippets** → **Articles**.
-2. Cliquez sur **Ajouter un article** (bouton en haut à droite).
+1. Menu latéral → **Fragments** → **Articles**.
+2. Cliquez sur **Ajouter un(e) Article** (bouton en haut à gauche).
 3. Remplissez le formulaire :
 
 | Champ             | Obligatoire | Description                                                                |
@@ -81,35 +74,38 @@ sous-entrées Articles / Projets / Membres du réseau / Contacts.*
 | **Contenu**       |      ✅      | Éditeur de texte riche (gras, titres, listes, liens, images, etc.).        |
 | **Illustration**  |      ❌      | Image affichée dans la carte (recadrée en 800×500).                        |
 
-4. Cliquez sur **Enregistrer** : l'article est **publié (live)** par défaut et
-   apparaît aussitôt sur le site.
+4. Deux choix au bas de la page :
+   - **Enregistrer le brouillon** (bouton principal, vert) : l'article est
+     sauvegardé mais **n'apparaît pas encore sur le site**.
+   - Cliquez sur la flèche ▲ à droite du bouton pour ouvrir le menu
+     d'actions, puis **Publier** pour rendre l'article visible sur le site.
 
 ![Formulaire de création d'article](./admin-guide/screenshots/04-article-form.png)
-*Capture à fournir : formulaire complet de création d'un article avec les
-champs Titre, Tags, Résumé, éditeur Contenu et sélecteur d'Illustration.*
 
-### 3.2. Modifier ou supprimer un article
+> ℹ️ Les articles utilisent un système de **brouillon / publié**
+> (`DraftStateMixin`). Tant qu'ils ne sont pas explicitement publiés, ils
+> restent invisibles du public.
+
+### 3.2. Modifier, publier ou supprimer un article
 
 - **Modifier** : dans la liste Articles, cliquez sur le titre de l'article.
-  Après modification, cliquez sur **Enregistrer**.
-- **Supprimer** : dans le formulaire d'édition → bouton **Supprimer** en bas,
-  puis confirmez.
-- **Historique** : Wagtail conserve une **révision** à chaque enregistrement.
-  Onglet *Historique* pour revenir à une version précédente.
+  Après modification, **Enregistrer le brouillon** ou **Publier**.
+- **Dépublier** : menu ▲ → **Dépublier** (retire l'article du site sans le
+  supprimer).
+- **Supprimer** : menu **Actions** en haut → **Supprimer**, puis confirmez.
+- **Historique** : onglet **Historique** pour voir et restaurer une
+  révision précédente (Wagtail en conserve une à chaque enregistrement).
 
 ![Liste des articles](./admin-guide/screenshots/05-article-list.png)
-*Capture à fournir : liste des articles avec colonnes Titre / Statut
-(Live/Draft) / Date et les boutons d'action.*
+
+La colonne **Statut** de la liste indique `PUBLIÉE`, `BROUILLON` ou les deux
+(article publié avec un brouillon en attente).
 
 ### 3.3. Où l'article apparaît sur le site
 
-- **Page `/blog`** : tous les articles *Live*, triés du plus récent au plus
-  ancien, avec filtres par tag.
-- **Page d'accueil** : carrousel des **5 articles les plus récents**.
-
-> ⚠️ **Attention** : si vous créez un article sans le dépublier (*Unpublish*),
-> il sera immédiatement public. Pour un brouillon, utilisez le menu déroulant
-> d'action et choisissez **Enregistrer comme brouillon** plutôt que *Publier*.
+- **Page `/blog`** : tous les articles **publiés**, triés du plus récent au
+  plus ancien, avec filtres par tag.
+- **Page d'accueil** : carrousel des **5 articles publiés les plus récents**.
 
 ---
 
@@ -117,7 +113,7 @@ champs Titre, Tags, Résumé, éditeur Contenu et sélecteur d'Illustration.*
 
 ### 4.1. Créer un projet
 
-1. **Snippets** → **Projets** → **Ajouter un projet**.
+1. **Fragments** → **Projets** → **Ajouter un(e) Projet**.
 2. Remplissez :
 
 | Champ              | Obligatoire | Description                                                             |
@@ -129,11 +125,10 @@ champs Titre, Tags, Résumé, éditeur Contenu et sélecteur d'Illustration.*
 | **Miniature**      |      ❌      | Image affichée dans la grille (recadrée en 600×400).                    |
 | **À la une**       |      ❌      | Case à cocher : promeut le projet en page d'accueil (**max. 3**).       |
 
-3. Cliquez sur **Enregistrer**.
+3. Cliquez sur **Enregistrer** : le projet est immédiatement visible sur le
+   site (pas de mécanisme de brouillon pour les projets).
 
 ![Formulaire projet](./admin-guide/screenshots/06-projet-form.png)
-*Capture à fournir : formulaire de création d'un projet avec tous les
-champs visibles, en particulier la case à cocher "À la une".*
 
 ### 4.2. Mettre des projets à la une
 
@@ -142,12 +137,14 @@ mettre un projet, cochez **À la une** dans la fiche projet.
 
 > ⚠️ **Limite stricte : 3 projets à la une maximum.**
 > Si vous cochez la case sur un 4ᵉ projet, l'enregistrement échoue avec le
-> message : *« Il ne peut y avoir plus de 3 projets à la une. »*
-> Décochez d'abord la case sur un projet existant.
+> message **« Il ne peut y avoir plus de 3 projets à la une. »** affiché
+> juste sous la case. Décochez d'abord la case sur un projet existant.
 
-![Erreur limite projets à la une](./admin-guide/screenshots/07-projet-featured-error.png)
-*Capture à fournir : message d'erreur de validation affiché en haut du
-formulaire lorsqu'on tente de cocher "À la une" sur un 4ᵉ projet.*
+![Erreur limite projets à la une](./admin-guide/screenshots/07b-projet-field-error.png)
+
+Le même message s'affiche aussi en bandeau rouge en haut du formulaire :
+
+![Bandeau d'erreur](./admin-guide/screenshots/07-projet-featured-error.png)
 
 ### 4.3. Où le projet apparaît
 
@@ -163,7 +160,8 @@ formulaire lorsqu'on tente de cocher "À la une" sur un 4ᵉ projet.*
 
 ### 5.1. Ajouter un membre
 
-1. **Snippets** → **Membres du réseau** → **Ajouter un membre**.
+1. **Fragments** → **Membres du réseau** → **Ajouter un(e) Membre du
+   réseau**.
 2. Remplissez :
 
 | Champ     | Obligatoire | Description                                                                     |
@@ -175,8 +173,6 @@ formulaire lorsqu'on tente de cocher "À la une" sur un 4ᵉ projet.*
 3. **Enregistrer**.
 
 ![Formulaire membre du réseau](./admin-guide/screenshots/08-membre-form.png)
-*Capture à fournir : formulaire de création d'un membre du réseau avec
-Nom, Type, Logo.*
 
 ### 5.2. Comprendre le champ « Type »
 
@@ -199,13 +195,14 @@ C'est fonctionnel mais moins visuel — ajoutez toujours un logo si possible.
 
 ### 6.1. Consultation
 
-1. **Snippets** → **Contacts**.
-2. La liste affiche **Sujet**, **Nom**, **Email**, **Date de soumission**.
-3. Cliquez sur une ligne pour lire le message complet.
+Les demandes de contact sont accessibles de deux façons :
+- Menu latéral → **Contacts** (raccourci direct).
+- Menu latéral → **Fragments** → **Demandes de contact**.
+
+La liste affiche **Sujet**, **Nom**, **Email**, **Date de soumission**.
+Cliquez sur une ligne pour lire le message complet.
 
 ![Liste des contacts](./admin-guide/screenshots/09-contacts-list.png)
-*Capture à fournir : liste des soumissions de contact avec les colonnes
-Sujet / Nom / Email / Date, triée du plus récent au plus ancien.*
 
 ### 6.2. Limitations
 
@@ -225,7 +222,7 @@ Sujet / Nom / Email / Date, triée du plus récent au plus ancien.*
 Les images utilisées dans les Articles, Projets et Membres du réseau sont
 stockées dans la **bibliothèque Images** de Wagtail (menu latéral **Images**).
 
-- **Téléverser** : bouton *Ajouter une image*. Les images sont stockées sur
+- **Téléverser** : bouton **Ajouter une image**. Les images sont stockées sur
   le bucket MinIO/S3 du projet.
 - **Éditer** : modifier le titre, le texte alternatif (accessibilité), le
   point focal pour les recadrages.
@@ -233,8 +230,6 @@ stockées dans la **bibliothèque Images** de Wagtail (menu latéral **Images**)
   fragments.
 
 ![Bibliothèque d'images](./admin-guide/screenshots/10-images-library.png)
-*Capture à fournir : vue de la bibliothèque Images avec la grille de
-vignettes et le bouton "Ajouter une image".*
 
 > ⚠️ **Ne supprimez pas une image encore utilisée** par un article/projet :
 > l'illustration ou la miniature sera manquante côté site. Vérifiez d'abord
@@ -255,8 +250,6 @@ phase de préprod). Ce réglage se fait dans :
 | **Décochée**        | Le site est public, aucun login demandé.                             |
 
 ![Paramètres du site](./admin-guide/screenshots/11-site-settings.png)
-*Capture à fournir : page "Paramètres du site" avec la case à cocher
-"Authentification requise".*
 
 > Ce réglage n'a pas d'impact sur l'accès à `/admin/` : l'admin est toujours
 > protégé par ses propres identifiants.
@@ -265,17 +258,17 @@ phase de préprod). Ce réglage se fait dans :
 
 ## 9. Tableau récapitulatif : où modifier quoi ?
 
-| Ce que je vois sur le site                 | Où le modifier dans l'admin           |
-| ------------------------------------------ | ------------------------------------- |
-| Carrousel blog (accueil)                   | Snippets → Articles *(5 plus récents)*|
-| Page `/blog`                               | Snippets → Articles                   |
-| Section « Les projets à la une »           | Snippets → Projets — case *À la une*  |
-| Page `/projets`                            | Snippets → Projets                    |
-| Section « Notre Réseau » (accueil)         | Snippets → Membres du réseau          |
-| Filtres Partenaires / Sponsors / etc.      | Snippets → Membres du réseau, champ *Type* |
-| Messages reçus via le formulaire contact   | Snippets → Contacts *(lecture seule)* |
-| Site public ou protégé par login           | Paramètres → Paramètres du site       |
-| Illustrations utilisées partout            | Images (menu latéral)                 |
+| Ce que je vois sur le site                 | Où le modifier dans l'admin                   |
+| ------------------------------------------ | --------------------------------------------- |
+| Carrousel blog (accueil)                   | Fragments → Articles *(5 plus récents publiés)* |
+| Page `/blog`                               | Fragments → Articles                          |
+| Section « Les projets à la une »           | Fragments → Projets — case *À la une*         |
+| Page `/projets`                            | Fragments → Projets                           |
+| Section « Notre Réseau » (accueil)         | Fragments → Membres du réseau                 |
+| Filtres Partenaires / Sponsors / etc.      | Fragments → Membres du réseau, champ *Type*   |
+| Messages reçus via le formulaire contact   | Contacts *(lecture seule)*                    |
+| Site public ou protégé par login           | Paramètres → Paramètres du site               |
+| Illustrations utilisées partout            | Images (menu latéral)                         |
 
 ---
 
@@ -300,7 +293,7 @@ phase de préprod). Ce réglage se fait dans :
 
 | Symptôme                                                   | Cause probable & solution                                                                                    |
 | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Un article créé n'apparaît pas sur `/blog`.                | L'article est en *Draft*. Ouvrez-le → *Publier*.                                                             |
+| Un article créé n'apparaît pas sur `/blog`.                | L'article est en *Brouillon*. Ouvrez-le → menu ▲ → **Publier**.                                              |
 | L'image d'un article est absente.                          | L'image a été supprimée de la bibliothèque. Rouvrez l'article et sélectionnez une nouvelle illustration.     |
 | Impossible de cocher un 4ᵉ projet « À la une ».            | Limite de 3 atteinte. Décochez la case sur un projet existant avant de recocher sur le nouveau.              |
 | Un nouveau bouton de filtre apparaît dans la section Réseau. | Une nouvelle valeur de *Type* a été saisie. Corrigez l'orthographe dans la fiche membre concernée.           |
