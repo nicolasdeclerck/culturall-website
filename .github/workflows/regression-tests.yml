@@ -60,6 +60,24 @@ jobs:
             ./scripts/tnr-docker.sh up
             docker network connect culturall-website-tnr_default claude-worker || true
 
+      - name: Seed regression test content (articles, network members, projects)
+        id: seed-content
+        if: steps.start-env.outcome == 'success'
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ubuntu
+          key: ${{ secrets.VPS_SSH_KEY }}
+          command_timeout: 10m
+          script: |
+            set -e
+            cd ~/n8n-traefik/repos/culturall-website
+            docker compose -p culturall-website-tnr \
+              -f docker-compose.base.yml \
+              -f docker-compose.test.yml \
+              --env-file .env.test \
+              exec -T django python manage.py seed_test_content
+
       - name: Run regression tests on VPS
         id: run-tests
         if: steps.start-env.outcome == 'success'

@@ -113,6 +113,11 @@ PYTHON
     echo "Test data seeded."
 }
 
+seed_test_content() {
+    echo "Seeding test content (articles, network members, projects)..."
+    $COMPOSE exec -T django python manage.py seed_test_content
+}
+
 cmd_up() {
     echo "Building and starting TNR environment (Next.js + Django/Wagtail + MinIO)..."
     $COMPOSE up --build -d
@@ -120,6 +125,7 @@ cmd_up() {
     wait_for_gunicorn
     run_migrations
     seed_test_data
+    seed_test_content
     wait_for_nextjs
 
     # Le bucket MinIO est créé automatiquement par le service `minio-init`
