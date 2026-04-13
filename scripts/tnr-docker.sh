@@ -69,7 +69,15 @@ run_migrations() {
     echo "Running Django/Wagtail migrations..."
     $COMPOSE exec -T django python manage.py migrate --noinput
     echo "Collecting static files..."
-    $COMPOSE exec -T django python manage.py collectstatic --noinput || true
+    $COMPOSE exec -T django python manage.py collectstatic --noinput
+    # Gunicorn a démarré avant collectstatic : WhiteNoise et
+    # CompressedManifestStaticFilesStorage ont donc caché en mémoire
+    # l'absence du dossier /app/staticfiles et du staticfiles.json.
+    # Sans restart, l'admin Wagtail retourne 500 pour toute la durée
+    # de vie du container (cf. régression récurrente sur /admin/ en TNR).
+    echo "Restarting Django so gunicorn picks up the fresh staticfiles manifest..."
+    $COMPOSE restart django
+    wait_for_gunicorn
 }
 
 seed_test_data() {
