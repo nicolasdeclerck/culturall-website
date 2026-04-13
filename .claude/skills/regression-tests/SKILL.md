@@ -153,6 +153,34 @@ agent-browser --session user2 open ${BASE_URL}/admin/login/
 **Important :** Réutilise les sessions entre les tests du même type pour
 éviter de se reconnecter à chaque test.
 
+### 2.2.1 Viewport mobile vs desktop
+
+Le viewport par défaut d'`agent-browser` est **1280×720 (desktop)**. Les
+scénarios qui mentionnent « viewport mobile (375px de large) » dans le
+cahier de tests (ex : `NAV-05`, `NAV-06`, `BLOG-08`, `NET-04`, `PROJ-06`,
+`PROJ-07`) **ne déclenchent pas** les media queries `(max-width: 768px)`
+tant que le viewport n'a pas été explicitement réduit. Conséquence
+typique : le menu hamburger n'apparaît pas et la grille blog reste en
+3 colonnes, alors que tout fonctionne sur un vrai téléphone.
+
+Avant chaque test « mobile », bascule le viewport de la session
+correspondante **avant** d'ouvrir la page, puis remets-le en desktop
+après le test (ou en début du test suivant non-mobile) :
+
+```bash
+# Passage en mobile
+agent-browser --session {session} set viewport 375 812
+agent-browser --session {session} open "${BASE_URL}/..."
+# ... assertions mobiles ...
+
+# Retour en desktop après le dernier test mobile consécutif
+agent-browser --session {session} set viewport 1280 720
+```
+
+Le viewport est **persistant par session** : inutile de le redéfinir
+avant chaque commande de la même session tant que le mode (mobile ou
+desktop) ne change pas.
+
 ### 2.3 Exécution d'un test unitaire
 
 Pour chaque scénario, le pattern est :

@@ -149,6 +149,33 @@ agent-browser --session user1 click @e3
 agent-browser --session user1 wait --load networkidle
 ```
 
+### 3.1.1 Viewport mobile vs desktop
+
+Le viewport par défaut d'`agent-browser` est **1280×720 (desktop)**. Les
+scénarios qui mentionnent « viewport mobile (375px de large) » dans le
+cahier de tests (ex : `NAV-05`, `NAV-06`, `BLOG-08`, `NET-04`, `PROJ-06`,
+`PROJ-07`) **ne déclenchent pas** les media queries `(max-width: 768px)`
+tant que le viewport n'a pas été explicitement réduit — les tests remontent
+alors de faux échecs alors que le comportement est correct sur un vrai
+téléphone.
+
+Avant d'ouvrir la page d'un test « mobile », bascule le viewport de la
+session correspondante, puis reviens en desktop pour les tests suivants :
+
+```bash
+# Passage en mobile
+agent-browser --session {session} set viewport 375 812
+agent-browser --session {session} open "$BASE_URL/..."
+# ... assertions mobiles ...
+
+# Retour en desktop
+agent-browser --session {session} set viewport 1280 720
+```
+
+Le viewport est **persistant par session** : inutile de le redéfinir
+entre deux commandes de la même session tant que le mode (mobile ou
+desktop) ne change pas.
+
 ### 3.2 Exécution d'un scénario
 
 Pour chaque test à exécuter :
