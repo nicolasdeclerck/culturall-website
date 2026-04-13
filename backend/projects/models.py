@@ -68,3 +68,7 @@ class Project(ClusterableModel):
                 raise ValidationError(
                     {"featured": f"Il ne peut y avoir plus de {MAX_FEATURED_PROJECTS} projets à la une."}
                 )
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
