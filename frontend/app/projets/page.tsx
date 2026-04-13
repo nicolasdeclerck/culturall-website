@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import ProjectOverlay, { Project } from '../components/ProjectOverlay';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
@@ -10,6 +10,7 @@ export default function ProjetsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const clearSelection = useCallback(() => setSelectedProject(null), []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -95,7 +96,7 @@ export default function ProjetsPage() {
         </div>
       )}
 
-      <ProjectOverlay project={selectedProject} onClose={() => setSelectedProject(null)} />
+      <ProjectOverlay project={selectedProject} onClose={clearSelection} />
     </div>
   );
 }

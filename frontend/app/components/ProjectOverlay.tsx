@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useOverlay } from '../hooks/useOverlay';
 
 export interface Project {
   id: number;
@@ -24,43 +24,7 @@ function extractYouTubeId(url: string): string | null {
 }
 
 export default function ProjectOverlay({ project, onClose }: ProjectOverlayProps) {
-  const [visible, setVisible] = useState(false);
-  const rafRef = useRef<number>(0);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
-
-  const handleClose = useCallback(() => {
-    setVisible(false);
-    clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(onClose, 400);
-  }, [onClose]);
-
-  useEffect(() => {
-    if (project) {
-      rafRef.current = requestAnimationFrame(() => setVisible(true));
-      document.body.style.overflow = 'hidden';
-      return () => {
-        cancelAnimationFrame(rafRef.current);
-        clearTimeout(timeoutRef.current);
-        document.body.style.overflow = '';
-      };
-    } else {
-      setVisible(false);
-      document.body.style.overflow = '';
-    }
-  }, [project]);
-
-  useEffect(() => {
-    if (!project) return;
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') handleClose();
-    }
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [project, handleClose]);
-
-  function handleBackdropClick(e: React.MouseEvent<HTMLDivElement>) {
-    if (e.target === e.currentTarget) handleClose();
-  }
+  const { visible, handleClose, handleBackdropClick } = useOverlay(!!project, onClose);
 
   if (!project) return null;
 
@@ -68,26 +32,26 @@ export default function ProjectOverlay({ project, onClose }: ProjectOverlayProps
 
   return (
     <div
-      className={`article-overlay ${visible ? 'article-overlay--visible' : ''}`}
+      className={`content-overlay ${visible ? 'content-overlay--visible' : ''}`}
       role="dialog"
       aria-modal="true"
       aria-labelledby="project-overlay-title"
       onClick={handleBackdropClick}
     >
-      <button className="article-overlay__close" onClick={handleClose} aria-label="Fermer">
+      <button className="content-overlay__close" onClick={handleClose} aria-label="Fermer">
         ✕
       </button>
-      <div className="article-overlay__content">
-        <h2 id="project-overlay-title" className="article-overlay__title">{project.title}</h2>
+      <div className="content-overlay__content">
+        <h2 id="project-overlay-title" className="content-overlay__title">{project.title}</h2>
         {project.tags.length > 0 && (
-          <div className="article-overlay__tags">
+          <div className="content-overlay__tags">
             {project.tags.map((tag, i) => (
-              <span key={`${tag}-${i}`} className="article-overlay__tag">{tag}</span>
+              <span key={`${tag}-${i}`} className="content-overlay__tag">{tag}</span>
             ))}
           </div>
         )}
         <div
-          className="article-overlay__body"
+          className="content-overlay__body"
           dangerouslySetInnerHTML={{ __html: project.description }}
         />
         {videoId && (

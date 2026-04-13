@@ -572,7 +572,7 @@ body {
 }
 
 /* Article overlay */
-.article-overlay {
+.content-overlay {
   position: fixed;
   inset: 0;
   z-index: 100;
@@ -586,12 +586,12 @@ body {
   pointer-events: none;
 }
 
-.article-overlay--visible {
+.content-overlay--visible {
   opacity: 1;
   pointer-events: auto;
 }
 
-.article-overlay__close {
+.content-overlay__close {
   position: absolute;
   top: 1.5rem;
   right: 2rem;
@@ -604,17 +604,17 @@ body {
   transition: opacity 0.2s;
 }
 
-.article-overlay__close:hover {
+.content-overlay__close:hover {
   opacity: 0.7;
 }
 
-.article-overlay__content {
+.content-overlay__content {
   max-width: 800px;
   width: 100%;
   padding: 4rem 2rem 3rem;
 }
 
-.article-overlay__illustration {
+.content-overlay__illustration {
   width: 100%;
   max-height: 400px;
   object-fit: cover;
@@ -622,21 +622,21 @@ body {
   margin-bottom: 2rem;
 }
 
-.article-overlay__title {
+.content-overlay__title {
   font-size: 2.5rem;
   font-weight: 700;
   margin: 0 0 1rem;
   color: #fff;
 }
 
-.article-overlay__tags {
+.content-overlay__tags {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
   margin-bottom: 1.5rem;
 }
 
-.article-overlay__tag {
+.content-overlay__tag {
   padding: 0.25rem 0.75rem;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 2rem;
@@ -645,7 +645,7 @@ body {
   letter-spacing: 0.05em;
 }
 
-.article-overlay__summary {
+.content-overlay__summary {
   font-size: 1.15rem;
   font-style: italic;
   opacity: 0.75;
@@ -653,33 +653,33 @@ body {
   line-height: 1.6;
 }
 
-.article-overlay__body {
+.content-overlay__body {
   font-size: 1.1rem;
   line-height: 1.7;
   opacity: 0.85;
 }
 
-.article-overlay__body p {
+.content-overlay__body p {
   margin: 0 0 0.75em;
 }
 
-.article-overlay__body p:last-child {
+.content-overlay__body p:last-child {
   margin-bottom: 0;
 }
 
-.article-overlay__body ul,
-.article-overlay__body ol {
+.content-overlay__body ul,
+.content-overlay__body ol {
   margin: 0 0 0.75em;
   padding-left: 1.5em;
 }
 
-.article-overlay__body a {
+.content-overlay__body a {
   color: #fff;
   text-decoration: underline;
   text-underline-offset: 0.15em;
 }
 
-.article-overlay__body a:hover {
+.content-overlay__body a:hover {
   opacity: 0.7;
 }
 
@@ -1044,11 +1044,11 @@ body {
   }
 
   /* Article overlay mobile */
-  .article-overlay__content {
+  .content-overlay__content {
     padding: 3.5rem 1.5rem 2rem;
   }
 
-  .article-overlay__title {
+  .content-overlay__title {
     font-size: 1.75rem;
   }
 

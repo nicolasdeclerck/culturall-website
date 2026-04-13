@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import ArticleOverlay, { Article } from '../components/ArticleOverlay';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
@@ -15,6 +15,7 @@ export default function BlogPage() {
   const [loading, setLoading] = useState(true);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const clearSelection = useCallback(() => setSelectedArticle(null), []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -107,7 +108,7 @@ export default function BlogPage() {
         </div>
       )}
 
-      <ArticleOverlay article={selectedArticle} onClose={() => setSelectedArticle(null)} />
+      <ArticleOverlay article={selectedArticle} onClose={clearSelection} />
     </div>
   );
 }
