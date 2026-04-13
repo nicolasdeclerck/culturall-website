@@ -230,16 +230,21 @@ Types d'accès :
 
 **Résultat attendu** : la page Projets affiche une grille 3 colonnes avec filtrage par tags fonctionnel.
 
-### PROJ-03 [PUBLIC] — Clic sur un projet ouvre la vue détail
+### PROJ-03 [PUBLIC] — Clic sur un projet ouvre l'overlay détail (même pattern que les articles)
 1. Ouvrir `${BASE_URL}/projets`
 2. Cliquer sur une carte de projet
-3. Vérifier que la vue détail s'ouvre avec les informations textuelles (titre, description en texte riche, tags)
-4. Vérifier que la vidéo YouTube intégrée est affichée
-5. Vérifier la présence du lien « Retour aux projets »
-6. Cliquer sur « Retour aux projets »
-7. Vérifier le retour à la grille de projets
+3. Vérifier que l'overlay s'ouvre en plein écran avec un fond semi-opaque
+4. Vérifier la présence du bouton de fermeture (✕) en haut à droite
+5. Vérifier que le titre du projet est affiché
+6. Vérifier que les tags du projet sont affichés
+7. Vérifier que la description en texte riche est affichée
+8. Vérifier que la vidéo YouTube intégrée est affichée
+9. Fermer l'overlay via le bouton ✕
+10. Vérifier le retour à la grille de projets
+11. Rouvrir un projet et fermer via la touche Échap
+12. Vérifier le retour à la grille de projets
 
-**Résultat attendu** : la vue détail s'ouvre avec les informations et la vidéo, retour fonctionnel à la grille.
+**Résultat attendu** : l'overlay projet s'ouvre en plein écran avec titre, tags, description et vidéo, fermeture fonctionnelle via ✕ et Échap.
 
 ### PROJ-04 [AUTH] — Champ « À la une » dans l'admin Wagtail
 1. Se connecter à `${BASE_URL}/admin/`
@@ -285,10 +290,11 @@ Types d'accès :
 5. Cliquer sur « Voir tous les projets »
 6. Vérifier la navigation vers `${BASE_URL}/projets`
 7. Vérifier la présence du projet créé dans la grille
-8. Cliquer sur le projet pour voir la vue détail
-9. Vérifier les informations et la vidéo
+8. Cliquer sur le projet pour ouvrir l'overlay détail
+9. Vérifier les informations (titre, tags, description) et la vidéo YouTube dans l'overlay
+10. Fermer l'overlay via le bouton ✕
 
-**Résultat attendu** : parcours complet de création et consultation d'un projet via la homepage et la page projets sans erreur.
+**Résultat attendu** : parcours complet de création et consultation d'un projet via la homepage et la page projets sans erreur, overlay fonctionnel.
 
 ## 6. Section Réseau
 
