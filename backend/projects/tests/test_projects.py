@@ -123,6 +123,24 @@ class TestProjectModel:
             extra.clean()
         assert "featured" in exc_info.value.message_dict
 
+    def test_featured_max_validation_on_save(self, db):
+        """save() must also enforce the max featured constraint."""
+        for i in range(MAX_FEATURED_PROJECTS):
+            Project.objects.create(
+                title=f"Featured {i}",
+                youtube_url=f"https://youtube.com/watch?v={i}",
+                featured=True,
+            )
+        extra = Project(
+            title="One too many",
+            youtube_url="https://youtube.com/watch?v=extra",
+            featured=True,
+        )
+        with pytest.raises(ValidationError) as exc_info:
+            extra.save()
+        assert "featured" in exc_info.value.message_dict
+        assert Project.objects.filter(featured=True).count() == MAX_FEATURED_PROJECTS
+
     def test_featured_allows_update_existing(self, db):
         project = Project.objects.create(
             title="Already featured",
@@ -136,4 +154,4 @@ class TestProjectModel:
                 featured=True,
             )
         # Re-saving an existing featured project should not raise
-        project.clean()
+        project.save()
