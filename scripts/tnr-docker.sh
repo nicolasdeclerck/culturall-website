@@ -127,6 +127,9 @@ seed_test_content() {
 }
 
 cmd_up() {
+    echo "Cleaning up any residual TNR containers/volumes from a previous run..."
+    $COMPOSE down -v --remove-orphans || true
+
     echo "Building and starting TNR environment (Next.js + Django/Wagtail + MinIO)..."
     $COMPOSE up --build -d
 

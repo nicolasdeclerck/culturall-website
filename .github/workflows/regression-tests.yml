@@ -100,7 +100,7 @@ jobs:
               --dangerously-skip-permissions --output-format json
 
       - name: Tear down test environment
-        if: always() && steps.start-env.outcome == 'success'
+        if: always() && steps.check-merges.outputs.merge_count != '0'
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
