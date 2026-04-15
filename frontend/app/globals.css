@@ -36,6 +36,14 @@ body {
   color: #fff;
   text-decoration: none;
   letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+}
+
+.header-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
 }
 
 .header-nav {

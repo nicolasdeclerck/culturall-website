@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -11,6 +12,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -26,6 +28,13 @@ export default function Header() {
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/site-settings/`, { credentials: 'include' })
+      .then((res) => res.json())
+      .then((data) => setLogoUrl(data.logo_url ?? null))
+      .catch(() => setLogoUrl(null));
   }, []);
 
   useEffect(() => {
@@ -65,7 +74,18 @@ export default function Header() {
   return (
     <header className={`header${scrolled ? ' header--scrolled' : ''}`}>
       <Link href="/" className="header-title">
-        Cultur&apos;all
+        {logoUrl ? (
+          <Image
+            src={logoUrl}
+            alt="Cultur'all"
+            width={150}
+            height={40}
+            className="header-logo"
+            priority
+          />
+        ) : (
+          <>Cultur&apos;all</>
+        )}
       </Link>
       <button
         className="header-burger"

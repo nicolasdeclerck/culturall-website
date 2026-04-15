@@ -12,6 +12,7 @@ from home.auth_views import auth_check, auth_login, auth_logout
 from home.views import contact_submit
 from network.views import network_member_list
 from projects.views import project_featured, project_list
+from site_settings.views import site_settings_view
 
 
 def hello(request):
@@ -45,6 +46,7 @@ urlpatterns = [
     path("api/projects/", project_list, name="project-list"),
     path("api/projects/featured/", project_featured, name="project-featured"),
     path("api/blog/articles/", article_list, name="article-list"),
+    path("api/site-settings/", site_settings_view, name="site-settings"),
 
     # Catch-all Wagtail (page tree) — désactivé tant que la racine est `hello`.
     # Décommente quand un HomePage existe et retire la route `hello` ci-dessus.
