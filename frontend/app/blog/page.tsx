@@ -79,13 +79,14 @@ export default function BlogPage() {
       ) : filtered.length === 0 ? (
         <p className="blog-page__message">Aucun article pour le moment.</p>
       ) : (
-        <div className="blog-masonry">
-          {filtered.map((article) => {
+        <div className="blog-masonry" key={selectedTag ?? '__all__'}>
+          {filtered.map((article, i) => {
             const text = excerpts.get(article.id) ?? '';
             return (
               <button
                 key={article.id}
                 className="blog-card"
+                style={{ animationDelay: `${i * 0.04}s` }}
                 onClick={() => setSelectedArticle(article)}
               >
                 {article.illustration_url && (
