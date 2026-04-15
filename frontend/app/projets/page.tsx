@@ -70,11 +70,12 @@ export default function ProjetsPage() {
       ) : filtered.length === 0 ? (
         <p className="projets-page__message">Aucun projet pour le moment.</p>
       ) : (
-        <div className="projets-grid">
-          {filtered.map((project) => (
+        <div className="projets-grid" key={selectedTag ?? '__all__'}>
+          {filtered.map((project, i) => (
             <button
               key={project.id}
               className={`project-card${!project.thumbnail_url ? ' project-card--no-thumbnail' : ''}`}
+              style={{ animationDelay: `${i * 0.04}s` }}
               onClick={() => setSelectedProject(project)}
             >
               {project.thumbnail_url && (

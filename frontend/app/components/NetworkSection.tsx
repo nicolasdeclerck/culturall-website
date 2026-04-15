@@ -61,9 +61,9 @@ export default function NetworkSection() {
         </div>
       )}
 
-      <div className="network-grid">
-        {filtered.map((member) => (
-          <div key={member.id} className="network-card" title={member.name}>
+      <div className="network-grid" key={activeType ?? '__all__'}>
+        {filtered.map((member, i) => (
+          <div key={member.id} className="network-card" title={member.name} style={{ animationDelay: `${i * 0.04}s` }}>
             {member.logo_url ? (
               <img
                 src={member.logo_url}
