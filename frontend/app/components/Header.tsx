@@ -31,18 +31,17 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/site-settings/`, { credentials: 'include' })
-      .then((res) => res.json())
-      .then((data) => setLogoUrl(data.logo_url ?? null))
-      .catch(() => setLogoUrl(null));
-  }, []);
-
-  useEffect(() => {
     setMenuOpen(false);
     fetch(`${API_URL}/api/auth/check/`, { credentials: 'include' })
       .then((res) => res.json())
-      .then((data) => setAuthenticated(data.authenticated))
-      .catch(() => setAuthenticated(false));
+      .then((data) => {
+        setAuthenticated(data.authenticated);
+        setLogoUrl(data.logo_url ?? null);
+      })
+      .catch(() => {
+        setAuthenticated(false);
+        setLogoUrl(null);
+      });
   }, [pathname]);
 
   useEffect(() => {
@@ -84,7 +83,7 @@ export default function Header() {
             priority
           />
         ) : (
-          <>Cultur&apos;all</>
+          "Cultur'all"
         )}
       </Link>
       <button

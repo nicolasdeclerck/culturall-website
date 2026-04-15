@@ -10,12 +10,18 @@ from site_settings.models import SiteSettings
 
 
 def auth_check(request):
-    """Returns authentication status and whether auth is required."""
+    """Returns authentication status, whether auth is required, and logo URL."""
     site = Site.find_for_request(request)
     settings = SiteSettings.for_site(site)
+
+    logo_url = None
+    if settings.logo:
+        logo_url = settings.logo.get_rendition("max-300x80").url
+
     return JsonResponse({
         "authenticated": request.user.is_authenticated,
         "require_authentication": settings.require_authentication,
+        "logo_url": logo_url,
     })
 
 
