@@ -63,8 +63,10 @@ jobs:
             set -e
             cd ~/n8n-traefik/repos/culturall-website
             git fetch origin "$BRANCH"
-            git checkout -B "$BRANCH" "origin/$BRANCH"
-            git reset --hard "origin/$BRANCH"
+            # Detached HEAD pour éviter le conflit si la branche est déjà
+            # checkée dans un worktree (ex: /workspace/culturall-website-issue-N
+            # créé par le ticket-workflow).
+            git checkout --detach "origin/$BRANCH"
             ./scripts/tnr-docker.sh up
             # Le compose project ajoute le suffixe -tnr (cf. tnr-docker.sh)
             docker network connect culturall-website-tnr_default claude-worker || true
