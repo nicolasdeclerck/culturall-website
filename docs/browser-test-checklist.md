@@ -237,14 +237,26 @@ Types d'accès :
 4. Vérifier la présence du bouton de fermeture (✕) en haut à droite
 5. Vérifier que le titre du projet est affiché
 6. Vérifier que les tags du projet sont affichés
-7. Vérifier que la description en texte riche est affichée
-8. Vérifier que la vidéo YouTube intégrée est affichée
-9. Fermer l'overlay via le bouton ✕
-10. Vérifier le retour à la grille de projets
-11. Rouvrir un projet et fermer via la touche Échap
-12. Vérifier le retour à la grille de projets
+7. Vérifier que l'année de création est affichée (si renseignée)
+8. Vérifier que la durée de la vidéo est affichée (si renseignée)
+9. Vérifier que la description en texte riche est affichée
+10. Vérifier que les crédits en texte riche sont affichés (si renseignés)
+11. Vérifier que la vidéo YouTube intégrée est affichée
+12. Fermer l'overlay via le bouton ✕
+13. Vérifier le retour à la grille de projets
+14. Rouvrir un projet et fermer via la touche Échap
+15. Vérifier le retour à la grille de projets
 
-**Résultat attendu** : l'overlay projet s'ouvre en plein écran avec titre, tags, description et vidéo, fermeture fonctionnelle via ✕ et Échap.
+**Résultat attendu** : l'overlay projet s'ouvre en plein écran avec titre, tags, année, durée, description, crédits et vidéo, fermeture fonctionnelle via ✕ et Échap.
+
+### PROJ-08 [PUBLIC] — Les champs année, durée et crédits ne sont pas visibles dans les listes
+1. Ouvrir `${BASE_URL}/`
+2. Scroller jusqu'à la section Projets à la une
+3. Vérifier que les cartes de projets n'affichent PAS l'année, la durée ou les crédits
+4. Ouvrir `${BASE_URL}/projets`
+5. Vérifier que les cartes de la grille n'affichent PAS l'année, la durée ou les crédits
+
+**Résultat attendu** : les champs année, durée et crédits sont absents des vues en liste (homepage et page projets), visibles uniquement dans l'overlay détail.
 
 ### PROJ-04 [AUTH] — Champ « À la une » dans l'admin Wagtail
 1. Se connecter à `${BASE_URL}/admin/`

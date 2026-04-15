@@ -37,6 +37,9 @@ class TestProjectListView:
             title="Mon projet",
             description="<p>Description du projet</p>",
             youtube_url="https://youtube.com/watch?v=xyz",
+            year="2024",
+            video_duration="3min30",
+            credits="<p>Réalisation : Jean Dupont</p>",
         )
 
         resp = client.get(self.url)
@@ -47,6 +50,22 @@ class TestProjectListView:
         assert project["youtube_url"] == "https://youtube.com/watch?v=xyz"
         assert project["tags"] == []
         assert project["thumbnail_url"] is None
+        assert project["year"] == "2024"
+        assert project["video_duration"] == "3min30"
+        assert "Réalisation : Jean Dupont" in project["credits"]
+
+    def test_project_optional_fields_empty(self, client: Client):
+        Project.objects.create(
+            title="Projet sans extras",
+            youtube_url="https://youtube.com/watch?v=abc",
+        )
+
+        resp = client.get(self.url)
+        project = resp.json()[0]
+
+        assert project["year"] == ""
+        assert project["video_duration"] == ""
+        assert project["credits"] == ""
 
     def test_ordering_newest_first(self, client: Client):
         Project.objects.create(title="Old", youtube_url="https://youtube.com/watch?v=1")

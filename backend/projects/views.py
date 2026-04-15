@@ -26,6 +26,9 @@ def _serialize_projects(request, projects):
                 if project.thumbnail
                 else None
             ),
+            "year": project.year,
+            "video_duration": project.video_duration,
+            "credits": expand_db_html(project.credits) if project.credits else "",
         }
         for project in projects
     ]
