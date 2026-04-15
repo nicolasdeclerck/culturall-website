@@ -224,11 +224,13 @@ Types d'accès :
 4. Vérifier que chaque carte affiche la miniature en fond, le titre en surimpression et le tag
 5. Vérifier la présence de boutons de filtrage par tags au-dessus de la grille
 6. Cliquer sur un tag spécifique
-7. Vérifier que seuls les projets ayant ce tag sont affichés
-8. Cliquer sur « Tous »
-9. Vérifier que tous les projets sont de nouveau affichés
+7. Vérifier que les cartes se redisposent avec un effet d'animation fluide (fade-in + scale)
+8. Vérifier que seuls les projets ayant ce tag sont affichés
+9. Cliquer sur « Tous »
+10. Vérifier que les cartes se redisposent à nouveau avec l'effet d'animation
+11. Vérifier que tous les projets sont de nouveau affichés
 
-**Résultat attendu** : la page Projets affiche une grille 3 colonnes avec filtrage par tags fonctionnel.
+**Résultat attendu** : la page Projets affiche une grille 3 colonnes avec filtrage par tags fonctionnel et un effet d'animation de redisposition lors du changement de filtre.
 
 ### PROJ-03 [PUBLIC] — Clic sur un projet ouvre l'overlay détail (même pattern que les articles)
 1. Ouvrir `${BASE_URL}/projets`
@@ -326,11 +328,13 @@ Types d'accès :
 3. Vérifier la présence de boutons de filtrage par type au-dessus de la grille de logos
 4. Vérifier qu'un bouton « Tous » est actif par défaut
 5. Cliquer sur un type spécifique
-6. Vérifier que seuls les logos des membres de ce type sont affichés
-7. Cliquer sur « Tous »
-8. Vérifier que tous les logos sont de nouveau affichés
+6. Vérifier que les cartes se redisposent avec un effet d'animation fluide (fade-in + scale)
+7. Vérifier que seuls les logos des membres de ce type sont affichés
+8. Cliquer sur « Tous »
+9. Vérifier que les cartes se redisposent à nouveau avec l'effet d'animation
+10. Vérifier que tous les logos sont de nouveau affichés
 
-**Résultat attendu** : le filtrage par type fonctionne dynamiquement, seuls les logos correspondants sont affichés.
+**Résultat attendu** : le filtrage par type fonctionne dynamiquement avec un effet d'animation de redisposition, seuls les logos correspondants sont affichés.
 
 ### NET-03 [AUTH] — Ajout d'un membre du réseau via l'admin Wagtail
 1. Se connecter à `${BASE_URL}/admin/`
@@ -388,11 +392,13 @@ Types d'accès :
 2. Vérifier la présence de boutons de filtrage par tags au-dessus de la grille
 3. Vérifier qu'un bouton « Tous » est actif par défaut
 4. Cliquer sur un tag spécifique
-5. Vérifier que seuls les articles ayant ce tag sont affichés
-6. Cliquer sur « Tous »
-7. Vérifier que tous les articles sont de nouveau affichés
+5. Vérifier que les cartes se redisposent avec un effet d'animation fluide (fade-in + scale)
+6. Vérifier que seuls les articles ayant ce tag sont affichés
+7. Cliquer sur « Tous »
+8. Vérifier que les cartes se redisposent à nouveau avec l'effet d'animation
+9. Vérifier que tous les articles sont de nouveau affichés
 
-**Résultat attendu** : le filtrage par tags fonctionne dynamiquement sur la page Blog.
+**Résultat attendu** : le filtrage par tags fonctionne dynamiquement sur la page Blog avec un effet d'animation de redisposition lors du changement de filtre.
 
 ### BLOG-06 [PUBLIC] — Ouverture de l'overlay article depuis la page Blog
 1. Ouvrir `${BASE_URL}/blog`
