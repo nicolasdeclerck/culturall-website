@@ -29,7 +29,7 @@ Types d'accès :
 1. Ouvrir `${BASE_URL}/`
 2. Vérifier la présence d'une vidéo en arrière-plan occupant tout l'écran
 3. Vérifier que la vidéo est en lecture automatique et sans son (muted)
-4. Vérifier la présence du header avec le titre « Cultur'all » à gauche
+4. Vérifier la présence du header avec le logo ou le titre « Cultur'all » à gauche
 5. Vérifier la présence du menu de navigation à droite avec les liens « À propos » et « Contact »
 
 **Résultat attendu** : la landing page s'affiche avec la vidéo plein écran en fond, le header est visible par-dessus la vidéo.
@@ -104,6 +104,16 @@ Types d'accès :
 7. Vérifier que le header redevient transparent
 
 **Résultat attendu** : le header passe progressivement de transparent à noir semi-opaque au scroll, et redevient transparent en haut de page. Le contenu du menu reste lisible sur la zone réseau (fond blanc).
+
+### NAV-09 [PUBLIC] — Affichage du logo du site dans le header
+1. Ouvrir `${BASE_URL}/`
+2. Vérifier que le header affiche une image (logo) ou le texte « Cultur'all » comme titre du site
+3. Si un logo est configuré dans l'admin, vérifier qu'une balise `<img>` est présente dans le lien d'accueil du header avec un attribut `alt` contenant « Cultur'all »
+4. Vérifier que le logo / titre est cliquable et redirige vers `${BASE_URL}/`
+5. Réduire la fenêtre à une largeur mobile (< 768px)
+6. Vérifier que le logo reste visible et lisible (pas de débordement)
+
+**Résultat attendu** : le logo du site (ou le texte de fallback) s'affiche dans le header, est cliquable vers l'accueil, et reste responsive.
 
 ## 2. Formulaire de contact
 
