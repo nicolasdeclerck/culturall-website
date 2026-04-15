@@ -38,12 +38,18 @@ class Project(ClusterableModel):
         related_name="+",
         verbose_name="Miniature",
     )
+    year = models.CharField("Année de création", max_length=20, blank=True)
+    video_duration = models.CharField("Durée de la vidéo", max_length=50, blank=True)
+    credits = RichTextField("Crédits", blank=True)
     featured = models.BooleanField("À la une", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     panels = [
         FieldPanel("title"),
         FieldPanel("description"),
+        FieldPanel("year"),
+        FieldPanel("video_duration"),
+        FieldPanel("credits"),
         FieldPanel("tags"),
         FieldPanel("youtube_url"),
         FieldPanel("thumbnail"),

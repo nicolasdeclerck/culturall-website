@@ -9,6 +9,9 @@ export interface Project {
   youtube_url: string;
   tags: string[];
   thumbnail_url: string | null;
+  year: string;
+  video_duration: string;
+  credits: string;
 }
 
 interface ProjectOverlayProps {
@@ -50,10 +53,22 @@ export default function ProjectOverlay({ project, onClose }: ProjectOverlayProps
             ))}
           </div>
         )}
+        {(project.year || project.video_duration) && (
+          <div className="content-overlay__meta">
+            {project.year && <span className="content-overlay__meta-item">{project.year}</span>}
+            {project.video_duration && <span className="content-overlay__meta-item">{project.video_duration}</span>}
+          </div>
+        )}
         <div
           className="content-overlay__body"
           dangerouslySetInnerHTML={{ __html: project.description }}
         />
+        {project.credits && (
+          <div
+            className="content-overlay__credits"
+            dangerouslySetInnerHTML={{ __html: project.credits }}
+          />
+        )}
         {videoId && (
           <div className="project-overlay__video">
             <iframe
