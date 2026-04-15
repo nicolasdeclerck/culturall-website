@@ -233,21 +233,21 @@ Types d'accès :
 ### PROJ-03 [PUBLIC] — Clic sur un projet ouvre l'overlay détail (même pattern que les articles)
 1. Ouvrir `${BASE_URL}/projets`
 2. Cliquer sur une carte de projet
-3. Vérifier que l'overlay s'ouvre en plein écran avec un fond semi-opaque
+3. Vérifier que l'overlay s'ouvre en plein écran avec un fond suffisamment opaque pour lire le contenu
 4. Vérifier la présence du bouton de fermeture (✕) en haut à droite
 5. Vérifier que le titre du projet est affiché
 6. Vérifier que les tags du projet sont affichés
-7. Vérifier que l'année de création est affichée (si renseignée)
-8. Vérifier que la durée de la vidéo est affichée (si renseignée)
-9. Vérifier que la description en texte riche est affichée
-10. Vérifier que les crédits en texte riche sont affichés (si renseignés)
+7. Vérifier que l'année est affichée avec le label « Année » devant (si renseignée)
+8. Vérifier que la durée est affichée avec le label « Durée » devant (si renseignée)
+9. Vérifier que les crédits en texte riche sont affichés **au-dessus** de la description (si renseignés)
+10. Vérifier que la description en texte riche est affichée **en dessous** des crédits
 11. Vérifier que la vidéo YouTube intégrée est affichée
 12. Fermer l'overlay via le bouton ✕
 13. Vérifier le retour à la grille de projets
 14. Rouvrir un projet et fermer via la touche Échap
 15. Vérifier le retour à la grille de projets
 
-**Résultat attendu** : l'overlay projet s'ouvre en plein écran avec titre, tags, année, durée, description, crédits et vidéo, fermeture fonctionnelle via ✕ et Échap.
+**Résultat attendu** : l'overlay projet s'ouvre en plein écran avec titre, tags, « Année » + année, « Durée » + durée, crédits au-dessus de la description, vidéo, fond lisible, fermeture fonctionnelle via ✕ et Échap.
 
 ### PROJ-08 [PUBLIC] — Les champs année, durée et crédits ne sont pas visibles dans les listes
 1. Ouvrir `${BASE_URL}/`

@@ -55,20 +55,20 @@ export default function ProjectOverlay({ project, onClose }: ProjectOverlayProps
         )}
         {(project.year || project.video_duration) && (
           <div className="content-overlay__meta">
-            {project.year && <span className="content-overlay__meta-item">{project.year}</span>}
-            {project.video_duration && <span className="content-overlay__meta-item">{project.video_duration}</span>}
+            {project.year && <span className="content-overlay__meta-item">Année {project.year}</span>}
+            {project.video_duration && <span className="content-overlay__meta-item">Durée {project.video_duration}</span>}
           </div>
         )}
-        <div
-          className="content-overlay__body"
-          dangerouslySetInnerHTML={{ __html: project.description }}
-        />
         {project.credits && (
           <div
             className="content-overlay__credits"
             dangerouslySetInnerHTML={{ __html: project.credits }}
           />
         )}
+        <div
+          className="content-overlay__body"
+          dangerouslySetInnerHTML={{ __html: project.description }}
+        />
         {videoId && (
           <div className="project-overlay__video">
             <iframe
