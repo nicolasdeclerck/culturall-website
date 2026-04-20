@@ -43,7 +43,7 @@ export default function ProjectsSection() {
         {projects.map((project) => (
           <Link
             key={project.id}
-            href="/projets"
+            href={`/projets?project=${project.id}`}
             className={`projects-section__card${!project.thumbnail_url ? ' projects-section__card--no-thumbnail' : ''}`}
           >
             {project.thumbnail_url && (

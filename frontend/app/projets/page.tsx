@@ -10,7 +10,16 @@ export default function ProjetsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const clearSelection = useCallback(() => setSelectedProject(null), []);
+  const clearSelection = useCallback(() => {
+    setSelectedProject(null);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('project')) {
+        url.searchParams.delete('project');
+        window.history.replaceState({}, '', url.pathname + url.search);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -23,7 +32,14 @@ export default function ProjetsPage() {
         return res.json();
       })
       .then((data) => {
-        if (Array.isArray(data)) setProjects(data);
+        if (Array.isArray(data)) {
+          setProjects(data);
+          const requestedId = new URLSearchParams(window.location.search).get('project');
+          if (requestedId) {
+            const match = data.find((p: Project) => String(p.id) === requestedId);
+            if (match) setSelectedProject(match);
+          }
+        }
       })
       .catch((err) => {
         if (err.name !== 'AbortError') setProjects([]);
