@@ -161,6 +161,9 @@ class Command(BaseCommand):
             blog_index.add_child(instance=article)
             article.tags.add(*data["tags"])
             article.save()
+            # save_revision().publish() pose first_published_at, qui sert de
+            # source de vérité pour l'ordre et le champ `created_at` exposé.
+            article.save_revision().publish()
             created += 1
         total = ArticlePage.objects.descendant_of(blog_index).count()
         self.stdout.write(f"Articles : {created} créé(s), {total} au total.")

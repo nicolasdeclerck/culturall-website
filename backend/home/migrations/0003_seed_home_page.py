@@ -28,13 +28,17 @@ def create_home_page(apps, schema_editor):
     if root is None:
         return
 
-    home_page = RuntimeHomePage(title="Cultur'all", slug="home")
-
+    # On ne supprime PAS la welcome page créée par le bootstrap Wagtail :
+    # un Page.delete() déclenche un cascade qui interroge toutes les tables
+    # liées à Page (wagtailforms, wagtailimages, etc.) et dépend d'un ordre
+    # de migration cross-app difficile à garantir. On la renomme pour
+    # libérer le slug "home".
     welcome = root.get_children().filter(slug="home").first()
     if welcome:
-        Site.objects.filter(root_page_id=welcome.pk).update(root_page=root)
-        welcome.delete()
+        welcome.slug = "wagtail-welcome"
+        welcome.save()
 
+    home_page = RuntimeHomePage(title="Cultur'all", slug="home")
     root.add_child(instance=home_page)
     home_page.save_revision().publish()
 
