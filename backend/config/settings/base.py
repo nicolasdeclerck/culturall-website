@@ -121,3 +121,8 @@ CORS_ALLOWED_ORIGINS = [
     for o in os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(",")
     if o.strip()
 ]
+# Le frontend appelle l'API en `credentials: 'include'` (cookies de session
+# Django pour le check d'auth). Sans ce flag, django-cors-headers ne renvoie
+# pas `Access-Control-Allow-Credentials: true` et le navigateur bloque la
+# réponse même si l'origine est dans la whitelist.
+CORS_ALLOW_CREDENTIALS = True
