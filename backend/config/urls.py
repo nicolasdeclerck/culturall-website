@@ -7,7 +7,7 @@ from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
-from blog.views import article_detail, article_list
+from blog.views import article_detail, article_list, article_preview_draft
 from home.auth_views import auth_check, auth_login, auth_logout
 from home.views import contact_submit
 from network.views import network_member_list
@@ -48,6 +48,7 @@ urlpatterns = [
     path("api/projects/featured/", project_featured, name="project-featured"),
     path("api/blog/articles/", article_list, name="article-list"),
     path("api/blog/articles/<slug:slug>/", article_detail, name="article-detail"),
+    path("api/preview/draft/", article_preview_draft, name="article-preview-draft"),
     path("api/pages/<slug:slug>/", static_page_detail, name="static-page-detail"),
 
     # Catch-all Wagtail (page tree) — désactivé : on est headless, Next.js

@@ -65,3 +65,27 @@ def article_detail(request, slug):
         raise Http404("Article introuvable") from exc
 
     return JsonResponse(_serialize_article(request, article))
+
+
+@require_GET
+def article_preview_draft(request):
+    """Retourne les données brouillon d'un ArticlePage pour la preview headless.
+
+    Authentifié par token signé (créé par wagtail-headless-preview lors du clic Aperçu).
+    Le token fait office de credential — aucune session Django requise.
+    """
+    from django.core.signing import BadSignature
+
+    token = request.GET.get("token")
+    if not token:
+        raise Http404("Token manquant")
+
+    try:
+        page = ArticlePage.get_page_from_preview_token(token)
+    except BadSignature:
+        raise Http404("Token invalide")
+
+    if page is None:
+        raise Http404("Token introuvable ou expiré")
+
+    return JsonResponse(_serialize_article(request, page))

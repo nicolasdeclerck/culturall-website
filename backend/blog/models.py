@@ -6,6 +6,7 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
 from wagtail.images import get_image_model_string
 from wagtail.models import Page
+from wagtail_headless_preview.models import HeadlessPreviewMixin
 
 
 class ArticlePageTag(TaggedItemBase):
@@ -29,14 +30,14 @@ class BlogIndexPage(Page):
     subpage_types = ["blog.ArticlePage"]
     max_count = 1
 
-    # Pas de preview headless dans cette PR (voir #121)
+    # Pas de preview headless pour la page de listing
     preview_modes = []
 
     class Meta:
         verbose_name = "Index de blog"
 
 
-class ArticlePage(Page):
+class ArticlePage(HeadlessPreviewMixin, Page):
     """Article de blog publié dans l'arbre Wagtail."""
 
     summary = models.TextField("Résumé", blank=True)
@@ -64,9 +65,6 @@ class ArticlePage(Page):
 
     parent_page_types = ["blog.BlogIndexPage"]
     subpage_types = []
-
-    # Pas de preview headless dans cette PR (voir #121)
-    preview_modes = []
 
     class Meta:
         verbose_name = "Article"

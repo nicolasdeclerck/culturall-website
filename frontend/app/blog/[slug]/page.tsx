@@ -2,20 +2,28 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { Article } from '../../types/article';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 export default function ArticleDetailPage() {
   const params = useParams<{ slug: string }>();
+  const searchParams = useSearchParams();
+  const previewToken = searchParams.get('preview_token');
+
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!params.slug) return;
     const controller = new AbortController();
-    fetch(`${API_URL}/api/blog/articles/${encodeURIComponent(params.slug)}/`, {
+
+    const url = previewToken
+      ? `${API_URL}/api/preview/draft/?token=${encodeURIComponent(previewToken)}`
+      : `${API_URL}/api/blog/articles/${encodeURIComponent(params.slug)}/`;
+
+    fetch(url, {
       credentials: 'include',
       signal: controller.signal,
     })
@@ -32,7 +40,7 @@ export default function ArticleDetailPage() {
       })
       .finally(() => setLoading(false));
     return () => controller.abort();
-  }, [params.slug]);
+  }, [params.slug, previewToken]);
 
   if (loading) {
     return (
@@ -59,6 +67,14 @@ export default function ArticleDetailPage() {
 
   return (
     <div className="page blog-page">
+      {previewToken && (
+        <div className="preview-banner" role="status">
+          <span>Mode aperçu — ce contenu n&apos;est pas encore publié</span>
+          <Link href={`/blog/${params.slug}`} className="preview-banner__exit">
+            Quitter l&apos;aperçu
+          </Link>
+        </div>
+      )}
       <div className="article-detail-wrapper">
         <Link href="/blog" className="article-detail__back">
           <span className="article-detail__back-icon" aria-hidden="true">←</span>
