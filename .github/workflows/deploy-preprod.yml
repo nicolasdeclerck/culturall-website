@@ -1,13 +1,16 @@
-name: Deploy to Production
+name: Deploy to Preprod
 
 # Tire les images pré-buildées par build-images.yml depuis GHCR et les
-# déploie sur le VPS de prod (cultur-all.org). PAS de build sur le VPS.
+# déploie sur le VPS de preprod (culturall-website.nickorp.com). PAS de
+# build sur le VPS.
 #
-# Reverse proxy : Traefik EMBARQUÉ dans docker-compose.prod.yml (le VPS de
-# prod est dédié au site cultur-all.org). Pas de Traefik externe à partager.
+# Reverse proxy : Traefik EXTERNE (stack n8n-traefik partagé sur le VPS),
+# réseau `n8n-traefik_default`. Les services s'enregistrent via labels.
 #
-# Déclenchement : MANUEL UNIQUEMENT (workflow_dispatch). Le déploiement
-# automatique sur push `main` ne concerne que la preprod (deploy-preprod.yml).
+# Déclenchements :
+#   - Automatique : depuis build-images.yml (workflow_dispatch avec image_tag)
+#     sur chaque push `main`
+#   - Manuel via UI ou `gh workflow run`
 
 on:
   workflow_dispatch:
@@ -27,26 +30,26 @@ jobs:
         env:
           IMAGE_TAG: ${{ inputs.image_tag }}
         with:
-          host: ${{ secrets.VPS_HOST }}
+          host: ${{ secrets.PREPROD_VPS_HOST }}
           username: ubuntu
-          key: ${{ secrets.VPS_SSH_KEY }}
+          key: ${{ secrets.PREPROD_VPS_SSH_KEY }}
           envs: IMAGE_TAG
           script: |
             set -e
-            cd ~/culturall-website
+            cd ~/n8n-traefik/repos/culturall-website
 
             echo "==> Pulling latest compose files from main..."
             git pull origin main
 
             COMPOSE_CMD="docker compose -p culturall-website \
               -f docker-compose.base.yml \
-              -f docker-compose.prod.yml \
-              --env-file .env.prod"
+              -f docker-compose.preprod.yml \
+              --env-file .env.preprod"
 
-            echo "==> Updating IMAGE_TAG in .env.prod (current : $IMAGE_TAG)..."
-            grep -q '^IMAGE_TAG=' .env.prod \
-              && sed -i "s|^IMAGE_TAG=.*|IMAGE_TAG=$IMAGE_TAG|" .env.prod \
-              || echo "IMAGE_TAG=$IMAGE_TAG" >> .env.prod
+            echo "==> Updating IMAGE_TAG in .env.preprod (current : $IMAGE_TAG)..."
+            grep -q '^IMAGE_TAG=' .env.preprod \
+              && sed -i "s|^IMAGE_TAG=.*|IMAGE_TAG=$IMAGE_TAG|" .env.preprod \
+              || echo "IMAGE_TAG=$IMAGE_TAG" >> .env.preprod
 
             echo "==> Logging in to GHCR..."
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io \
@@ -56,9 +59,8 @@ jobs:
             $COMPOSE_CMD pull django nextjs
 
             echo "==> Restarting services with new images..."
-            # nginx est désactivé en prod (Traefik fait le reverse proxy).
-            # traefik est inclus pour s'assurer qu'il tourne après un redémarrage du VPS.
-            $COMPOSE_CMD up -d --force-recreate --no-build django nextjs minio postgres traefik
+            # nginx est désactivé en preprod (Traefik externe fait le reverse proxy)
+            $COMPOSE_CMD up -d --force-recreate --no-build django nextjs minio postgres
 
             echo "==> Running Django/Wagtail migrations..."
             $COMPOSE_CMD exec -T django python manage.py migrate --noinput

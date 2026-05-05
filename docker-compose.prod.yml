@@ -7,24 +7,45 @@
 # Caractéristiques :
 #   - Images PRÉ-BUILDÉES par CI/CD (pas de build local sur le VPS)
 #   - Tag d'image injecté via REGISTRY + IMAGE_TAG dans .env.prod
-#   - Reverse proxy Traefik EXTERNE (déjà déployé sur le VPS) qui gère TLS
-#     via Let's Encrypt et l'entrypoint websecure
-#   - PAS de nginx ni de certbot dans ce compose
+#   - Reverse proxy Traefik EMBARQUÉ dans ce compose (le VPS de prod est
+#     dédié au site cultur-all.org : pas de Traefik externe à partager)
+#   - TLS automatique via Let's Encrypt (challenge TLS-ALPN sur :443)
+#   - HTTP → HTTPS forcé au niveau de l'entrypoint web
 #   - Routing :
-#       https://culturall-website.nickorp.com/admin   → django  (Wagtail admin)
-#       https://culturall-website.nickorp.com/api     → django  (DRF API)
-#       https://culturall-website.nickorp.com/static  → django  (servi via whitenoise)
-#       https://culturall-website.nickorp.com/        → nextjs  (catch-all front)
-#       https://media.culturall-website.nickorp.com/  → minio   (médias S3-compatible)
-#
-# Placeholders à remplacer :
-#   culturall-website.nickorp.com            : domaine principal de l'app (ex: studio.example.com)
-#   media.culturall-website.nickorp.com      : sous-domaine des médias    (ex: media.studio.example.com)
-#   n8n-traefik_default   : nom du network Traefik externe (ex: n8n-traefik_default)
-#   culturall-website   : nom du projet docker compose (ex: studio-site)
-#   myresolver     : nom du resolver Let's Encrypt côté Traefik (ex: myresolver)
+#       https://cultur-all.org/admin       → django  (Wagtail admin)
+#       https://cultur-all.org/api         → django  (DRF API)
+#       https://cultur-all.org/static      → django  (servi via whitenoise)
+#       https://cultur-all.org/            → nextjs  (catch-all front)
+#       https://www.cultur-all.org/*       → 301 → https://cultur-all.org/*
+#       https://media.cultur-all.org/      → minio   (médias S3-compatible)
 
 services:
+  traefik:
+    image: traefik:v3.5
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # Redirect global HTTP → HTTPS au niveau entrypoint
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      # Let's Encrypt — challenge TLS-ALPN (port 443 uniquement, compatible
+      # avec le redirect HTTP→HTTPS ci-dessus contrairement au httpchallenge)
+      - "--certificatesresolvers.myresolver.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--log.level=INFO"
+      - "--accesslog=true"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_letsencrypt:/letsencrypt
+    restart: always
+
   django:
     image: ${REGISTRY}/django:${IMAGE_TAG:-latest}
     build: !reset null
@@ -39,78 +60,61 @@ services:
     volumes:
       - static_files:/app/staticfiles
       - media_files:/app/media
-    networks:
-      - default
-      - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=n8n-traefik_default"
 
       # Routeur backend — admin/api/static (Django + Wagtail + whitenoise)
-      - "traefik.http.routers.culturall-website-back.rule=Host(`culturall-website.nickorp.com`) && (PathPrefix(`/admin`) || PathPrefix(`/api`) || PathPrefix(`/static`))"
+      - "traefik.http.routers.culturall-website-back.rule=Host(`cultur-all.org`) && (PathPrefix(`/admin`) || PathPrefix(`/api`) || PathPrefix(`/static`))"
       - "traefik.http.routers.culturall-website-back.entrypoints=websecure"
       - "traefik.http.routers.culturall-website-back.tls=true"
       - "traefik.http.routers.culturall-website-back.tls.certresolver=myresolver"
       - "traefik.http.routers.culturall-website-back.priority=100"
       - "traefik.http.services.culturall-website-back.loadbalancer.server.port=8000"
-
-      # Redirect HTTP → HTTPS pour le backend
-      - "traefik.http.routers.culturall-website-back-http.rule=Host(`culturall-website.nickorp.com`) && (PathPrefix(`/admin`) || PathPrefix(`/api`) || PathPrefix(`/static`))"
-      - "traefik.http.routers.culturall-website-back-http.entrypoints=web"
-      - "traefik.http.routers.culturall-website-back-http.middlewares=culturall-website-redirect-to-https"
     restart: always
 
   nextjs:
     image: ${REGISTRY}/nextjs:${IMAGE_TAG:-latest}
     build: !reset null
     command: node server.js
-    networks:
-      - default
-      - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=n8n-traefik_default"
 
-      # Routeur frontend — catch-all (priorité plus basse que /admin /api /static)
-      - "traefik.http.routers.culturall-website-front.rule=Host(`culturall-website.nickorp.com`)"
+      # Routeur frontend — catch-all sur cultur-all.org
+      - "traefik.http.routers.culturall-website-front.rule=Host(`cultur-all.org`)"
       - "traefik.http.routers.culturall-website-front.entrypoints=websecure"
       - "traefik.http.routers.culturall-website-front.tls=true"
       - "traefik.http.routers.culturall-website-front.tls.certresolver=myresolver"
       - "traefik.http.routers.culturall-website-front.priority=10"
       - "traefik.http.services.culturall-website-front.loadbalancer.server.port=3000"
 
-      # Redirect HTTP → HTTPS pour le frontend
-      - "traefik.http.routers.culturall-website-front-http.rule=Host(`culturall-website.nickorp.com`)"
-      - "traefik.http.routers.culturall-website-front-http.entrypoints=web"
-      - "traefik.http.routers.culturall-website-front-http.middlewares=culturall-website-redirect-to-https"
-
-      # Middleware partagé : redirect to https
-      - "traefik.http.middlewares.culturall-website-redirect-to-https.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.culturall-website-redirect-to-https.redirectscheme.permanent=true"
+      # Routeur www → non-www (301). Service requis par Traefik mais le
+      # middleware répond avant d'atteindre nextjs.
+      - "traefik.http.routers.culturall-website-www.rule=Host(`www.cultur-all.org`)"
+      - "traefik.http.routers.culturall-website-www.entrypoints=websecure"
+      - "traefik.http.routers.culturall-website-www.tls=true"
+      - "traefik.http.routers.culturall-website-www.tls.certresolver=myresolver"
+      - "traefik.http.routers.culturall-website-www.middlewares=culturall-website-www-redirect"
+      - "traefik.http.routers.culturall-website-www.service=culturall-website-front"
+      # Le `$$` est échappé pour docker-compose ; Traefik reçoit `${1}` (capture regex).
+      - "traefik.http.middlewares.culturall-website-www-redirect.redirectregex.regex=^https://www\\.cultur-all\\.org/(.*)"
+      - "traefik.http.middlewares.culturall-website-www-redirect.redirectregex.replacement=https://cultur-all.org/$${1}"
+      - "traefik.http.middlewares.culturall-website-www-redirect.redirectregex.permanent=true"
     restart: always
 
   minio:
-    networks:
-      - default
-      - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=n8n-traefik_default"
 
       # MinIO sur sous-domaine dédié — préfixe = bucket name
-      # URL publique : https://media.culturall-website.nickorp.com/<bucket>/<key>
+      # URL publique : https://media.cultur-all.org/<bucket>/<key>
       # où <bucket> = valeur de MINIO_BUCKET_NAME dans .env.prod.
       # (compatible avec une migration future vers Cloudflare R2 sur le
       #  même sous-domaine)
-      - "traefik.http.routers.culturall-website-media.rule=Host(`media.culturall-website.nickorp.com`)"
+      - "traefik.http.routers.culturall-website-media.rule=Host(`media.cultur-all.org`)"
       - "traefik.http.routers.culturall-website-media.entrypoints=websecure"
       - "traefik.http.routers.culturall-website-media.tls=true"
       - "traefik.http.routers.culturall-website-media.tls.certresolver=myresolver"
       - "traefik.http.services.culturall-website-media.loadbalancer.server.port=9000"
-
-      - "traefik.http.routers.culturall-website-media-http.rule=Host(`media.culturall-website.nickorp.com`)"
-      - "traefik.http.routers.culturall-website-media-http.entrypoints=web"
-      - "traefik.http.routers.culturall-website-media-http.middlewares=culturall-website-redirect-to-https"
     volumes:
       - minio_prod_data:/data
     restart: always
@@ -129,8 +133,4 @@ volumes:
   media_files:
   postgres_prod_data:
   minio_prod_data:
-
-networks:
-  traefik:
-    external: true
-    name: n8n-traefik_default
+  traefik_letsencrypt:

@@ -120,10 +120,12 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger deploy-prod
+      - name: Trigger deploy-preprod
+        # Auto-déploiement sur preprod uniquement. La prod se déclenche
+        # manuellement via Actions → Deploy to Production.
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh workflow run deploy-prod.yml \
+          gh workflow run deploy-preprod.yml \
             --repo ${{ github.repository }} \
             -f image_tag=${{ needs.build-and-push.outputs.image_tag }}

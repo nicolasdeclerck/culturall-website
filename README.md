@@ -10,8 +10,16 @@ Site vitrine de l'association Cultur'all, permettant de présenter ses projets c
 | Backend / CMS | Django 5.1, Wagtail 6.3 (headless) |
 | Base de données | PostgreSQL 16 |
 | Stockage médias | MinIO (S3-compatible, self-hosted) |
-| Reverse proxy | Nginx (dev/preprod) · Traefik (production) |
+| Reverse proxy | Nginx (dev) · Traefik (preprod/prod) |
 | CI/CD | GitHub Actions → GHCR → VPS |
+
+## Environnements
+
+| Env | URL | VPS | Traefik | Déploiement |
+|---|---|---|---|---|
+| Dev | http://localhost | local | nginx | manuel |
+| Preprod | https://culturall-website.nickorp.com | partagé (n8n-traefik) | externe | auto sur push `main` |
+| Prod | https://cultur-all.org | dédié | embarqué dans le compose | manuel via Actions |
 
 ## Prérequis
 
@@ -75,33 +83,52 @@ docker compose -p culturall-website \
   exec django python manage.py createsuperuser
 ```
 
-## Installation — Production
+## Pipeline CI/CD
 
-La production utilise des images Docker pré-buildées, poussées sur GHCR par la CI, et servies derrière Traefik avec TLS automatique (Let's Encrypt).
+```
+push main
+   │
+   ▼
+build-images.yml  ──► tests backend + build Django/Next.js + push GHCR
+   │
+   ▼
+deploy-preprod.yml  (auto)  ──► VPS preprod (n8n-traefik)
+                                   https://culturall-website.nickorp.com
+
+[manuel] deploy-prod.yml      ──► VPS prod (Traefik dédié)
+                                   https://cultur-all.org
+```
+
+- **Push sur `main`** → build + déploiement automatique sur **preprod** uniquement
+- **Prod** → déploiement **manuel** : Actions → **Deploy to Production** → Run workflow → `image_tag: latest` (ou un SHA précis)
+
+## Installation — Pré-production
+
+La preprod tourne sur un VPS partagé avec un stack Traefik externe (`n8n-traefik`, réseau `n8n-traefik_default`).
 
 ### Prérequis sur le VPS
 
 - Docker et Docker Compose installés
-- Un container **Traefik** déjà en place, exposant les entrypoints `web` (80) et `websecure` (443) avec un cert resolver Let's Encrypt
-- Le réseau Docker externe `traefik_default` créé (`docker network create traefik_default`)
-- Les enregistrements DNS pointant vers le VPS :
-  - `culturall-website.nickorp.com` (site)
-  - `media.culturall-website.nickorp.com` (médias MinIO)
+- Stack **Traefik** (`n8n-traefik`) déjà déployé, exposant les entrypoints `web` (80) et `websecure` (443) avec un cert resolver Let's Encrypt nommé `myresolver`
+- Le réseau Docker externe `n8n-traefik_default` existant
+- Enregistrements DNS pointant vers le VPS :
+  - `culturall-website.nickorp.com`
+  - `media.culturall-website.nickorp.com`
 
 ### 1. Cloner le dépôt sur le VPS
 
 ```bash
-git clone git@github.com:nicolasdeclerck/culturall-website.git ~/culturall-website
-cd ~/culturall-website
+git clone git@github.com:nicolasdeclerck/culturall-website.git ~/n8n-traefik/repos/culturall-website
+cd ~/n8n-traefik/repos/culturall-website
 ```
 
-### 2. Configurer l'environnement de production
+### 2. Configurer l'environnement
 
 ```bash
-cp .env.example .env.prod
+cp .env.example .env.preprod
 ```
 
-Modifier `.env.prod` avec les valeurs de production :
+À renseigner :
 
 ```
 DJANGO_SECRET_KEY=<clé secrète forte>
@@ -116,27 +143,74 @@ REGISTRY=ghcr.io/nicolasdeclerck/culturall-website
 IMAGE_TAG=latest
 ```
 
+### 3. Premier lancement manuel
+
+```bash
+docker compose -p culturall-website \
+  -f docker-compose.base.yml \
+  -f docker-compose.preprod.yml \
+  --env-file .env.preprod \
+  up -d
+```
+
+Puis : `migrate` + `collectstatic` + `createsuperuser` comme en dev. Les déploiements suivants sont automatiques via `deploy-preprod.yml`.
+
+## Installation — Production
+
+La prod tourne sur un VPS dédié au site `cultur-all.org`. Traefik est embarqué dans `docker-compose.prod.yml` (pas de stack Traefik partagé). TLS automatique via Let's Encrypt (challenge TLS-ALPN sur :443).
+
+### Prérequis sur le VPS
+
+- Docker et Docker Compose installés
+- Ports 80 et 443 libres (Traefik les utilise)
+- Enregistrements DNS pointant vers le VPS :
+  - `cultur-all.org`
+  - `www.cultur-all.org` (redirige vers `cultur-all.org` via Traefik)
+  - `media.cultur-all.org`
+
+### 1. Cloner le dépôt sur le VPS
+
+```bash
+git clone git@github.com:nicolasdeclerck/culturall-website.git ~/culturall-website
+cd ~/culturall-website
+```
+
+### 2. Configurer l'environnement
+
+```bash
+cp .env.example .env.prod
+```
+
+À renseigner :
+
+```
+DJANGO_SECRET_KEY=<clé secrète forte>
+DEBUG=False
+ALLOWED_HOSTS=cultur-all.org,www.cultur-all.org
+CSRF_TRUSTED_ORIGINS=https://cultur-all.org,https://www.cultur-all.org
+MINIO_ROOT_PASSWORD=<mot de passe fort>
+MINIO_PUBLIC_URL=https://media.cultur-all.org
+NEXT_PUBLIC_API_URL=https://cultur-all.org
+NODE_ENV=production
+ACME_EMAIL=<email pour Let's Encrypt>
+REGISTRY=ghcr.io/nicolasdeclerck/culturall-website
+IMAGE_TAG=latest
+```
+
 ### 3. Configurer les secrets GitHub Actions
 
 Dans les paramètres du dépôt GitHub, ajouter les secrets suivants :
 
 | Secret | Description |
 |---|---|
-| `VPS_HOST` | Adresse IP ou hostname du VPS |
-| `VPS_SSH_KEY` | Clé SSH privée pour se connecter au VPS |
-| `GHCR_USERNAME` | Nom d'utilisateur GitHub (pour push sur GHCR) |
-| `GHCR_TOKEN` | Token GitHub avec le scope `packages:write` |
+| `VPS_HOST` | IP/hostname du VPS de **prod** |
+| `VPS_SSH_KEY` | Clé SSH privée pour le VPS de **prod** |
+| `PREPROD_VPS_HOST` | IP/hostname du VPS de **preprod** |
+| `PREPROD_VPS_SSH_KEY` | Clé SSH privée pour le VPS de **preprod** |
+| `GHCR_USERNAME` | Nom d'utilisateur GitHub (push GHCR) |
+| `GHCR_TOKEN` | Token GitHub avec scope `packages:write` |
 
-### 4. Pipeline de déploiement
-
-Le déploiement est entièrement automatisé :
-
-1. **Push sur `main`** → GitHub Actions build les images Django et Next.js, les pousse sur GHCR
-2. **Deploy automatique** → SSH au VPS, pull des images, redémarrage des containers, migrations et collectstatic
-
-Pour un premier déploiement manuel : Actions → **Deploy to Production** → Run workflow → `image_tag: latest`.
-
-### 5. Lancer les services en production
+### 4. Premier lancement
 
 ```bash
 docker compose -p culturall-website \
@@ -145,6 +219,8 @@ docker compose -p culturall-website \
   --env-file .env.prod \
   up -d
 ```
+
+Traefik négocie automatiquement les certificats Let's Encrypt au premier accès HTTPS. Les déploiements suivants se font manuellement via : Actions → **Deploy to Production** → Run workflow.
 
 ## Tests de non-régression (TNR)
 
@@ -162,16 +238,20 @@ Les TNR tournent aussi automatiquement chaque nuit à 2h UTC via GitHub Actions.
 
 ```
 culturall-website/
-├── backend/                 # Django 5.1 / Wagtail 6.3
-│   ├── config/              #   Settings (base, dev, test, prod)
-│   ├── home/                #   HomePage + ContactSubmission
-│   ├── projects/            #   Projets culturels (snippets Wagtail)
-│   └── site_settings/       #   Paramètres globaux du site
-├── frontend/                # Next.js 14
-│   └── app/                 #   Pages : accueil, à propos, contact, login
-├── docker/                  # Dockerfiles (django, nextjs) + config nginx
-├── docker-compose.*.yml     # base + overrides (dev, test, preprod, prod)
-├── scripts/                 # tnr-docker.sh
-├── docs/                    # Documentation complémentaire
-└── .github/workflows/       # CI/CD GitHub Actions
+├── backend/                    # Django 5.1 / Wagtail 6.3
+│   ├── config/                 #   Settings (base, dev, test, prod)
+│   ├── home/                   #   HomePage + ContactSubmission
+│   ├── projects/               #   Projets culturels (snippets Wagtail)
+│   └── site_settings/          #   Paramètres globaux du site
+├── frontend/                   # Next.js 14
+│   └── app/                    #   Pages : accueil, à propos, contact, login
+├── docker/                     # Dockerfiles (django, nextjs) + config nginx (TNR)
+├── docker-compose.base.yml     # Services communs (django, nextjs, postgres, minio, nginx)
+├── docker-compose.dev.yml      # Override dev (hot-reload, ports exposés)
+├── docker-compose.test.yml     # Override TNR (éphémère, tmpfs)
+├── docker-compose.preprod.yml  # Override preprod (GHCR + Traefik externe)
+├── docker-compose.prod.yml     # Override prod (GHCR + Traefik embarqué)
+├── scripts/                    # tnr-docker.sh
+├── docs/                       # Documentation complémentaire
+└── .github/workflows/          # build-images / deploy-preprod / deploy-prod
 ```
