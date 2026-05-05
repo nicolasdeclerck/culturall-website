@@ -7,7 +7,7 @@ from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
-from blog.views import article_list
+from blog.views import article_detail, article_list
 from home.auth_views import auth_check, auth_login, auth_logout
 from home.views import contact_submit
 from network.views import network_member_list
@@ -25,8 +25,9 @@ def hello(request):
 
 
 urlpatterns = [
-    # HelloWorld root view — à remplacer par les pages Wagtail (voir plus bas)
-    # quand un HomePage aura été créé.
+    # HelloWorld root view — le backend est headless, le rendu HTML est fait
+    # par Next.js. Le catch-all Wagtail (plus bas) reste désactivé tant qu'on
+    # n'a pas câblé wagtail-headless-preview (#121).
     path("", hello),
 
     # API — Auth
@@ -46,10 +47,12 @@ urlpatterns = [
     path("api/projects/", project_list, name="project-list"),
     path("api/projects/featured/", project_featured, name="project-featured"),
     path("api/blog/articles/", article_list, name="article-list"),
+    path("api/blog/articles/<slug:slug>/", article_detail, name="article-detail"),
     path("api/pages/<slug:slug>/", static_page_detail, name="static-page-detail"),
 
-    # Catch-all Wagtail (page tree) — désactivé tant que la racine est `hello`.
-    # Décommente quand un HomePage existe et retire la route `hello` ci-dessus.
+    # Catch-all Wagtail (page tree) — désactivé : on est headless, Next.js
+    # gère le rendu. À activer quand on installera wagtail-headless-preview
+    # (#121) pour que la preview rédactionnelle puisse pointer ici.
     # path("", include(wagtail_urls)),
 ]
 

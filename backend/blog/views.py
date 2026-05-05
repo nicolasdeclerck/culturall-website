@@ -1,14 +1,43 @@
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.views.decorators.http import require_GET
 from wagtail.rich_text import expand_db_html
 
-from .models import Article
+from .models import ArticlePage
+
+
+def _serialize_article(request, article):
+    return {
+        "id": article.pk,
+        "slug": article.slug,
+        "title": article.title,
+        "summary": article.summary,
+        "content": expand_db_html(article.content) if article.content else "",
+        "illustration_url": (
+            request.build_absolute_uri(
+                article.illustration.get_rendition("fill-800x500").url
+            )
+            if article.illustration
+            else None
+        ),
+        "tags": [t.name for t in article.tags.all()],
+        "created_at": article.first_published_at.isoformat() if article.first_published_at else "",
+    }
+
+
+def _published_articles():
+    return (
+        ArticlePage.objects.live()
+        .public()
+        .prefetch_related("tags")
+        .select_related("illustration")
+        .order_by("-first_published_at")
+    )
 
 
 @require_GET
 def article_list(request):
-    """Return published articles as JSON, with optional limit and tag filters."""
-    articles = Article.objects.filter(live=True).prefetch_related("tags").select_related("illustration")
+    """Liste des articles publiés en JSON, avec filtres optionnels limit et tag."""
+    articles = _published_articles()
 
     tag = request.GET.get("tag")
     if tag:
@@ -23,22 +52,16 @@ def article_list(request):
         except (ValueError, TypeError):
             pass
 
-    data = [
-        {
-            "id": article.pk,
-            "title": article.title,
-            "summary": article.summary,
-            "content": expand_db_html(article.content) if article.content else "",
-            "illustration_url": (
-                request.build_absolute_uri(
-                    article.illustration.get_rendition("fill-800x500").url
-                )
-                if article.illustration
-                else None
-            ),
-            "tags": [t.name for t in article.tags.all()],
-            "created_at": article.created_at.isoformat(),
-        }
-        for article in articles
-    ]
+    data = [_serialize_article(request, article) for article in articles]
     return JsonResponse(data, safe=False)
+
+
+@require_GET
+def article_detail(request, slug):
+    """Détail d'un article publié, identifié par slug."""
+    try:
+        article = _published_articles().get(slug=slug)
+    except ArticlePage.DoesNotExist as exc:
+        raise Http404("Article introuvable") from exc
+
+    return JsonResponse(_serialize_article(request, article))
