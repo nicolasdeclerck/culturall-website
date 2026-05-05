@@ -58,7 +58,7 @@ def migrate_projects_to_pages(apps, schema_editor):
             slug=slug,
             description=project.description,
             youtube_url=project.youtube_url,
-            thumbnail=project.thumbnail,
+            thumbnail_id=project.thumbnail_id,
             year=project.year,
             video_duration=project.video_duration,
             credits=project.credits,
