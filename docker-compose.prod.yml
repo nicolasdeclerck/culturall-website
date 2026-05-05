@@ -29,6 +29,12 @@ services:
     image: ${REGISTRY}/django:${IMAGE_TAG:-latest}
     build: !reset null
     command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 4
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import socket; s=socket.create_connection(('localhost',8000),2); s.close()\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
     environment:
       # Forcé ici pour que gunicorn ET les `manage.py` exécutés via `docker
       # compose exec` (collectstatic, migrate) utilisent production.py. Sans
@@ -64,6 +70,12 @@ services:
     image: ${REGISTRY}/nextjs:${IMAGE_TAG:-latest}
     build: !reset null
     command: node server.js
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
     networks:
       - default
       - traefik
