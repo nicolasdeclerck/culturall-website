@@ -15,6 +15,8 @@
 #       https://culturall-website.nickorp.com/api     → django  (DRF API)
 #       https://culturall-website.nickorp.com/static  → django  (servi via whitenoise)
 #       https://culturall-website.nickorp.com/        → nextjs  (catch-all front)
+#       https://cultur-all.org/{admin,api,static}     → django  (domaine alternatif)
+#       https://cultur-all.org/                       → nextjs  (domaine alternatif)
 #       https://media.culturall-website.nickorp.com/  → minio   (médias S3-compatible)
 #
 # Placeholders à remplacer :
@@ -53,7 +55,7 @@ services:
       - "traefik.docker.network=n8n-traefik_default"
 
       # Routeur backend — admin/api/static (Django + Wagtail + whitenoise)
-      - "traefik.http.routers.culturall-website-back.rule=Host(`culturall-website.nickorp.com`) && (PathPrefix(`/admin`) || PathPrefix(`/api`) || PathPrefix(`/static`))"
+      - "traefik.http.routers.culturall-website-back.rule=(Host(`culturall-website.nickorp.com`) || Host(`cultur-all.org`)) && (PathPrefix(`/admin`) || PathPrefix(`/api`) || PathPrefix(`/static`))"
       - "traefik.http.routers.culturall-website-back.entrypoints=websecure"
       - "traefik.http.routers.culturall-website-back.tls=true"
       - "traefik.http.routers.culturall-website-back.tls.certresolver=myresolver"
@@ -61,7 +63,7 @@ services:
       - "traefik.http.services.culturall-website-back.loadbalancer.server.port=8000"
 
       # Redirect HTTP → HTTPS pour le backend
-      - "traefik.http.routers.culturall-website-back-http.rule=Host(`culturall-website.nickorp.com`) && (PathPrefix(`/admin`) || PathPrefix(`/api`) || PathPrefix(`/static`))"
+      - "traefik.http.routers.culturall-website-back-http.rule=(Host(`culturall-website.nickorp.com`) || Host(`cultur-all.org`)) && (PathPrefix(`/admin`) || PathPrefix(`/api`) || PathPrefix(`/static`))"
       - "traefik.http.routers.culturall-website-back-http.entrypoints=web"
       - "traefik.http.routers.culturall-website-back-http.middlewares=culturall-website-redirect-to-https"
     restart: always
@@ -84,7 +86,7 @@ services:
       - "traefik.docker.network=n8n-traefik_default"
 
       # Routeur frontend — catch-all (priorité plus basse que /admin /api /static)
-      - "traefik.http.routers.culturall-website-front.rule=Host(`culturall-website.nickorp.com`)"
+      - "traefik.http.routers.culturall-website-front.rule=Host(`culturall-website.nickorp.com`) || Host(`cultur-all.org`)"
       - "traefik.http.routers.culturall-website-front.entrypoints=websecure"
       - "traefik.http.routers.culturall-website-front.tls=true"
       - "traefik.http.routers.culturall-website-front.tls.certresolver=myresolver"
@@ -92,7 +94,7 @@ services:
       - "traefik.http.services.culturall-website-front.loadbalancer.server.port=3000"
 
       # Redirect HTTP → HTTPS pour le frontend
-      - "traefik.http.routers.culturall-website-front-http.rule=Host(`culturall-website.nickorp.com`)"
+      - "traefik.http.routers.culturall-website-front-http.rule=Host(`culturall-website.nickorp.com`) || Host(`cultur-all.org`)"
       - "traefik.http.routers.culturall-website-front-http.entrypoints=web"
       - "traefik.http.routers.culturall-website-front-http.middlewares=culturall-website-redirect-to-https"
 
