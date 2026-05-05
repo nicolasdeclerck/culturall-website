@@ -73,7 +73,7 @@ export default function ProjetsPage() {
           {filtered.map((project, i) => (
             <Link
               key={project.id}
-              href={`/projets/${project.id}`}
+              href={`/projets/${project.slug}`}
               className={`project-card${!project.thumbnail_url ? ' project-card--no-thumbnail' : ''}`}
               style={{ animationDelay: `${i * 0.04}s` }}
             >

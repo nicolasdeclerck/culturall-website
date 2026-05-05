@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 interface Project {
   id: number;
+  slug: string;
   title: string;
   tags: string[];
   thumbnail_url: string | null;
@@ -43,7 +44,7 @@ export default function ProjectsSection() {
         {projects.map((project) => (
           <Link
             key={project.id}
-            href={`/projets/${project.id}`}
+            href={`/projets/${project.slug}`}
             className={`projects-section__card${!project.thumbnail_url ? ' projects-section__card--no-thumbnail' : ''}`}
           >
             {project.thumbnail_url && (

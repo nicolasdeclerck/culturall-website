@@ -1,32 +1,46 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalKey
-from modelcluster.models import ClusterableModel
-from modelcluster.tags import ClusterTaggableManager
 from taggit.models import TaggedItemBase
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
 from wagtail.images import get_image_model_string
-from wagtail.snippets.models import register_snippet
+from wagtail.models import Page
 
 MAX_FEATURED_PROJECTS = 3
 
 
-class ProjectTag(TaggedItemBase):
+class ProjectPageTag(TaggedItemBase):
     content_object = ParentalKey(
-        "projects.Project",
+        "projects.ProjectPage",
         on_delete=models.CASCADE,
         related_name="tagged_items",
     )
 
 
-@register_snippet
-class Project(ClusterableModel):
-    title = models.CharField("Titre", max_length=255)
+class ProjectsIndexPage(Page):
+    """Page de listing des projets. Parent unique des ProjectPage."""
+
+    content_panels = Page.content_panels
+
+    parent_page_types = ["home.HomePage"]
+    subpage_types = ["projects.ProjectPage"]
+    max_count = 1
+
+    preview_modes = []
+
+    class Meta:
+        verbose_name = "Index des projets"
+
+
+class ProjectPage(Page):
+    """Projet publié dans l'arbre Wagtail."""
+
     description = RichTextField("Description", blank=True)
     youtube_url = models.URLField("Lien YouTube")
     tags = ClusterTaggableManager(
-        through=ProjectTag,
+        through=ProjectPageTag,
         blank=True,
         verbose_name="Tags",
     )
@@ -42,10 +56,8 @@ class Project(ClusterableModel):
     video_duration = models.CharField("Durée de la vidéo", max_length=50, blank=True)
     credits = RichTextField("Crédits", blank=True)
     featured = models.BooleanField("À la une", default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    panels = [
-        FieldPanel("title"),
+    content_panels = Page.content_panels + [
         FieldPanel("description"),
         FieldPanel("year"),
         FieldPanel("video_duration"),
@@ -56,18 +68,19 @@ class Project(ClusterableModel):
         FieldPanel("featured"),
     ]
 
+    parent_page_types = ["projects.ProjectsIndexPage"]
+    subpage_types = []
+
+    preview_modes = []
+
     class Meta:
-        ordering = ["-created_at"]
         verbose_name = "Projet"
         verbose_name_plural = "Projets"
-
-    def __str__(self):
-        return self.title
 
     def clean(self):
         super().clean()
         if self.featured:
-            qs = Project.objects.filter(featured=True)
+            qs = ProjectPage.objects.filter(featured=True)
             if self.pk:
                 qs = qs.exclude(pk=self.pk)
             if qs.count() >= MAX_FEATURED_PROJECTS:

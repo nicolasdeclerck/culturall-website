@@ -1,5 +1,6 @@
 export interface Project {
   id: number;
+  slug: string;
   title: string;
   description: string;
   youtube_url: string;

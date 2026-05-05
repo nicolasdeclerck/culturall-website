@@ -15,13 +15,13 @@ function extractYouTubeId(url: string): string | null {
 }
 
 export default function ProjectDetailPage() {
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ slug: string }>();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`${API_URL}/api/projects/`, {
+    fetch(`${API_URL}/api/projects/${params.slug}/`, {
       credentials: 'include',
       signal: controller.signal,
     })
@@ -29,18 +29,13 @@ export default function ProjectDetailPage() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then((data) => {
-        if (Array.isArray(data)) {
-          const match = data.find((p: Project) => String(p.id) === params.id) || null;
-          setProject(match);
-        }
-      })
+      .then((data) => setProject(data))
       .catch((err) => {
         if (err.name !== 'AbortError') setProject(null);
       })
       .finally(() => setLoading(false));
     return () => controller.abort();
-  }, [params.id]);
+  }, [params.slug]);
 
   if (loading) {
     return (
