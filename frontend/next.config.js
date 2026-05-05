@@ -16,6 +16,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: '*.nickorp.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'cultur-all.org',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.cultur-all.org',
+      },
     ],
   },
 };
