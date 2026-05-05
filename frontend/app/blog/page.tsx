@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import ArticleOverlay, { Article } from '../components/ArticleOverlay';
+import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { Article } from '../types/article';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 const EXCERPT_LENGTH = 500;
@@ -14,8 +15,6 @@ export default function BlogPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
-  const clearSelection = useCallback(() => setSelectedArticle(null), []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -83,11 +82,11 @@ export default function BlogPage() {
           {filtered.map((article, i) => {
             const text = excerpts.get(article.id) ?? '';
             return (
-              <button
+              <Link
                 key={article.id}
+                href={`/blog/${article.id}`}
                 className="blog-card"
                 style={{ animationDelay: `${i * 0.04}s` }}
-                onClick={() => setSelectedArticle(article)}
               >
                 {article.illustration_url && (
                   <img
@@ -103,13 +102,11 @@ export default function BlogPage() {
                     {text.length > EXCERPT_LENGTH ? '…' : ''}
                   </p>
                 </div>
-              </button>
+              </Link>
             );
           })}
         </div>
       )}
-
-      <ArticleOverlay article={selectedArticle} onClose={clearSelection} />
     </div>
   );
 }
