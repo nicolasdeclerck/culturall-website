@@ -58,7 +58,12 @@ def migrate_articles_to_pages(apps, schema_editor):
             slug=slug,
             summary=article.summary,
             content=article.content,
-            illustration=article.illustration,
+            # On passe l'ID, pas l'instance : `article.illustration` est une
+            # instance du modèle historique de wagtailimages.Image (récupéré
+            # via apps.get_model), incompatible avec le FK de ArticlePage qui
+            # attend le modèle runtime. Même table en base, classes Python
+            # distinctes.
+            illustration_id=article.illustration_id,
             live=article.live,
             has_unpublished_changes=article.has_unpublished_changes,
             first_published_at=article.first_published_at or article.created_at,
