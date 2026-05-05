@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useMemo, useState, useEffect } from 'react';
-import ProjectOverlay, { Project } from '../components/ProjectOverlay';
+import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { Project } from '../types/project';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -9,17 +10,6 @@ export default function ProjetsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const clearSelection = useCallback(() => {
-    setSelectedProject(null);
-    if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      if (url.searchParams.has('project')) {
-        url.searchParams.delete('project');
-        window.history.replaceState({}, '', url.pathname + url.search);
-      }
-    }
-  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -32,14 +22,7 @@ export default function ProjetsPage() {
         return res.json();
       })
       .then((data) => {
-        if (Array.isArray(data)) {
-          setProjects(data);
-          const requestedId = new URLSearchParams(window.location.search).get('project');
-          if (requestedId) {
-            const match = data.find((p: Project) => String(p.id) === requestedId);
-            if (match) setSelectedProject(match);
-          }
-        }
+        if (Array.isArray(data)) setProjects(data);
       })
       .catch((err) => {
         if (err.name !== 'AbortError') setProjects([]);
@@ -88,11 +71,11 @@ export default function ProjetsPage() {
       ) : (
         <div className="projets-grid" key={selectedTag ?? '__all__'}>
           {filtered.map((project, i) => (
-            <button
+            <Link
               key={project.id}
+              href={`/projets/${project.id}`}
               className={`project-card${!project.thumbnail_url ? ' project-card--no-thumbnail' : ''}`}
               style={{ animationDelay: `${i * 0.04}s` }}
-              onClick={() => setSelectedProject(project)}
             >
               {project.thumbnail_url && (
                 <>
@@ -108,12 +91,10 @@ export default function ProjetsPage() {
                 {project.tags[0] || ''}
               </span>
               <span className="project-card__title">{project.title}</span>
-            </button>
+            </Link>
           ))}
         </div>
       )}
-
-      <ProjectOverlay project={selectedProject} onClose={clearSelection} />
     </div>
   );
 }
