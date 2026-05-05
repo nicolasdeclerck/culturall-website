@@ -53,9 +53,14 @@ export default function ProjectDetailPage() {
   if (!project) {
     return (
       <div className="page projets-page">
-        <Link href="/projets" className="project-detail__back">← Retour aux projets</Link>
-        <h1>Projet introuvable</h1>
-        <p>Ce projet n&apos;existe pas ou a été retiré.</p>
+        <div className="project-detail-wrapper">
+          <Link href="/projets" className="project-detail__back">
+            <span className="project-detail__back-icon" aria-hidden="true">←</span>
+            <span>Projets</span>
+          </Link>
+          <h1>Projet introuvable</h1>
+          <p>Ce projet n&apos;existe pas ou a été retiré.</p>
+        </div>
       </div>
     );
   }
@@ -64,32 +69,24 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="page projets-page">
-      <Link href="/projets" className="project-detail__back">← Retour aux projets</Link>
-      <article className="project-detail">
+      <div className="project-detail-wrapper">
+        <Link href="/projets" className="project-detail__back">
+          <span className="project-detail__back-icon" aria-hidden="true">←</span>
+          <span>Projets</span>
+        </Link>
+        <article className="project-detail">
         <h1>{project.title}</h1>
-        {project.tags.length > 0 && (
-          <div className="content-overlay__tags">
+        {(project.tags.length > 0 || project.year || project.video_duration) && (
+          <div className="project-detail__byline">
             {project.tags.map((tag, i) => (
-              <span key={`${tag}-${i}`} className="content-overlay__tag">{tag}</span>
+              <span key={`tag-${i}`} className="project-detail__byline-item">{tag}</span>
             ))}
+            {project.year && <span className="project-detail__byline-item">{project.year}</span>}
+            {project.video_duration && (
+              <span className="project-detail__byline-item">{project.video_duration}</span>
+            )}
           </div>
         )}
-        {(project.year || project.video_duration) && (
-          <div className="content-overlay__meta">
-            {project.year && <span className="content-overlay__meta-item">Année {project.year}</span>}
-            {project.video_duration && <span className="content-overlay__meta-item">Durée {project.video_duration}</span>}
-          </div>
-        )}
-        {project.credits && (
-          <div
-            className="content-overlay__credits"
-            dangerouslySetInnerHTML={{ __html: project.credits }}
-          />
-        )}
-        <div
-          className="content-overlay__body"
-          dangerouslySetInnerHTML={{ __html: project.description }}
-        />
         {videoId && (
           <div className="project-detail__video">
             <iframe
@@ -102,7 +99,23 @@ export default function ProjectDetailPage() {
             />
           </div>
         )}
-      </article>
+        <div className="project-detail__content">
+          <div
+            className="content-overlay__body"
+            dangerouslySetInnerHTML={{ __html: project.description }}
+          />
+          {project.credits && (
+            <aside className="project-detail__credits">
+              <h2 className="project-detail__credits-heading">Crédits</h2>
+              <div
+                className="project-detail__credits-body"
+                dangerouslySetInnerHTML={{ __html: project.credits }}
+              />
+            </aside>
+          )}
+        </div>
+        </article>
+      </div>
     </div>
   );
 }
