@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "blog",
     "home",
     "network",
+    "pages",
     "projects",
     "site_settings",
 

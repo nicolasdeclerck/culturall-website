@@ -4,14 +4,41 @@ export const metadata: Metadata = {
   title: 'À propos',
 };
 
-export default function APropos() {
+const API_URL =
+  process.env.INTERNAL_API_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  '';
+
+const FALLBACK_TITLE = 'À propos';
+
+type StaticPage = {
+  slug: string;
+  title: string;
+  body: string;
+};
+
+async function fetchStaticPage(slug: string): Promise<StaticPage | null> {
+  if (!API_URL) return null;
+  try {
+    const res = await fetch(`${API_URL}/api/pages/${slug}/`, {
+      cache: 'no-store',
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as StaticPage;
+  } catch {
+    return null;
+  }
+}
+
+export default async function APropos() {
+  const page = await fetchStaticPage('a-propos');
+
   return (
     <main className="page">
-      <h1>À propos</h1>
-      <p>
-        Cultur&apos;all est un projet dédié à la promotion de la culture sous
-        toutes ses formes.
-      </p>
+      <h1>{page?.title ?? FALLBACK_TITLE}</h1>
+      {page?.body && (
+        <div dangerouslySetInnerHTML={{ __html: page.body }} />
+      )}
     </main>
   );
 }
