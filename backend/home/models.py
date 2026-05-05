@@ -1,14 +1,14 @@
 """
 Home app — point d'entrée Wagtail.
 
-Pour l'instant ne contient qu'un HomePage minimal. Quand tu seras prêt à
-basculer le routing racine sur Wagtail, lance :
+La `HomePage` est créée par la data migration `0003_seed_home_page` et sert
+de racine à l'arbre Wagtail (parent direct de `BlogIndexPage` et, à terme,
+des autres pages d'accueil de section). Le `Site` Wagtail par défaut pointe
+sur cette `HomePage`.
 
-    python manage.py makemigrations home
-    python manage.py migrate
-
-…puis crée une page HomePage via /admin/ et décommente la route catch-all
-dans config/urls.py.
+Le rendu HTML est fait par le frontend Next.js : le catch-all Wagtail reste
+désactivé dans `config/urls.py` tant que la preview headless (#121) n'est
+pas en place.
 """
 
 from functools import cached_property

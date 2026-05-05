@@ -1,31 +1,44 @@
 from django.db import models
+from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalKey
-from modelcluster.models import ClusterableModel
-from modelcluster.tags import ClusterTaggableManager
 from taggit.models import TaggedItemBase
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
 from wagtail.images import get_image_model_string
-from wagtail.models import DraftStateMixin, RevisionMixin
-from wagtail.snippets.models import register_snippet
+from wagtail.models import Page
 
 
-class ArticleTag(TaggedItemBase):
+class ArticlePageTag(TaggedItemBase):
     content_object = ParentalKey(
-        "blog.Article",
+        "blog.ArticlePage",
         on_delete=models.CASCADE,
         related_name="tagged_items",
     )
 
 
-@register_snippet
-class Article(DraftStateMixin, RevisionMixin, ClusterableModel):
-    title = models.CharField("Titre", max_length=255)
-    tags = ClusterTaggableManager(
-        through=ArticleTag,
-        blank=True,
-        verbose_name="Tags",
-    )
+class BlogIndexPage(Page):
+    """Page de listing du blog. Parent unique des ArticlePage."""
+
+    intro = RichTextField("Introduction", blank=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel("intro"),
+    ]
+
+    parent_page_types = ["home.HomePage"]
+    subpage_types = ["blog.ArticlePage"]
+    max_count = 1
+
+    # Pas de preview headless dans cette PR (voir #121)
+    preview_modes = []
+
+    class Meta:
+        verbose_name = "Index de blog"
+
+
+class ArticlePage(Page):
+    """Article de blog publié dans l'arbre Wagtail."""
+
     summary = models.TextField("Résumé", blank=True)
     content = RichTextField("Contenu")
     illustration = models.ForeignKey(
@@ -36,21 +49,25 @@ class Article(DraftStateMixin, RevisionMixin, ClusterableModel):
         related_name="+",
         verbose_name="Illustration",
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    tags = ClusterTaggableManager(
+        through=ArticlePageTag,
+        blank=True,
+        verbose_name="Tags",
+    )
 
-    panels = [
-        FieldPanel("title"),
-        FieldPanel("tags"),
+    content_panels = Page.content_panels + [
         FieldPanel("summary"),
         FieldPanel("content"),
         FieldPanel("illustration"),
+        FieldPanel("tags"),
     ]
 
+    parent_page_types = ["blog.BlogIndexPage"]
+    subpage_types = []
+
+    # Pas de preview headless dans cette PR (voir #121)
+    preview_modes = []
+
     class Meta:
-        ordering = ["-created_at"]
         verbose_name = "Article"
         verbose_name_plural = "Articles"
-
-    def __str__(self):
-        return self.title

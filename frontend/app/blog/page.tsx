@@ -84,7 +84,7 @@ export default function BlogPage() {
             return (
               <Link
                 key={article.id}
-                href={`/blog/${article.id}`}
+                href={`/blog/${article.slug}`}
                 className="blog-card"
                 style={{ animationDelay: `${i * 0.04}s` }}
               >

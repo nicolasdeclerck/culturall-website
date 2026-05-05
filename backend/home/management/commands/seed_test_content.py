@@ -15,10 +15,11 @@ import io
 from django.core.files.images import ImageFile
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.utils.text import slugify
 from PIL import Image as PILImage
 from wagtail.images import get_image_model
 
-from blog.models import Article
+from blog.models import ArticlePage, BlogIndexPage
 from network.models import NetworkMember
 from projects.models import Project
 
@@ -126,24 +127,46 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("Données de test chargées."))
 
     def _seed_articles(self) -> None:
+        blog_index = BlogIndexPage.objects.first()
+        if blog_index is None:
+            self.stdout.write(self.style.WARNING(
+                "Articles : BlogIndexPage introuvable, étape ignorée."
+            ))
+            return
+
+        existing_slugs = set(blog_index.get_children().values_list("slug", flat=True))
         created = 0
         for idx, data in enumerate(ARTICLES):
-            if Article.objects.filter(title=data["title"]).exists():
+            if ArticlePage.objects.descendant_of(blog_index).filter(title=data["title"]).exists():
                 continue
             illustration = _get_or_create_image(
                 f"Illustration – {data['title']}",
                 color=(90 + idx * 40, 120, 200 - idx * 30),
             )
-            article = Article.objects.create(
+            base_slug = slugify(data["title"]) or "article"
+            slug = base_slug
+            suffix = 2
+            while slug in existing_slugs:
+                slug = f"{base_slug}-{suffix}"
+                suffix += 1
+            existing_slugs.add(slug)
+
+            article = ArticlePage(
                 title=data["title"],
+                slug=slug,
                 summary=data["summary"],
                 content=data["content"],
                 illustration=illustration,
             )
+            blog_index.add_child(instance=article)
             article.tags.add(*data["tags"])
             article.save()
+            # save_revision().publish() pose first_published_at, qui sert de
+            # source de vérité pour l'ordre et le champ `created_at` exposé.
+            article.save_revision().publish()
             created += 1
-        self.stdout.write(f"Articles : {created} créé(s), {Article.objects.count()} au total.")
+        total = ArticlePage.objects.descendant_of(blog_index).count()
+        self.stdout.write(f"Articles : {created} créé(s), {total} au total.")
 
     def _seed_network_members(self) -> None:
         created = 0
