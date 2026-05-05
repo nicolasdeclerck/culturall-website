@@ -17,6 +17,7 @@
 #       https://culturall-website.nickorp.com/        → nextjs  (catch-all front)
 #       https://cultur-all.org/{admin,api,static}     → django  (domaine alternatif)
 #       https://cultur-all.org/                       → nextjs  (domaine alternatif)
+#       https://www.cultur-all.org/*                  → 301 redirect vers https://cultur-all.org/*
 #       https://media.culturall-website.nickorp.com/  → minio   (médias S3-compatible)
 #
 # Placeholders à remplacer :
@@ -101,6 +102,28 @@ services:
       # Middleware partagé : redirect to https
       - "traefik.http.middlewares.culturall-website-redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.middlewares.culturall-website-redirect-to-https.redirectscheme.permanent=true"
+
+      # Redirect 301 www.cultur-all.org → cultur-all.org (apex), HTTP comme HTTPS,
+      # en un seul saut. Permet aussi à Let's Encrypt d'émettre un cert couvrant
+      # le SAN www.cultur-all.org via les routeurs ci-dessous.
+      - "traefik.http.middlewares.culturall-website-www-to-apex.redirectregex.regex=^https?://www\\.cultur-all\\.org/(.*)"
+      - "traefik.http.middlewares.culturall-website-www-to-apex.redirectregex.replacement=https://cultur-all.org/$${1}"
+      - "traefik.http.middlewares.culturall-website-www-to-apex.redirectregex.permanent=true"
+
+      # Routeur HTTPS pour www — déclenche l'émission du cert Let's Encrypt
+      # (SAN www.cultur-all.org) puis redirige vers l'apex.
+      - "traefik.http.routers.culturall-website-www.rule=Host(`www.cultur-all.org`)"
+      - "traefik.http.routers.culturall-website-www.entrypoints=websecure"
+      - "traefik.http.routers.culturall-website-www.tls=true"
+      - "traefik.http.routers.culturall-website-www.tls.certresolver=myresolver"
+      - "traefik.http.routers.culturall-website-www.middlewares=culturall-website-www-to-apex"
+      - "traefik.http.routers.culturall-website-www.service=culturall-website-front"
+
+      # Routeur HTTP pour www — redirige directement vers https://cultur-all.org/
+      - "traefik.http.routers.culturall-website-www-http.rule=Host(`www.cultur-all.org`)"
+      - "traefik.http.routers.culturall-website-www-http.entrypoints=web"
+      - "traefik.http.routers.culturall-website-www-http.middlewares=culturall-website-www-to-apex"
+      - "traefik.http.routers.culturall-website-www-http.service=culturall-website-front"
     restart: always
 
   minio:
