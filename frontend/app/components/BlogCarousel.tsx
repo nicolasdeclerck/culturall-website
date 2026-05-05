@@ -2,13 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import ArticleOverlay, { Article } from './ArticleOverlay';
+import { Article } from '../types/article';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 export default function BlogCarousel() {
   const [articles, setArticles] = useState<Article[]>([]);
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -51,10 +50,10 @@ export default function BlogCarousel() {
         </button>
         <div className="blog-carousel" ref={scrollRef}>
           {articles.map((article) => (
-            <button
+            <Link
               key={article.id}
+              href={`/blog/${article.id}`}
               className="carousel-card"
-              onClick={() => setSelectedArticle(article)}
             >
               {article.illustration_url ? (
                 <img
@@ -66,7 +65,7 @@ export default function BlogCarousel() {
                 <div className="carousel-card__placeholder" />
               )}
               <span className="carousel-card__title">{article.title}</span>
-            </button>
+            </Link>
           ))}
         </div>
         <button
@@ -80,7 +79,6 @@ export default function BlogCarousel() {
       <Link href="/blog" className="blog-carousel-section__link">
         Voir tous les articles →
       </Link>
-      <ArticleOverlay article={selectedArticle} onClose={() => setSelectedArticle(null)} />
     </section>
   );
 }
