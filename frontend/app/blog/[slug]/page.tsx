@@ -8,32 +8,31 @@ import { Article } from '../../types/article';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 export default function ArticleDetailPage() {
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ slug: string }>();
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!params.slug) return;
     const controller = new AbortController();
-    fetch(`${API_URL}/api/blog/articles/`, {
+    fetch(`${API_URL}/api/blog/articles/${encodeURIComponent(params.slug)}/`, {
       credentials: 'include',
       signal: controller.signal,
     })
       .then((res) => {
+        if (res.status === 404) return null;
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
       .then((data) => {
-        if (Array.isArray(data)) {
-          const match = data.find((a: Article) => String(a.id) === params.id) || null;
-          setArticle(match);
-        }
+        setArticle(data ?? null);
       })
       .catch((err) => {
         if (err.name !== 'AbortError') setArticle(null);
       })
       .finally(() => setLoading(false));
     return () => controller.abort();
-  }, [params.id]);
+  }, [params.slug]);
 
   if (loading) {
     return (

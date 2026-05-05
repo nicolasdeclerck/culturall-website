@@ -52,7 +52,7 @@ export default function BlogCarousel() {
           {articles.map((article) => (
             <Link
               key={article.id}
-              href={`/blog/${article.id}`}
+              href={`/blog/${article.slug}`}
               className="carousel-card"
             >
               {article.illustration_url ? (
