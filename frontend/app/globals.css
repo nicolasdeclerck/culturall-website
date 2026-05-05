@@ -890,6 +890,32 @@ body {
   opacity: 1;
 }
 
+/* Preview banner */
+.preview-banner {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0.6rem 1rem;
+  background: #b45309;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.preview-banner__exit {
+  color: #fff;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.preview-banner__exit:hover {
+  opacity: 0.8;
+}
+
 /* Blog page */
 .blog-page {
   background: #111;
