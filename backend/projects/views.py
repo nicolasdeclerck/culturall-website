@@ -63,3 +63,27 @@ def project_detail(request, slug):
     except ProjectPage.DoesNotExist:
         raise Http404
     return JsonResponse(_serialize_project(request, project))
+
+
+@require_GET
+def project_preview_draft(request):
+    """Retourne les données brouillon d'un ProjectPage pour la preview headless.
+
+    Authentifié par token signé (créé par wagtail-headless-preview lors du clic Aperçu).
+    Le token fait office de credential — aucune session Django requise.
+    """
+    from django.core.signing import BadSignature
+
+    token = request.GET.get("token")
+    if not token:
+        raise Http404("Token manquant")
+
+    try:
+        page = ProjectPage.get_page_from_preview_token(token)
+    except BadSignature:
+        raise Http404("Token invalide")
+
+    if page is None:
+        raise Http404("Token introuvable ou expiré")
+
+    return JsonResponse(_serialize_project(request, page))

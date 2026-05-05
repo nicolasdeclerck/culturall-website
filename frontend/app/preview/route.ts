@@ -3,6 +3,18 @@ import { NextRequest, NextResponse } from 'next/server';
 const INTERNAL_API_URL =
   process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://django:8000';
 
+// Dispatch table : content_type → endpoint backend draft + préfixe de route frontend
+const PREVIEW_ROUTES: Record<string, { backendPath: string; frontendPrefix: string }> = {
+  'blog.articlepage': {
+    backendPath: '/api/preview/article/',
+    frontendPrefix: '/blog',
+  },
+  'projects.projectpage': {
+    backendPath: '/api/preview/project/',
+    frontendPrefix: '/projets',
+  },
+};
+
 /**
  * Reconstruit l'URL externe de la requête à partir des headers X-Forwarded-*
  * (posés par Traefik en prod). Sans ça, request.url retombe sur l'adresse
@@ -18,16 +30,22 @@ function getExternalBaseUrl(request: NextRequest): string {
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const token = searchParams.get('token');
+  const contentType = searchParams.get('content_type');
 
   if (!token) {
     return NextResponse.json({ error: 'Token manquant' }, { status: 400 });
   }
 
-  // Valide le token et récupère les données brouillon (dont le slug)
+  if (!contentType || !(contentType in PREVIEW_ROUTES)) {
+    return NextResponse.json({ error: 'content_type non supporté' }, { status: 400 });
+  }
+
+  const { backendPath, frontendPrefix } = PREVIEW_ROUTES[contentType];
+
   let res: Response;
   try {
     res = await fetch(
-      `${INTERNAL_API_URL}/api/preview/draft/?token=${encodeURIComponent(token)}`,
+      `${INTERNAL_API_URL}${backendPath}?token=${encodeURIComponent(token)}`,
       { cache: 'no-store' },
     );
   } catch {
@@ -41,10 +59,9 @@ export async function GET(request: NextRequest) {
   const data = await res.json();
   const slug: string = data.slug;
 
-  // Redirige vers la page article avec le token en query param
-  // Le token fait office de credential — la page client l'utilise pour fetcher le brouillon
-  const previewUrl = new URL(`/blog/${slug}`, getExternalBaseUrl(request));
+  const previewUrl = new URL(`${frontendPrefix}/${slug}`, getExternalBaseUrl(request));
   previewUrl.searchParams.set('preview_token', token);
+  previewUrl.searchParams.set('content_type', contentType);
 
   return NextResponse.redirect(previewUrl);
 }
