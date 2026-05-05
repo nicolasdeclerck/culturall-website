@@ -845,6 +845,7 @@ body {
   font-family: inherit;
   text-align: left;
   padding: 0;
+  text-decoration: none;
   transition: transform 0.3s ease;
 }
 
@@ -948,6 +949,7 @@ body {
   font-family: inherit;
   text-align: left;
   padding: 0;
+  text-decoration: none;
   transition: transform 0.3s ease, background 0.2s ease;
   animation: filterCardIn 0.35s ease both;
 }
