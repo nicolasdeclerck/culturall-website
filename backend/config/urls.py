@@ -12,7 +12,7 @@ from home.auth_views import auth_check, auth_login, auth_logout
 from home.views import contact_submit
 from network.views import network_member_list
 from pages.views import static_page_detail
-from projects.views import project_featured, project_list
+from projects.views import project_detail, project_featured, project_list
 
 
 def hello(request):
@@ -46,6 +46,7 @@ urlpatterns = [
     path("api/network/", network_member_list, name="network-member-list"),
     path("api/projects/", project_list, name="project-list"),
     path("api/projects/featured/", project_featured, name="project-featured"),
+    path("api/projects/<slug:slug>/", project_detail, name="project-detail"),
     path("api/blog/articles/", article_list, name="article-list"),
     path("api/blog/articles/<slug:slug>/", article_detail, name="article-detail"),
     path("api/pages/<slug:slug>/", static_page_detail, name="static-page-detail"),
