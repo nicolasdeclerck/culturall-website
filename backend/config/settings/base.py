@@ -121,7 +121,7 @@ WAGTAILDOCS_EXTENSIONS = ["csv", "docx", "key", "odt", "pdf", "pptx", "rtf", "tx
 _FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 WAGTAIL_HEADLESS_PREVIEW = {
     "CLIENT_URLS": {
-        "default": f"{_FRONTEND_URL}/api/preview",
+        "default": f"{_FRONTEND_URL}/preview",
     },
 }
 
