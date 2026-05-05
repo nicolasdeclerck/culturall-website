@@ -86,7 +86,7 @@ La production utilise des images Docker pré-buildées, poussées sur GHCR par l
 - Le réseau Docker externe `traefik_default` créé (`docker network create traefik_default`)
 - Les enregistrements DNS pointant vers le VPS :
   - `culturall-website.nickorp.com` (site)
-  - `media.culturall-website.nickorp.com` (médias MinIO)
+  - `media.cultur-all.org` (médias MinIO)
 
 ### 1. Cloner le dépôt sur le VPS
 
@@ -109,7 +109,7 @@ DEBUG=False
 ALLOWED_HOSTS=culturall-website.nickorp.com
 CSRF_TRUSTED_ORIGINS=https://culturall-website.nickorp.com
 MINIO_ROOT_PASSWORD=<mot de passe fort>
-MINIO_PUBLIC_URL=https://media.culturall-website.nickorp.com
+MINIO_PUBLIC_URL=https://media.cultur-all.org
 NEXT_PUBLIC_API_URL=https://culturall-website.nickorp.com
 NODE_ENV=production
 REGISTRY=ghcr.io/nicolasdeclerck/culturall-website

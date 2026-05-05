@@ -11,7 +11,7 @@
   attaché à un network Docker externe partagé (par défaut `traefik_default`).
   Les services `django`, `nextjs` et `minio` s'enregistrent auprès de Traefik
   via des labels — pas de nginx ni de certbot dans le compose de prod.
-- **DNS** : `culturall-website.nickorp.com` et `media.culturall-website.nickorp.com` doivent pointer vers l'IP du VPS
+- **DNS** : `culturall-website.nickorp.com`, `cultur-all.org`, `www.cultur-all.org` et `media.cultur-all.org` doivent pointer vers l'IP du VPS
   (records A ou AAAA) avant le premier déploiement, pour que Let's Encrypt
   puisse émettre les certificats.
 - **Clone du repo sur le VPS** : le dépôt doit être cloné à `~/n8n-traefik/repos/culturall-website`
