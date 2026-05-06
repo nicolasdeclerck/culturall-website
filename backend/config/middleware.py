@@ -13,6 +13,10 @@ class LoginRequiredMiddleware:
     - /admin/        → Wagtail admin (has its own auth)
     - /django-admin/ → Django admin (has its own auth)
     - /api/auth/     → Auth endpoints (must be accessible to log in)
+    - /api/pages/    → Pages statiques publiques (À propos, Mentions légales).
+                      Lues en SSR par Next.js sans cookies de session — un
+                      blocage ici renvoie une page vide aux utilisateurs
+                      authentifiés.
     - /static/       → Static files
     - /media/        → Media files
     """
@@ -21,6 +25,7 @@ class LoginRequiredMiddleware:
         "/admin/",
         "/django-admin/",
         "/api/auth/",
+        "/api/pages/",
         "/api/preview/",
         "/documents/",
         "/static/",
