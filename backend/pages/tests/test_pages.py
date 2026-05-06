@@ -4,7 +4,7 @@ import pytest
 from django.http import Http404
 from django.test import RequestFactory
 
-from pages.models import StaticPage
+from pages.models import StaticContentPage
 from pages.views import static_page_detail
 
 pytestmark = pytest.mark.django_db
@@ -32,16 +32,15 @@ class TestStaticPageDetailEndpoint:
             static_page_detail(request, slug="inexistante")
 
     def test_returns_404_when_page_unpublished(self, rf):
-        page = StaticPage.objects.get(slug="a-propos")
+        page = StaticContentPage.objects.get(slug="a-propos")
         page.unpublish()
-        page.save()
 
         request = rf.get("/api/pages/a-propos/")
         with pytest.raises(Http404):
             static_page_detail(request, slug="a-propos")
 
     def test_empty_body_returns_empty_string(self, rf):
-        page = StaticPage.objects.get(slug="a-propos")
+        page = StaticContentPage.objects.get(slug="a-propos")
         page.body = ""
         page.save()
 
@@ -57,7 +56,7 @@ class TestStaticPageDetailEndpoint:
         assert response.status_code == 405
 
     def test_body_is_rendered_html(self, rf):
-        page = StaticPage.objects.get(slug="mentions-legales")
+        page = StaticContentPage.objects.get(slug="mentions-legales")
         page.body = "<p>Hello <strong>world</strong></p>"
         page.save()
 
@@ -71,10 +70,19 @@ class TestSeedDataMigration:
     """Verify the data migration created the two expected pages."""
 
     def test_seeded_pages_exist(self):
-        assert StaticPage.objects.filter(slug="mentions-legales").exists()
-        assert StaticPage.objects.filter(slug="a-propos").exists()
+        assert StaticContentPage.objects.filter(slug="mentions-legales").exists()
+        assert StaticContentPage.objects.filter(slug="a-propos").exists()
 
     def test_seeded_pages_are_live(self):
         for slug in ("mentions-legales", "a-propos"):
-            page = StaticPage.objects.get(slug=slug)
+            page = StaticContentPage.objects.get(slug=slug)
             assert page.live is True
+
+    def test_seeded_pages_are_children_of_home(self):
+        from home.models import HomePage
+
+        home = HomePage.objects.first()
+        assert home is not None
+        for slug in ("mentions-legales", "a-propos"):
+            page = StaticContentPage.objects.get(slug=slug)
+            assert page.get_parent().specific == home
