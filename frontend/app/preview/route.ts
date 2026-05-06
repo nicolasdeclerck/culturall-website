@@ -3,15 +3,19 @@ import { NextRequest, NextResponse } from 'next/server';
 const INTERNAL_API_URL =
   process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://django:8000';
 
-// Dispatch table : content_type → endpoint backend draft + préfixe de route frontend
-const PREVIEW_ROUTES: Record<string, { backendPath: string; frontendPrefix: string }> = {
+// Dispatch table : content_type → endpoint backend draft + builder de chemin frontend
+const PREVIEW_ROUTES: Record<string, { backendPath: string; buildPath: (slug: string) => string }> = {
   'blog.articlepage': {
     backendPath: '/api/preview/article/',
-    frontendPrefix: '/blog',
+    buildPath: (slug) => `/blog/${slug}`,
   },
   'projects.projectpage': {
     backendPath: '/api/preview/project/',
-    frontendPrefix: '/projets',
+    buildPath: (slug) => `/projets/${slug}`,
+  },
+  'pages.staticcontentpage': {
+    backendPath: '/api/preview/page/',
+    buildPath: (slug) => `/${slug}`,
   },
 };
 
@@ -40,7 +44,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'content_type non supporté' }, { status: 400 });
   }
 
-  const { backendPath, frontendPrefix } = PREVIEW_ROUTES[contentType];
+  const { backendPath, buildPath } = PREVIEW_ROUTES[contentType];
 
   let res: Response;
   try {
@@ -59,7 +63,7 @@ export async function GET(request: NextRequest) {
   const data = await res.json();
   const slug: string = data.slug;
 
-  const previewUrl = new URL(`${frontendPrefix}/${slug}`, getExternalBaseUrl(request));
+  const previewUrl = new URL(buildPath(slug), getExternalBaseUrl(request));
   previewUrl.searchParams.set('preview_token', token);
   previewUrl.searchParams.set('content_type', contentType);
 

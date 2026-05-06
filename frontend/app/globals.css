@@ -485,7 +485,8 @@ body {
 
 /* Project / article detail page (shared) */
 .project-detail-wrapper,
-.article-detail-wrapper {
+.article-detail-wrapper,
+.static-page-wrapper {
   max-width: 880px;
   margin: 0 auto;
 }
