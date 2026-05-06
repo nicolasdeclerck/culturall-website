@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { Project } from '../../types/project';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
@@ -16,26 +16,36 @@ function extractYouTubeId(url: string): string | null {
 
 export default function ProjectDetailPage() {
   const params = useParams<{ slug: string }>();
+  const searchParams = useSearchParams();
+  const previewToken = searchParams.get('preview_token');
+
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!params.slug) return;
     const controller = new AbortController();
-    fetch(`${API_URL}/api/projects/${params.slug}/`, {
+
+    const url = previewToken
+      ? `${API_URL}/api/preview/project/?token=${encodeURIComponent(previewToken)}`
+      : `${API_URL}/api/projects/${encodeURIComponent(params.slug)}/`;
+
+    fetch(url, {
       credentials: 'include',
       signal: controller.signal,
     })
       .then((res) => {
+        if (res.status === 404) return null;
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then((data) => setProject(data))
+      .then((data) => setProject(data ?? null))
       .catch((err) => {
         if (err.name !== 'AbortError') setProject(null);
       })
       .finally(() => setLoading(false));
     return () => controller.abort();
-  }, [params.slug]);
+  }, [params.slug, previewToken]);
 
   if (loading) {
     return (
@@ -64,6 +74,14 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="page projets-page">
+      {previewToken && (
+        <div className="preview-banner" role="status">
+          <span>Mode aperçu — ce contenu n&apos;est pas encore publié</span>
+          <Link href={`/projets/${params.slug}`} className="preview-banner__exit">
+            Quitter l&apos;aperçu
+          </Link>
+        </div>
+      )}
       <div className="project-detail-wrapper">
         <Link href="/projets" className="project-detail__back">
           <span className="project-detail__back-icon" aria-hidden="true">←</span>

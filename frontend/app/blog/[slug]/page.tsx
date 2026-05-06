@@ -20,7 +20,7 @@ export default function ArticleDetailPage() {
     const controller = new AbortController();
 
     const url = previewToken
-      ? `${API_URL}/api/preview/draft/?token=${encodeURIComponent(previewToken)}`
+      ? `${API_URL}/api/preview/article/?token=${encodeURIComponent(previewToken)}`
       : `${API_URL}/api/blog/articles/${encodeURIComponent(params.slug)}/`;
 
     fetch(url, {

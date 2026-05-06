@@ -7,6 +7,7 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
 from wagtail.images import get_image_model_string
 from wagtail.models import Page
+from wagtail_headless_preview.models import HeadlessPreviewMixin
 
 MAX_FEATURED_PROJECTS = 3
 
@@ -34,7 +35,7 @@ class ProjectsIndexPage(Page):
         verbose_name = "Index des projets"
 
 
-class ProjectPage(Page):
+class ProjectPage(HeadlessPreviewMixin, Page):
     """Projet publié dans l'arbre Wagtail."""
 
     description = RichTextField("Description", blank=True)
@@ -70,8 +71,6 @@ class ProjectPage(Page):
 
     parent_page_types = ["projects.ProjectsIndexPage"]
     subpage_types = []
-
-    preview_modes = []
 
     class Meta:
         verbose_name = "Projet"
