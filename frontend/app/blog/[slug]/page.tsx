@@ -14,6 +14,7 @@ export default function ArticleDetailPage() {
 
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (!params.slug) return;
@@ -41,6 +42,18 @@ export default function ArticleDetailPage() {
       .finally(() => setLoading(false));
     return () => controller.abort();
   }, [params.slug, previewToken]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch(`${API_URL}/api/auth/check/`, {
+      credentials: 'include',
+      signal: controller.signal,
+    })
+      .then((res) => res.json())
+      .then((data) => setIsAdmin(Boolean(data.is_admin)))
+      .catch(() => setIsAdmin(false));
+    return () => controller.abort();
+  }, []);
 
   if (loading) {
     return (
@@ -76,10 +89,20 @@ export default function ArticleDetailPage() {
         </div>
       )}
       <div className="article-detail-wrapper">
-        <Link href="/blog" className="article-detail__back">
-          <span className="article-detail__back-icon" aria-hidden="true">←</span>
-          <span>Blog</span>
-        </Link>
+        <div className="article-detail__actions">
+          <Link href="/blog" className="article-detail__back">
+            <span className="article-detail__back-icon" aria-hidden="true">←</span>
+            <span>Blog</span>
+          </Link>
+          {isAdmin && (
+            <a
+              href={`/admin/pages/${article.id}/edit/`}
+              className="article-detail__edit"
+            >
+              Modifier
+            </a>
+          )}
+        </div>
         <article className="article-detail">
           <h1>{article.title}</h1>
           {article.tags.length > 0 && (

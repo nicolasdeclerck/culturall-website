@@ -21,6 +21,7 @@ export default function ProjectDetailPage() {
 
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (!params.slug) return;
@@ -46,6 +47,18 @@ export default function ProjectDetailPage() {
       .finally(() => setLoading(false));
     return () => controller.abort();
   }, [params.slug, previewToken]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch(`${API_URL}/api/auth/check/`, {
+      credentials: 'include',
+      signal: controller.signal,
+    })
+      .then((res) => res.json())
+      .then((data) => setIsAdmin(Boolean(data.is_admin)))
+      .catch(() => setIsAdmin(false));
+    return () => controller.abort();
+  }, []);
 
   if (loading) {
     return (
@@ -83,10 +96,20 @@ export default function ProjectDetailPage() {
         </div>
       )}
       <div className="project-detail-wrapper">
-        <Link href="/projets" className="project-detail__back">
-          <span className="project-detail__back-icon" aria-hidden="true">←</span>
-          <span>Projets</span>
-        </Link>
+        <div className="project-detail__actions">
+          <Link href="/projets" className="project-detail__back">
+            <span className="project-detail__back-icon" aria-hidden="true">←</span>
+            <span>Projets</span>
+          </Link>
+          {isAdmin && (
+            <a
+              href={`/admin/pages/${project.id}/edit/`}
+              className="project-detail__edit"
+            >
+              Modifier
+            </a>
+          )}
+        </div>
         <article className="project-detail">
         <h1>{project.title}</h1>
         {(project.tags.length > 0 || project.year || project.video_duration) && (

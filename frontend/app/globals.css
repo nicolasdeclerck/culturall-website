@@ -81,6 +81,10 @@ body {
   opacity: 0.8;
 }
 
+.header-nav a.header-nav__admin {
+  color: #facc15;
+}
+
 /* Hamburger button — hidden on desktop, visible on mobile */
 .header-burger {
   display: none;
@@ -533,6 +537,38 @@ body {
 .project-detail__back:hover .project-detail__back-icon,
 .article-detail__back:hover .article-detail__back-icon {
   transform: translateX(-3px);
+}
+
+.project-detail__actions,
+.article-detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.project-detail__edit,
+.article-detail__edit {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: #facc15;
+  border: 1px solid #facc15;
+  border-radius: 2rem;
+  color: #000;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.project-detail__edit:hover,
+.article-detail__edit:hover {
+  background: #fde047;
+  border-color: #fde047;
 }
 
 .project-detail__byline,

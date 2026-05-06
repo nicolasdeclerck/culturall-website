@@ -11,6 +11,7 @@ const SCROLL_THRESHOLD = 50;
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const pathname = usePathname();
@@ -36,10 +37,12 @@ export default function Header() {
       .then((res) => res.json())
       .then((data) => {
         setAuthenticated(data.authenticated);
+        setIsAdmin(Boolean(data.is_admin));
         setLogoUrl(data.logo_url ?? null);
       })
       .catch(() => {
         setAuthenticated(false);
+        setIsAdmin(false);
         setLogoUrl(null);
       });
   }, [pathname]);
@@ -63,6 +66,7 @@ export default function Header() {
       credentials: 'include',
     });
     setAuthenticated(false);
+    setIsAdmin(false);
     router.push('/login');
     router.refresh();
   }
@@ -99,6 +103,15 @@ export default function Header() {
         <Link href="/blog" onClick={() => setMenuOpen(false)}>Blog</Link>
         <Link href="/a-propos" onClick={() => setMenuOpen(false)}>À propos</Link>
         <Link href="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
+        {isAdmin && (
+          <a
+            href="/admin/"
+            className="header-nav__admin"
+            onClick={() => setMenuOpen(false)}
+          >
+            Administration
+          </a>
+        )}
         {authenticated && (
           <button className="header-nav__link" onClick={handleLogout}>
             Déconnexion
