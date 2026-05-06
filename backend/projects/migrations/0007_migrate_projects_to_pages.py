@@ -16,6 +16,14 @@ from django.utils.text import slugify
 
 
 def migrate_projects_to_pages(apps, schema_editor):
+    # Idempotence : si la table source a déjà été droppée par la migration
+    # successeur (0008), on no-op pour éviter un crash quand la chaîne est
+    # rejouée sur une DB déjà avancée (ex : `migrate --fake` puis `migrate`
+    # depuis zéro après un reset, ou cascade après InconsistentMigrationHistory).
+    from django.db import connection
+    if "projects_project" not in connection.introspection.table_names():
+        return
+
     Project = apps.get_model("projects", "Project")
     ProjectTag = apps.get_model("projects", "ProjectTag")
 

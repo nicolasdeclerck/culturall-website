@@ -7,6 +7,28 @@ name: Deploy to Production
 # d'autres apps via le network défini par traefik_default). Les services
 # django, nextjs et minio s'enregistrent auprès de Traefik via labels.
 #
+# Ordre de déploiement (durci suite à l'incident du 2026-05-06) :
+#   1. git pull + docker login
+#   2. compose pull django nextjs (récupère les nouvelles images)
+#   3. compose up -d postgres minio (deps DB + storage seules, sans toucher
+#      django/nextjs encore — les conteneurs courants continuent de servir)
+#   4. Gate fail-fast sur l'historique des migrations via `showmigrations`
+#      (plante avec InconsistentMigrationHistory sans muter la DB ; lancé
+#      via `compose run --rm` sur la NOUVELLE image Django)
+#   5. Apply migrations (`migrate --noinput`) via `compose run --rm`
+#   6. collectstatic via `compose run --rm` AVANT de démarrer le nouveau
+#      gunicorn — sans ça gunicorn cache l'ancien manifest staticfiles.json
+#      en RAM et sert un HTML pointant vers des hashes ensuite régénérés,
+#      ce qui casse l'admin Wagtail (500 sur tous les assets).
+#   7. compose up -d --force-recreate django nextjs (swap final, gunicorn
+#      démarre avec le manifest à jour)
+#   8. update_index (best-effort) + prune images
+#
+# Note volumes : `compose run --rm django` hérite par défaut des volumes
+# du service `django` (static_files:/app/staticfiles, media_files:/app/media),
+# donc les `migrate` / `collectstatic` lancés via `run` écrivent dans les
+# mêmes volumes que ceux montés par `up -d`.
+#
 # Déclenchements :
 #   - Manuel via UI ou `gh workflow run`
 #   - Automatique : depuis build-images.yml (workflow_dispatch avec image_tag)
@@ -58,18 +80,38 @@ jobs:
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io \
               -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
-            echo "==> Pulling pre-built images..."
+            echo "==> Pulling pre-built images (django, nextjs)..."
             $COMPOSE_CMD pull django nextjs
 
-            echo "==> Restarting services with new images..."
-            # nginx est désactivé en prod (Traefik fait le reverse proxy)
-            $COMPOSE_CMD up -d --force-recreate --no-build django nextjs minio postgres
+            echo "==> Starting deps only (postgres, minio)..."
+            # On démarre/maintient uniquement les deps. django et nextjs
+            # courants continuent de servir le trafic pendant le gate
+            # migrations. Le swap final se fait à l'étape 7.
+            $COMPOSE_CMD up -d postgres minio
+
+            echo "==> Gate : checking migration history consistency..."
+            # `showmigrations` lit django_migrations + le graphe et lève
+            # InconsistentMigrationHistory si une migration appliquée a
+            # une dépendance non appliquée (cas de l'incident 2026-05-06).
+            # Lancé via `run --rm` sur la NOUVELLE image (donc avec le
+            # nouveau code Wagtail/apps) sans rien muter en DB. Si ce
+            # check passe, on peut faire confiance au plan migrate ensuite.
+            $COMPOSE_CMD run --rm django python manage.py showmigrations
 
             echo "==> Running Django/Wagtail migrations..."
-            $COMPOSE_CMD exec -T django python manage.py migrate --noinput
+            $COMPOSE_CMD run --rm django python manage.py migrate --noinput
 
-            echo "==> Collecting static files..."
-            $COMPOSE_CMD exec -T django python manage.py collectstatic --noinput
+            echo "==> Collecting static files (BEFORE recreating django)..."
+            # Doit tourner AVANT `up -d --force-recreate django` : gunicorn
+            # cache staticfiles.json en RAM au démarrage, donc régénérer
+            # le manifest après le start sert un HTML pointant vers d'anciens
+            # hashes (admin Wagtail 500 sur tous ses assets).
+            $COMPOSE_CMD run --rm django python manage.py collectstatic --noinput
+
+            echo "==> Recreating django + nextjs with new images..."
+            # nginx est désactivé en prod (Traefik fait le reverse proxy).
+            # postgres et minio ont déjà été démarrés à l'étape 3.
+            $COMPOSE_CMD up -d --force-recreate --no-build django nextjs
 
             echo "==> Updating Wagtail search index..."
             $COMPOSE_CMD exec -T django python manage.py update_index || true
