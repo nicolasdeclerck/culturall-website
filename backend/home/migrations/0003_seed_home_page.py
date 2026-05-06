@@ -72,6 +72,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ("home", "0002_contactsubmission"),
         ("wagtailcore", "0094_alter_page_locale"),
+        ("wagtailsearch", "0010_add_text_fields"),
     ]
 
     operations = [
