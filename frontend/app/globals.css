@@ -139,7 +139,6 @@ body {
 
 .page p {
   font-size: 1.125rem;
-  max-width: 640px;
   opacity: 0.85;
   line-height: 1.7;
 }
