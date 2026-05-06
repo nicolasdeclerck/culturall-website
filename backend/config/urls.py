@@ -11,7 +11,7 @@ from blog.views import article_detail, article_list, article_preview_draft
 from home.auth_views import auth_check, auth_login, auth_logout
 from home.views import contact_submit
 from network.views import network_member_list
-from pages.views import static_page_detail
+from pages.views import static_page_detail, static_page_preview_draft
 from projects.views import project_detail, project_featured, project_list, project_preview_draft
 
 
@@ -51,6 +51,7 @@ urlpatterns = [
     path("api/blog/articles/<slug:slug>/", article_detail, name="article-detail"),
     path("api/preview/article/", article_preview_draft, name="article-preview-draft"),
     path("api/preview/project/", project_preview_draft, name="project-preview-draft"),
+    path("api/preview/page/", static_page_preview_draft, name="static-page-preview-draft"),
     path("api/pages/<slug:slug>/", static_page_detail, name="static-page-detail"),
 
     # Catch-all Wagtail (page tree) — désactivé : on est headless, Next.js
