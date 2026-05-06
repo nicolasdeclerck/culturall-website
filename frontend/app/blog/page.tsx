@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Article } from '../types/article';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
-const EXCERPT_LENGTH = 500;
+const EXCERPT_LENGTH = 200;
 
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, '');
