@@ -20,6 +20,7 @@ def auth_check(request):
 
     return JsonResponse({
         "authenticated": request.user.is_authenticated,
+        "is_admin": request.user.is_staff,
         "require_authentication": settings.require_authentication,
         "logo_url": logo_url,
     })

@@ -14,13 +14,24 @@ class TestAuthCheck:
         assert resp.status_code == 200
         data = resp.json()
         assert data["authenticated"] is False
+        assert data["is_admin"] is False
         assert "require_authentication" in data
 
     def test_authenticated_user(self, client: Client, user, site_settings):
         client.force_login(user)
         resp = client.get(self.url)
         assert resp.status_code == 200
-        assert resp.json()["authenticated"] is True
+        data = resp.json()
+        assert data["authenticated"] is True
+        assert data["is_admin"] is False
+
+    def test_staff_user_is_admin(self, client: Client, user, site_settings):
+        user.is_staff = True
+        user.save()
+        client.force_login(user)
+        resp = client.get(self.url)
+        assert resp.status_code == 200
+        assert resp.json()["is_admin"] is True
 
     def test_reflects_site_setting(self, client: Client, site_settings):
         site_settings.require_authentication = False
