@@ -354,6 +354,12 @@ body {
   gap: 1.5rem;
 }
 
+.projets-page__load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
 /* Tag filters */
 .projects-filters {
   display: flex;
