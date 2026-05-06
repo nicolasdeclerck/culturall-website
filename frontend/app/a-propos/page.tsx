@@ -4,6 +4,8 @@ export const metadata: Metadata = {
   title: 'À propos',
 };
 
+export const dynamic = 'force-dynamic';
+
 const API_URL =
   process.env.INTERNAL_API_URL ||
   process.env.NEXT_PUBLIC_API_URL ||
