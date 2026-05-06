@@ -33,6 +33,8 @@ class TestLoginRequiredMiddleware:
         "/django-admin/",
         "/api/auth/check/",
         "/api/auth/login/",
+        "/api/pages/a-propos/",
+        "/api/pages/mentions-legales/",
         "/static/test.css",
         "/media/test.jpg",
     ])
