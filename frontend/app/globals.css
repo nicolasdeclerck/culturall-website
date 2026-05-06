@@ -963,15 +963,19 @@ body {
 }
 
 .blog-masonry {
-  columns: 3 300px;
-  column-gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 1.5rem;
+  /* Cap at 5 cards per row: 5 * 350px + 4 * 1.5rem gap */
+  max-width: calc(5 * 350px + 4 * 1.5rem);
+  margin-inline: auto;
 }
 
 .blog-card {
   display: block;
   width: 100%;
-  break-inside: avoid;
-  margin-bottom: 1.5rem;
+  max-width: 350px;
+  justify-self: center;
   background: rgba(255, 255, 255, 0.05);
   border: none;
   border-radius: 0.5rem;
@@ -1154,11 +1158,6 @@ body {
 
   .carousel-card {
     flex: 0 0 180px;
-  }
-
-  /* Blog page mobile */
-  .blog-masonry {
-    columns: 1;
   }
 
   .site-footer__content {
