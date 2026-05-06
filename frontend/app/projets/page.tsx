@@ -5,11 +5,13 @@ import Link from 'next/link';
 import { Project } from '../types/project';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+const PAGE_SIZE = 20;
 
 export default function ProjetsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -39,6 +41,12 @@ export default function ProjetsPage() {
     () => selectedTag ? projects.filter((p) => p.tags.includes(selectedTag)) : projects,
     [projects, selectedTag],
   );
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = filtered.length > visibleCount;
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [selectedTag]);
 
   return (
     <div className="page projets-page">
@@ -69,8 +77,9 @@ export default function ProjetsPage() {
       ) : filtered.length === 0 ? (
         <p className="projets-page__message">Aucun projet pour le moment.</p>
       ) : (
+        <>
         <div className="projets-grid" key={selectedTag ?? '__all__'}>
-          {filtered.map((project, i) => (
+          {visible.map((project, i) => (
             <Link
               key={project.id}
               href={`/projets/${project.slug}`}
@@ -94,6 +103,18 @@ export default function ProjetsPage() {
             </Link>
           ))}
         </div>
+        {hasMore && (
+          <div className="projets-page__load-more">
+            <button
+              type="button"
+              className="projects-filters__btn"
+              onClick={() => setVisibleCount((n) => n + PAGE_SIZE)}
+            >
+              Afficher plus
+            </button>
+          </div>
+        )}
+        </>
       )}
     </div>
   );
