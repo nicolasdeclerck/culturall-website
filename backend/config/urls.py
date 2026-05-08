@@ -11,7 +11,7 @@ from blog.views import article_detail, article_list, article_preview_draft
 from home.auth_views import auth_check, auth_login, auth_logout
 from home.views import contact_submit
 from network.views import network_member_list
-from pages.views import static_page_detail, static_page_preview_draft
+from pages.views import static_page_detail, static_page_html, static_page_preview_draft
 from projects.views import project_detail, project_featured, project_list, project_preview_draft
 
 
@@ -37,6 +37,11 @@ urlpatterns = [
 
     # API
     path("api/contact/", contact_submit, name="contact-submit"),
+
+    # POC HTMX — rendu serveur Django/Wagtail pour la page À propos.
+    # Cf. docs/poc-htmx-a-propos.md. Ne remplace pas la route Next.js, vit
+    # à côté sur le port Django (8000) pour comparaison directe.
+    path("a-propos/", static_page_html, {"slug": "a-propos"}, name="static-page-html"),
 
     path("django-admin/", admin.site.urls),
     path("admin/", include(wagtailadmin_urls)),
