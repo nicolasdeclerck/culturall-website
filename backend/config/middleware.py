@@ -30,6 +30,9 @@ class LoginRequiredMiddleware:
         "/documents/",
         "/static/",
         "/media/",
+        # POC HTMX (cf. docs/poc-htmx-a-propos.md) : la page À propos
+        # rendue côté serveur reste publique, comme son équivalent API.
+        "/a-propos/",
     )
 
     def __init__(self, get_response):

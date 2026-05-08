@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block title %}{{ page.title }} — Cultur'all{% endblock %}
+
+{% block content %}
+<main class="page">
+  <div class="static-page-wrapper">
+    <h1>{{ page.title }}</h1>
+    {% if page.body %}
+      <div>{{ page.body|richtext }}</div>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}
