@@ -61,6 +61,17 @@ jobs:
             echo "==> Pulling pre-built images..."
             $COMPOSE_CMD pull django
 
+            # Collecte des statics AVANT de (re)démarrer le conteneur applicatif.
+            # WhiteNoise (CompressedManifestStaticFilesStorage) lit le manifest
+            # staticfiles.json et indexe STATIC_ROOT au démarrage du process.
+            # Comme /app/staticfiles est un volume persistant, lancer
+            # collectstatic APRÈS le démarrage faisait servir le manifest du
+            # déploiement précédent (CSS/JS périmés) jusqu'au prochain redémarrage.
+            # On collecte donc dans le volume via un conteneur jetable (nouvelle
+            # image), puis on (re)crée le service qui démarre sur un manifest frais.
+            echo "==> Collecting static files (avant démarrage)..."
+            $COMPOSE_CMD run --rm --no-deps django python manage.py collectstatic --noinput
+
             echo "==> Restarting services with new images..."
             # nginx est désactivé en prod (Traefik fait le reverse proxy).
             # --remove-orphans nettoie les conteneurs de services retirés du
@@ -69,9 +80,6 @@ jobs:
 
             echo "==> Running Django/Wagtail migrations..."
             $COMPOSE_CMD exec -T django python manage.py migrate --noinput
-
-            echo "==> Collecting static files..."
-            $COMPOSE_CMD exec -T django python manage.py collectstatic --noinput
 
             echo "==> Updating Wagtail search index..."
             $COMPOSE_CMD exec -T django python manage.py update_index || true
