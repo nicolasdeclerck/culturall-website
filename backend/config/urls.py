@@ -73,16 +73,16 @@ urlpatterns = [
     path("projets/<slug:slug>/", project_page, name="project-page"),
 
     # Rendu serveur des pages statiques (À propos, Mentions légales, …) via le
-    # template Wagtail natif. Route explicite par slug : on ne réactive PAS
-    # encore le catch-all Wagtail global (Phase 5) pour ne pas exposer les
-    # pages blog/projets/home qui n'ont pas encore de template. Placée après
-    # toutes les routes /api/ et /admin/ pour ne pas les masquer.
+    # template Wagtail natif. Route explicite par slug, placée après toutes
+    # les routes /api/ et /admin/ pour ne pas les masquer.
     path("<slug:slug>/", static_page_html, name="static-page-html"),
 
-    # Catch-all Wagtail (page tree) — désactivé : Next.js gère encore le rendu
-    # des sections non migrées. Réactivation prévue en Phase 5 (bascule
-    # monolithe), une fois tous les templates en place.
-    # path("", include(wagtail_urls)),
+    # Catch-all Wagtail (page tree) — RÉACTIVÉ (Phase 5a). Désormais tous les
+    # templates sont en place : Wagtail sert nativement l'arbre de pages à
+    # leurs URLs. Les routes explicites ci-dessus restent prioritaires (résultat
+    # identique) et seront retirées en Phase 5b une fois Traefik basculé sur
+    # Django. Doit rester en DERNIER (il matche tout).
+    path("", include(wagtail_urls)),
 ]
 
 if settings.DEBUG:
