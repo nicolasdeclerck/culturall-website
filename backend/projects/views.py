@@ -66,33 +66,8 @@ def project_detail(request, slug):
     return JsonResponse(_serialize_project(request, project))
 
 
-@require_GET
-def project_preview_draft(request):
-    """Retourne les données brouillon d'un ProjectPage pour la preview headless.
-
-    Authentifié par token signé (créé par wagtail-headless-preview lors du clic Aperçu).
-    Le token fait office de credential — aucune session Django requise.
-    """
-    from django.core.signing import BadSignature
-
-    token = request.GET.get("token")
-    if not token:
-        raise Http404("Token manquant")
-
-    try:
-        page = ProjectPage.get_page_from_preview_token(token)
-    except BadSignature:
-        raise Http404("Token invalide")
-
-    if page is None:
-        raise Http404("Token introuvable ou expiré")
-
-    return JsonResponse(_serialize_project(request, page))
-
-
-# ─── Rendu serveur (Phase 4) ───────────────────────────────────
-# Routes explicites tant que le catch-all Wagtail global est désactivé
-# (réactivation Phase 5). Rendu via Page.serve().
+# ─── Rendu serveur ─────────────────────────────────────────────
+# Rendu via Page.serve().
 
 
 @require_GET

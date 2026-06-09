@@ -27,8 +27,6 @@ INSTALLED_APPS = [
     "projects",
     "site_settings",
 
-    "wagtail_headless_preview",
-
     "wagtail.contrib.forms",
     "wagtail.contrib.settings",
     "wagtail.contrib.redirects",
@@ -125,14 +123,6 @@ WAGTAILDOCS_EXTENSIONS = ["csv", "docx", "key", "odt", "pdf", "pptx", "rtf", "tx
 # que `[-a-zA-Z0-9_]+`. Sans ce flag, un titre avec accent (ex. « éducatifs »)
 # génère un slug unicode inaccessible côté API → 404. Cf. issue #138.
 WAGTAIL_ALLOW_UNICODE_SLUGS = False
-
-# ─── Headless Preview ──────────────────────────────────────────
-_FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
-WAGTAIL_HEADLESS_PREVIEW = {
-    "CLIENT_URLS": {
-        "default": f"{_FRONTEND_URL}/preview",
-    },
-}
 
 # ─── CORS ─────────────────────────────────────────────────────
 CORS_ALLOWED_ORIGINS = [

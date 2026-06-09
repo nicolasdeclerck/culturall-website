@@ -5,7 +5,7 @@ from django.http import Http404
 from django.test import RequestFactory
 
 from pages.models import StaticContentPage
-from pages.views import static_page_detail, static_page_preview_draft
+from pages.views import static_page_detail
 
 pytestmark = pytest.mark.django_db
 
@@ -86,53 +86,3 @@ class TestSeedDataMigration:
         for slug in ("mentions-legales", "a-propos"):
             page = StaticContentPage.objects.get(slug=slug)
             assert page.get_parent().specific == home
-
-
-class TestStaticPagePreviewDraftEndpoint:
-    def test_returns_draft_content_with_valid_token(self, rf):
-        page = StaticContentPage.objects.get(slug="a-propos")
-        page.body = "<p>Brouillon non publié</p>"
-        page_preview = page.create_page_preview()
-        page_preview.save()
-
-        request = rf.get("/api/preview/page/", {"token": page_preview.token})
-        response = static_page_preview_draft(request)
-
-        assert response.status_code == 200
-        data = json.loads(response.content)
-        assert data["slug"] == "a-propos"
-        assert "Brouillon non publié" in data["body"]
-
-    def test_returns_draft_for_unpublished_page(self, rf):
-        page = StaticContentPage.objects.get(slug="a-propos")
-        page.unpublish()
-        page.body = "<p>Modifs sur page dépubliée</p>"
-        page_preview = page.create_page_preview()
-        page_preview.save()
-
-        request = rf.get("/api/preview/page/", {"token": page_preview.token})
-        response = static_page_preview_draft(request)
-        data = json.loads(response.content)
-
-        assert data["slug"] == "a-propos"
-        assert "Modifs sur page dépubliée" in data["body"]
-
-    def test_missing_token_raises_404(self, rf):
-        request = rf.get("/api/preview/page/")
-        with pytest.raises(Http404):
-            static_page_preview_draft(request)
-
-    def test_invalid_token_raises_404(self, rf):
-        request = rf.get("/api/preview/page/", {"token": "token-invalide"})
-        with pytest.raises(Http404):
-            static_page_preview_draft(request)
-
-    def test_tampered_token_raises_404(self, rf):
-        page = StaticContentPage.objects.get(slug="a-propos")
-        page_preview = page.create_page_preview()
-        page_preview.save()
-
-        tampered = page_preview.token + "tampered"
-        request = rf.get("/api/preview/page/", {"token": tampered})
-        with pytest.raises(Http404):
-            static_page_preview_draft(request)

@@ -1,10 +1,9 @@
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
 from wagtail.models import Page
-from wagtail_headless_preview.models import HeadlessPreviewMixin
 
 
-class StaticContentPage(HeadlessPreviewMixin, Page):
+class StaticContentPage(Page):
     """Page statique éditable depuis Wagtail (À propos, Mentions légales, etc.)."""
 
     body = RichTextField("Contenu", blank=True)
