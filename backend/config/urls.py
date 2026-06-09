@@ -38,11 +38,6 @@ urlpatterns = [
     # API
     path("api/contact/", contact_submit, name="contact-submit"),
 
-    # POC HTMX — rendu serveur Django/Wagtail pour la page À propos.
-    # Cf. docs/poc-htmx-a-propos.md. Ne remplace pas la route Next.js, vit
-    # à côté sur le port Django (8000) pour comparaison directe.
-    path("a-propos/", static_page_html, {"slug": "a-propos"}, name="static-page-html"),
-
     path("django-admin/", admin.site.urls),
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
@@ -59,9 +54,16 @@ urlpatterns = [
     path("api/preview/page/", static_page_preview_draft, name="static-page-preview-draft"),
     path("api/pages/<slug:slug>/", static_page_detail, name="static-page-detail"),
 
-    # Catch-all Wagtail (page tree) — désactivé : on est headless, Next.js
-    # gère le rendu. À activer quand on installera wagtail-headless-preview
-    # (#121) pour que la preview rédactionnelle puisse pointer ici.
+    # Rendu serveur des pages statiques (À propos, Mentions légales, …) via le
+    # template Wagtail natif. Route explicite par slug : on ne réactive PAS
+    # encore le catch-all Wagtail global (Phase 5) pour ne pas exposer les
+    # pages blog/projets/home qui n'ont pas encore de template. Placée après
+    # toutes les routes /api/ et /admin/ pour ne pas les masquer.
+    path("<slug:slug>/", static_page_html, name="static-page-html"),
+
+    # Catch-all Wagtail (page tree) — désactivé : Next.js gère encore le rendu
+    # des sections non migrées. Réactivation prévue en Phase 5 (bascule
+    # monolithe), une fois tous les templates en place.
     # path("", include(wagtail_urls)),
 ]
 

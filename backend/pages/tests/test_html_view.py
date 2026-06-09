@@ -1,6 +1,7 @@
-"""POC HTMX — tests pour la page À propos rendue côté serveur.
+"""Pages statiques rendues côté serveur via le template Wagtail natif.
 
-Cf. docs/poc-htmx-a-propos.md.
+Phase 1 de la migration monolithe Wagtail : généralise le rendu serveur
+(initialement limité au POC /a-propos/) à toutes les StaticContentPage.
 """
 
 import pytest
@@ -17,48 +18,57 @@ def client():
     return Client()
 
 
-class TestStaticPageHtmlView:
-    def test_renders_seeded_a_propos_page(self, client):
-        response = client.get(reverse("static-page-html"))
+def url(slug):
+    return reverse("static-page-html", kwargs={"slug": slug})
+
+
+class TestStaticPageServerRendering:
+    @pytest.mark.parametrize(
+        "slug, title",
+        [
+            ("a-propos", "À propos"),
+            ("mentions-legales", "Mentions légales"),
+        ],
+    )
+    def test_renders_seeded_pages(self, client, slug, title):
+        response = client.get(url(slug))
 
         assert response.status_code == 200
         assert response["Content-Type"].startswith("text/html")
-        assert b"<title>" in response.content
-        assert "À propos" in response.content.decode()
+        body = response.content.decode()
+        assert "<title>" in body
+        assert title in body
 
     def test_renders_body_as_html(self, client):
         page = StaticContentPage.objects.get(slug="a-propos")
         page.body = "<p>Bonjour <strong>monde</strong></p>"
         page.save()
 
-        response = client.get(reverse("static-page-html"))
-        body = response.content.decode()
-
+        body = client.get(url("a-propos")).content.decode()
         assert "<strong>monde</strong>" in body
 
     def test_includes_header_and_footer(self, client):
-        response = client.get(reverse("static-page-html"))
-        body = response.content.decode()
+        body = client.get(url("a-propos")).content.decode()
 
         assert 'class="header"' in body
         assert "Nos Projets" in body
         assert "Mentions légales" in body
         assert 'class="site-footer"' in body
 
-    def test_returns_404_when_page_unpublished(self, client):
-        page = StaticContentPage.objects.get(slug="a-propos")
-        page.unpublish()
-
-        response = client.get(reverse("static-page-html"))
-        assert response.status_code == 404
-
-    def test_only_get_allowed(self, client):
-        response = client.post(reverse("static-page-html"))
-        assert response.status_code == 405
-
     def test_loads_static_assets(self, client):
-        response = client.get(reverse("static-page-html"))
-        body = response.content.decode()
+        body = client.get(url("a-propos")).content.decode()
 
         assert "/static/css/main.css" in body
         assert "/static/js/site.js" in body
+
+    def test_returns_404_when_page_unpublished(self, client):
+        page = StaticContentPage.objects.get(slug="mentions-legales")
+        page.unpublish()
+
+        assert client.get(url("mentions-legales")).status_code == 404
+
+    def test_returns_404_for_unknown_slug(self, client):
+        assert client.get(url("slug-inexistant")).status_code == 404
+
+    def test_only_get_allowed(self, client):
+        assert client.post(url("a-propos")).status_code == 405

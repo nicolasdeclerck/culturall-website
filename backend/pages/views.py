@@ -1,5 +1,5 @@
 from django.http import Http404, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_GET
 from wagtail.rich_text import expand_db_html
 
@@ -27,14 +27,19 @@ def static_page_detail(request, slug):
 
 @require_GET
 def static_page_html(request, slug):
-    """POC : rend la page statique côté serveur via un template Django/Wagtail.
+    """Rend une StaticContentPage côté serveur via son template Wagtail natif.
 
-    Démontre la trajectoire de migration vers Django + HTMX décrite dans
-    docs/stack-comparison-django-react-vs-htmx.md. Coexiste avec la version
-    Next.js sans la remplacer : route ouverte uniquement sur /a-propos/.
+    Sert toutes les pages statiques publiées (À propos, Mentions légales, …),
+    et plus seulement la route POC /a-propos/. Le rendu passe par
+    ``Page.serve()``, donc par la résolution de template native de Wagtail
+    (``pages/static_content_page.html``) et ``get_context()``.
+
+    La preview reste headless (HeadlessPreviewMixin) et l'API JSON coexiste
+    tant que le frontend Next.js est en place ; leur retrait est prévu en
+    Phase 5 de la migration monolithe.
     """
     page = get_object_or_404(StaticContentPage.objects.live(), slug=slug)
-    return render(request, "pages/static_content_page.html", {"page": page})
+    return page.serve(request)
 
 
 @require_GET
