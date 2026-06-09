@@ -143,6 +143,11 @@ body {
   line-height: 1.7;
 }
 
+/* Contenu centré (page de contact) */
+.page--centered {
+  text-align: center;
+}
+
 /* Contact form */
 .contact-form {
   max-width: 640px;
@@ -150,6 +155,12 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+}
+
+.page--centered .contact-form {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
 }
 
 .contact-field {
@@ -218,6 +229,10 @@ body {
 .contact-submit:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.page--centered .contact-submit {
+  align-self: center;
 }
 
 /* Under construction page */
