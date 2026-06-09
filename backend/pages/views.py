@@ -29,38 +29,10 @@ def static_page_detail(request, slug):
 def static_page_html(request, slug):
     """Rend une StaticContentPage côté serveur via son template Wagtail natif.
 
-    Sert toutes les pages statiques publiées (À propos, Mentions légales, …),
-    et plus seulement la route POC /a-propos/. Le rendu passe par
-    ``Page.serve()``, donc par la résolution de template native de Wagtail
-    (``pages/static_content_page.html``) et ``get_context()``.
-
-    La preview reste headless (HeadlessPreviewMixin) et l'API JSON coexiste
-    tant que le frontend Next.js est en place ; leur retrait est prévu en
-    Phase 5 de la migration monolithe.
+    Sert toutes les pages statiques publiées (À propos, Mentions légales, …).
+    Le rendu passe par ``Page.serve()``, donc par la résolution de template
+    native de Wagtail (``pages/static_content_page.html``) et ``get_context()``.
+    La preview rédactionnelle est native (Wagtail rend le même template).
     """
     page = get_object_or_404(StaticContentPage.objects.live(), slug=slug)
     return page.serve(request)
-
-
-@require_GET
-def static_page_preview_draft(request):
-    """Retourne les données brouillon d'une StaticContentPage pour la preview headless.
-
-    Authentifié par token signé (créé par wagtail-headless-preview lors du clic Aperçu).
-    Le token fait office de credential — aucune session Django requise.
-    """
-    from django.core.signing import BadSignature
-
-    token = request.GET.get("token")
-    if not token:
-        raise Http404("Token manquant")
-
-    try:
-        page = StaticContentPage.get_page_from_preview_token(token)
-    except BadSignature:
-        raise Http404("Token invalide")
-
-    if page is None:
-        raise Http404("Token introuvable ou expiré")
-
-    return JsonResponse(_serialize(page))

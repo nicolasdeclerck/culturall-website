@@ -82,3 +82,14 @@ class TestProjectDetail:
     def test_only_get_allowed(self, client, make_project):
         project = make_project(title="X")
         assert client.post(f"/projets/{project.slug}/").status_code == 405
+
+    def test_native_preview_renders_template(self, make_project):
+        """La preview Wagtail native rend le template projet (plus de headless)."""
+        project = make_project(title="Projet aperçu", description="<p>desc brouillon</p>")
+
+        response = project.make_preview_request()
+
+        assert response.status_code == 200
+        body = response.content.decode()
+        assert "Projet aperçu" in body
+        assert "project-detail" in body

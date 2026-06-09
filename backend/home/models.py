@@ -6,9 +6,8 @@ de racine à l'arbre Wagtail (parent direct de `BlogIndexPage` et, à terme,
 des autres pages d'accueil de section). Le `Site` Wagtail par défaut pointe
 sur cette `HomePage`.
 
-Le rendu HTML est fait par le frontend Next.js : le catch-all Wagtail reste
-désactivé dans `config/urls.py` tant que la preview headless (#121) n'est
-pas en place.
+Le rendu HTML est fait côté serveur par Wagtail (catch-all activé dans
+`config/urls.py`). La `HomePage` est servie sur `/` par la vue `home.views.home_page`.
 """
 
 from functools import cached_property

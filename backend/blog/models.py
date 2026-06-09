@@ -6,7 +6,6 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
 from wagtail.images import get_image_model_string
 from wagtail.models import Page
-from wagtail_headless_preview.models import HeadlessPreviewMixin
 
 
 class ArticlePageTag(TaggedItemBase):
@@ -66,7 +65,7 @@ class BlogIndexPage(Page):
         return super().get_template(request, *args, **kwargs)
 
 
-class ArticlePage(HeadlessPreviewMixin, Page):
+class ArticlePage(Page):
     """Article de blog publié dans l'arbre Wagtail."""
 
     summary = models.TextField("Résumé", blank=True)

@@ -9,7 +9,6 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
 from wagtail.images import get_image_model_string
 from wagtail.models import Page
-from wagtail_headless_preview.models import HeadlessPreviewMixin
 
 MAX_FEATURED_PROJECTS = 3
 
@@ -70,7 +69,7 @@ class ProjectsIndexPage(Page):
         return super().get_template(request, *args, **kwargs)
 
 
-class ProjectPage(HeadlessPreviewMixin, Page):
+class ProjectPage(Page):
     """Projet publié dans l'arbre Wagtail."""
 
     description = RichTextField("Description", blank=True)

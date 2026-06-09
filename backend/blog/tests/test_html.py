@@ -94,3 +94,14 @@ class TestArticleDetail:
     def test_only_get_allowed(self, client, make_article):
         article = make_article(title="X")
         assert client.post(f"/blog/{article.slug}/").status_code == 405
+
+    def test_native_preview_renders_template(self, make_article):
+        """La preview Wagtail native rend le template article (plus de headless)."""
+        article = make_article(title="Brouillon aperçu", content="<p>contenu brouillon</p>")
+
+        response = article.make_preview_request()
+
+        assert response.status_code == 200
+        body = response.content.decode()
+        assert "Brouillon aperçu" in body
+        assert "article-detail" in body
