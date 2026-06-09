@@ -1,3 +1,5 @@
+import re
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from modelcluster.contrib.taggit import ClusterTaggableManager
@@ -10,6 +12,11 @@ from wagtail.models import Page
 from wagtail_headless_preview.models import HeadlessPreviewMixin
 
 MAX_FEATURED_PROJECTS = 3
+
+# Extrait l'ID d'une vidéo YouTube depuis les formats watch / youtu.be / embed / shorts.
+_YOUTUBE_ID_RE = re.compile(
+    r"(?:youtu\.be/|youtube\.com/(?:watch\?.*v=|embed/|shorts/))([a-zA-Z0-9_-]{11})"
+)
 
 
 class ProjectPageTag(TaggedItemBase):
@@ -33,6 +40,34 @@ class ProjectsIndexPage(Page):
 
     class Meta:
         verbose_name = "Index des projets"
+
+    def _published_projects(self):
+        return (
+            ProjectPage.objects.child_of(self)
+            .live()
+            .public()
+            .prefetch_related("tags")
+            .select_related("thumbnail")
+            .order_by("-first_published_at")
+        )
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        all_projects = self._published_projects()
+        current_tag = request.GET.get("tag") or None
+
+        projects = all_projects.filter(tags__name=current_tag) if current_tag else all_projects
+
+        context["projects"] = projects
+        context["current_tag"] = current_tag
+        context["tags"] = sorted({tag.name for project in all_projects for tag in project.tags.all()})
+        return context
+
+    def get_template(self, request, *args, **kwargs):
+        # En requête HTMX (filtre par tag), on ne renvoie que la grille à swapper.
+        if getattr(request, "htmx", False):
+            return "projects/_project_list.html"
+        return super().get_template(request, *args, **kwargs)
 
 
 class ProjectPage(HeadlessPreviewMixin, Page):
@@ -90,3 +125,11 @@ class ProjectPage(HeadlessPreviewMixin, Page):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
+
+    @property
+    def youtube_id(self):
+        """ID de la vidéo YouTube extrait de youtube_url (None si introuvable)."""
+        if not self.youtube_url:
+            return None
+        match = _YOUTUBE_ID_RE.search(self.youtube_url)
+        return match.group(1) if match else None

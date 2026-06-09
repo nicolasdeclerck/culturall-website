@@ -22,7 +22,26 @@ from wagtail.snippets.views.snippets import SnippetViewSet
 
 
 class HomePage(Page):
-    pass
+    def get_context(self, request, *args, **kwargs):
+        # Imports locaux pour éviter tout souci d'ordre de chargement des apps.
+        from network.models import NetworkMember
+        from projects.models import MAX_FEATURED_PROJECTS, ProjectPage
+
+        context = super().get_context(request, *args, **kwargs)
+
+        context["featured_projects"] = (
+            ProjectPage.objects.live()
+            .public()
+            .filter(featured=True)
+            .select_related("thumbnail")
+            .prefetch_related("tags")
+            .order_by("-first_published_at")[:MAX_FEATURED_PROJECTS]
+        )
+
+        members = list(NetworkMember.objects.select_related("logo").all())
+        context["network_members"] = members
+        context["network_types"] = sorted({m.member_type for m in members})
+        return context
 
 
 class ReadOnlyPermissionPolicy(ModelPermissionPolicy):

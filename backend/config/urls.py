@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.http import HttpResponse
 from django.urls import include, path
 from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
@@ -15,26 +14,23 @@ from blog.views import (
     blog_index,
 )
 from home.auth_views import auth_check, auth_login, auth_logout
-from home.views import contact_page, contact_submit
+from home.views import contact_page, contact_submit, home_page
 from network.views import network_member_list
 from pages.views import static_page_detail, static_page_html, static_page_preview_draft
-from projects.views import project_detail, project_featured, project_list, project_preview_draft
-
-
-def hello(request):
-    return HttpResponse(
-        "<h1>Hello, World!</h1>"
-        "<p>Backend Django + Wagtail prêt. "
-        "<a href='/admin/'>Wagtail admin</a> — "
-        "<a href='/django-admin/'>Django admin</a></p>"
-    )
+from projects.views import (
+    project_detail,
+    project_featured,
+    project_list,
+    project_page,
+    project_preview_draft,
+    projects_index,
+)
 
 
 urlpatterns = [
-    # HelloWorld root view — le backend est headless, le rendu HTML est fait
-    # par Next.js. Le catch-all Wagtail (plus bas) reste désactivé tant qu'on
-    # n'a pas câblé wagtail-headless-preview (#121).
-    path("", hello),
+    # Page d'accueil rendue côté serveur (Phase 4) : vidéo landing + projets
+    # à la une + section réseau.
+    path("", home_page, name="home"),
 
     # API — Auth
     path("api/auth/check/", auth_check, name="auth-check"),
@@ -70,6 +66,11 @@ urlpatterns = [
     # statique). /blog/ = listing (+ filtre tag HTMX), /blog/<slug>/ = article.
     path("blog/", blog_index, name="blog-index"),
     path("blog/<slug:slug>/", article_page, name="article-page"),
+
+    # Projets rendus côté serveur (Phase 4). Mêmes contraintes d'ordre que le
+    # blog : avant la route générique <slug:slug>/.
+    path("projets/", projects_index, name="projects-index"),
+    path("projets/<slug:slug>/", project_page, name="project-page"),
 
     # Rendu serveur des pages statiques (À propos, Mentions légales, …) via le
     # template Wagtail natif. Route explicite par slug : on ne réactive PAS
