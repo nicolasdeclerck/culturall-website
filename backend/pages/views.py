@@ -1,4 +1,5 @@
 from django.http import Http404, JsonResponse
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET
 from wagtail.rich_text import expand_db_html
 
@@ -22,6 +23,18 @@ def static_page_detail(request, slug):
         raise Http404("Page introuvable") from exc
 
     return JsonResponse(_serialize(page))
+
+
+@require_GET
+def static_page_html(request, slug):
+    """POC : rend la page statique côté serveur via un template Django/Wagtail.
+
+    Démontre la trajectoire de migration vers Django + HTMX décrite dans
+    docs/stack-comparison-django-react-vs-htmx.md. Coexiste avec la version
+    Next.js sans la remplacer : route ouverte uniquement sur /a-propos/.
+    """
+    page = get_object_or_404(StaticContentPage.objects.live(), slug=slug)
+    return render(request, "pages/static_content_page.html", {"page": page})
 
 
 @require_GET
