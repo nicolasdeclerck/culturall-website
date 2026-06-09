@@ -5,7 +5,7 @@ name: Deploy to Production
 #
 # Reverse proxy : Traefik EXTERNE (déjà déployé sur le VPS, partagé avec
 # d'autres apps via le network défini par traefik_default). Les services
-# django, nextjs et minio s'enregistrent auprès de Traefik via labels.
+# django et minio s'enregistrent auprès de Traefik via labels.
 #
 # Déclenchements :
 #   - Manuel via UI ou `gh workflow run`
@@ -59,11 +59,11 @@ jobs:
               -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
             echo "==> Pulling pre-built images..."
-            $COMPOSE_CMD pull django nextjs
+            $COMPOSE_CMD pull django
 
             echo "==> Restarting services with new images..."
             # nginx est désactivé en prod (Traefik fait le reverse proxy)
-            $COMPOSE_CMD up -d --force-recreate --no-build django nextjs minio postgres
+            $COMPOSE_CMD up -d --force-recreate --no-build django minio postgres
 
             echo "==> Running Django/Wagtail migrations..."
             $COMPOSE_CMD exec -T django python manage.py migrate --noinput

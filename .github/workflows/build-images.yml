@@ -1,7 +1,7 @@
 name: Build & Push Images
 
-# Build des images Django et Next.js, push vers GHCR, puis déclenchement
-# du workflow deploy-prod.yml avec le tag d'image à déployer.
+# Build de l'image Django, push vers GHCR, puis déclenchement du workflow
+# deploy-prod.yml avec le tag d'image à déployer.
 #
 # Placeholders à remplacer :
 #   culturall-website : nom du repo (ex: studio-site)
@@ -101,19 +101,6 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/django:latest
           cache-from: type=gha,scope=django
           cache-to: type=gha,mode=max,scope=django
-
-      - name: Build & push Next.js image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./frontend
-          file: ./docker/nextjs/Dockerfile
-          target: production
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/nextjs:${{ steps.meta.outputs.tag }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/nextjs:latest
-          cache-from: type=gha,scope=nextjs
-          cache-to: type=gha,mode=max,scope=nextjs
 
   trigger-deploy:
     needs: build-and-push

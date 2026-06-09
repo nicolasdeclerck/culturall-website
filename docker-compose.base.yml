@@ -21,7 +21,6 @@ services:
       - DEBUG
       - ALLOWED_HOSTS
       - DATABASE_URL
-      - FRONTEND_URL
       - MINIO_ROOT_USER
       - MINIO_ROOT_PASSWORD
       - MINIO_ENDPOINT_URL
@@ -32,17 +31,6 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
-
-  nextjs:
-    build:
-      context: ./frontend
-      dockerfile: ../docker/nextjs/Dockerfile
-    environment:
-      - NEXT_PUBLIC_API_URL
-      - INTERNAL_API_URL
-      - NODE_ENV
-    depends_on:
-      - django
 
   postgres:
     image: postgres:16-alpine
@@ -92,4 +80,3 @@ services:
     image: nginx:alpine
     depends_on:
       - django
-      - nextjs

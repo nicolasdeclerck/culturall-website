@@ -24,12 +24,6 @@ services:
       - media_files:/app/media
     restart: "no"
 
-  nextjs:
-    build:
-      target: production
-    command: node server.js
-    restart: "no"
-
   nginx:
     ports:
       - "8080:80"
@@ -39,8 +33,6 @@ services:
       - media_files:/app/media:ro
     depends_on:
       django:
-        condition: service_started
-      nextjs:
         condition: service_started
     restart: "no"
 

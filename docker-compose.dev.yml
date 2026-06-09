@@ -20,17 +20,6 @@ services:
     ports:
       - "8000:8000"
 
-  nextjs:
-    build:
-      target: development
-    command: npm run dev
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
-    ports:
-      - "3000:3000"
-
   postgres:
     ports:
       - "5432:5432"
