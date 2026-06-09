@@ -10,15 +10,18 @@
 #   - Reverse proxy Traefik EXTERNE (déjà déployé sur le VPS) qui gère TLS
 #     via Let's Encrypt et l'entrypoint websecure
 #   - PAS de nginx ni de certbot dans ce compose
-#   - Routing :
-#       https://culturall-website.nickorp.com/admin   → django  (Wagtail admin)
-#       https://culturall-website.nickorp.com/api     → django  (DRF API)
-#       https://culturall-website.nickorp.com/static  → django  (servi via whitenoise)
-#       https://culturall-website.nickorp.com/        → nextjs  (catch-all front)
-#       https://cultur-all.org/{admin,api,static}     → django  (domaine alternatif)
-#       https://cultur-all.org/                       → nextjs  (domaine alternatif)
+#   - Routing (Phase 5 — bascule monolithe) :
+#       https://culturall-website.nickorp.com/        → django  (catch-all, rendu Wagtail)
+#       https://cultur-all.org/                       → django  (domaine alternatif)
 #       https://www.cultur-all.org/*                  → 301 redirect vers https://cultur-all.org/*
 #       https://media.cultur-all.org/                 → minio   (médias S3-compatible)
+#
+#     Le service `nextjs` reste déployé en SECOURS DORMANT : son routeur
+#     `-front` est en priorité 10, alors que le routeur Django `-back` est en
+#     priorité 100 et capte tout le trafic. Pour revenir à Next.js (rollback),
+#     restaurer la règle PathPrefix(/admin|/api|/static) sur le routeur `-back`
+#     et redéployer. Next.js et son routeur seront supprimés en Phase 5b une
+#     fois la bascule validée en prod.
 #
 # Placeholders à remplacer :
 #   culturall-website.nickorp.com            : domaine principal de l'app (ex: studio.example.com)
@@ -55,16 +58,20 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=n8n-traefik_default"
 
-      # Routeur backend — admin/api/static (Django + Wagtail + whitenoise)
-      - "traefik.http.routers.culturall-website-back.rule=(Host(`culturall-website.nickorp.com`) || Host(`cultur-all.org`)) && (PathPrefix(`/admin`) || PathPrefix(`/api`) || PathPrefix(`/static`))"
+      # Routeur backend — CATCH-ALL (Django/Wagtail sert tout le site, y compris
+      # /admin, /api, /static via whitenoise). Priorité 100 > 10 du routeur
+      # `-front` (Next.js), donc Django capte l'intégralité du trafic ; Next
+      # reste en secours dormant. Rollback : ré-ajouter
+      # `&& (PathPrefix(/admin) || PathPrefix(/api) || PathPrefix(/static))`.
+      - "traefik.http.routers.culturall-website-back.rule=Host(`culturall-website.nickorp.com`) || Host(`cultur-all.org`)"
       - "traefik.http.routers.culturall-website-back.entrypoints=websecure"
       - "traefik.http.routers.culturall-website-back.tls=true"
       - "traefik.http.routers.culturall-website-back.tls.certresolver=myresolver"
       - "traefik.http.routers.culturall-website-back.priority=100"
       - "traefik.http.services.culturall-website-back.loadbalancer.server.port=8000"
 
-      # Redirect HTTP → HTTPS pour le backend
-      - "traefik.http.routers.culturall-website-back-http.rule=(Host(`culturall-website.nickorp.com`) || Host(`cultur-all.org`)) && (PathPrefix(`/admin`) || PathPrefix(`/api`) || PathPrefix(`/static`))"
+      # Redirect HTTP → HTTPS pour le backend (catch-all, cf. routeur ci-dessus)
+      - "traefik.http.routers.culturall-website-back-http.rule=Host(`culturall-website.nickorp.com`) || Host(`cultur-all.org`)"
       - "traefik.http.routers.culturall-website-back-http.entrypoints=web"
       - "traefik.http.routers.culturall-website-back-http.middlewares=culturall-website-redirect-to-https"
     restart: always
@@ -86,7 +93,10 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=n8n-traefik_default"
 
-      # Routeur frontend — catch-all (priorité plus basse que /admin /api /static)
+      # Routeur frontend — SECOURS DORMANT depuis la bascule monolithe : même
+      # règle Host que `-back` mais priorité 10 < 100, donc ne reçoit aucun
+      # trafic tant que Django est up. Conservé pour rollback rapide ; supprimé
+      # en Phase 5b.
       - "traefik.http.routers.culturall-website-front.rule=Host(`culturall-website.nickorp.com`) || Host(`cultur-all.org`)"
       - "traefik.http.routers.culturall-website-front.entrypoints=websecure"
       - "traefik.http.routers.culturall-website-front.tls=true"
