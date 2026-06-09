@@ -19,11 +19,6 @@ services:
       - static_files:/app/staticfiles
       - media_files:/app/media
 
-  nextjs:
-    build:
-      target: production
-    command: node server.js  # mode standalone Next.js
-
   nginx:
     ports:
       - "8080:80"
@@ -33,8 +28,6 @@ services:
       - media_files:/app/media:ro
     depends_on:
       django:
-        condition: service_started
-      nextjs:
         condition: service_started
 
   postgres:

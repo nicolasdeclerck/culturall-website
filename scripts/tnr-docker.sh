@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # tnr-docker.sh — Manage the ephemeral Docker environment for regression tests.
 #
-# Stack : Next.js + Django/Wagtail + Postgres + MinIO + Nginx
+# Stack : Django/Wagtail + Postgres + MinIO + Nginx
 #
 # Usage:
 #   ./scripts/tnr-docker.sh up      # Build, start, migrate, init MinIO bucket, seed test data
@@ -46,22 +46,6 @@ wait_for_gunicorn() {
     done
     echo "ERROR: Gunicorn did not become ready in time."
     $COMPOSE logs django
-    exit 1
-}
-
-wait_for_nextjs() {
-    echo "Waiting for Next.js to be ready..."
-    local retries=30
-    while [ $retries -gt 0 ]; do
-        if $COMPOSE exec -T nextjs node -e "fetch('http://localhost:3000').then(r=>{process.exit(r.ok?0:1)}).catch(()=>process.exit(1))" 2>/dev/null; then
-            echo "Next.js is ready."
-            return 0
-        fi
-        retries=$((retries - 1))
-        sleep 2
-    done
-    echo "ERROR: Next.js did not become ready in time."
-    $COMPOSE logs nextjs
     exit 1
 }
 
@@ -130,14 +114,13 @@ cmd_up() {
     echo "Cleaning up any residual TNR containers/volumes from a previous run..."
     $COMPOSE down -v --remove-orphans || true
 
-    echo "Building and starting TNR environment (Next.js + Django/Wagtail + MinIO)..."
+    echo "Building and starting TNR environment (Django/Wagtail + MinIO)..."
     $COMPOSE up --build -d
 
     wait_for_gunicorn
     run_migrations
     seed_test_data
     seed_test_content
-    wait_for_nextjs
 
     # Le bucket MinIO est créé automatiquement par le service `minio-init`
     # défini dans docker-compose.base.yml. On vérifie qu'il s'est bien terminé.

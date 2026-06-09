@@ -6,11 +6,10 @@ Site vitrine de l'association Cultur'all, permettant de présenter ses projets c
 
 | Couche | Technologie |
 |---|---|
-| Frontend | Next.js 14, React 18, TypeScript |
-| Backend / CMS | Django 5.1, Wagtail 6.3 (headless) |
+| Application / CMS | Django 5.2, Wagtail 7.4 — rendu serveur (templates Django/Wagtail + HTMX + Alpine.js) |
 | Base de données | PostgreSQL 16 |
 | Stockage médias | MinIO (S3-compatible, self-hosted) |
-| Reverse proxy | Nginx (dev/preprod) · Traefik (production) |
+| Reverse proxy | Nginx (preprod/TNR) · Traefik (production) |
 | CI/CD | GitHub Actions → GHCR → VPS |
 
 ## Prérequis
@@ -45,15 +44,13 @@ docker compose -p culturall-website \
   up
 ```
 
-Cela démarre 5 services : Django, Next.js, PostgreSQL, MinIO et Nginx. Le hot-reload est actif pour le frontend et le backend.
+Cela démarre Django (Wagtail), PostgreSQL et MinIO. Le hot-reload est actif (sources montées). Nginx n'est pas lancé en dev : on accède à Django directement.
 
 ### 4. Accéder à l'application
 
 | Service | URL |
 |---|---|
-| Site (via Nginx) | http://localhost |
-| Next.js (direct) | http://localhost:3000 |
-| Django API | http://localhost:8000 |
+| Site (Django/Wagtail) | http://localhost:8000 |
 | Admin Wagtail | http://localhost:8000/admin/ |
 | Console MinIO | http://localhost:9001 |
 
@@ -131,7 +128,7 @@ Dans les paramètres du dépôt GitHub, ajouter les secrets suivants :
 
 Le déploiement est entièrement automatisé :
 
-1. **Push sur `main`** → GitHub Actions build les images Django et Next.js, les pousse sur GHCR
+1. **Push sur `main`** → GitHub Actions build l'image Django, la pousse sur GHCR
 2. **Deploy automatique** → SSH au VPS, pull des images, redémarrage des containers, migrations et collectstatic
 
 Pour un premier déploiement manuel : Actions → **Deploy to Production** → Run workflow → `image_tag: latest`.
@@ -162,14 +159,17 @@ Les TNR tournent aussi automatiquement chaque nuit à 2h UTC via GitHub Actions.
 
 ```
 culturall-website/
-├── backend/                 # Django 5.1 / Wagtail 6.3
+├── backend/                 # Django 5.2 / Wagtail 7.4 (rendu serveur)
 │   ├── config/              #   Settings (base, dev, test, prod)
-│   ├── home/                #   HomePage + ContactSubmission
-│   ├── projects/            #   Projets culturels (snippets Wagtail)
+│   ├── home/                #   HomePage + contact + ContactSubmission
+│   ├── blog/                #   Articles (ArticlePage, BlogIndexPage)
+│   ├── projects/            #   Projets (ProjectPage, ProjectsIndexPage)
+│   ├── pages/               #   Pages statiques (StaticContentPage)
+│   ├── network/             #   Membres du réseau (snippets)
+│   ├── templates/           #   base.html, header, footer
+│   ├── static/              #   CSS + JS (htmx, Alpine, site.js)
 │   └── site_settings/       #   Paramètres globaux du site
-├── frontend/                # Next.js 14
-│   └── app/                 #   Pages : accueil, à propos, contact, login
-├── docker/                  # Dockerfiles (django, nextjs) + config nginx
+├── docker/                  # Dockerfile django + config nginx (preprod/TNR)
 ├── docker-compose.*.yml     # base + overrides (dev, test, preprod, prod)
 ├── scripts/                 # tnr-docker.sh
 ├── docs/                    # Documentation complémentaire
