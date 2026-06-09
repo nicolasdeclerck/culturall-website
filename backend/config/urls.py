@@ -7,7 +7,13 @@ from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
-from blog.views import article_detail, article_list, article_preview_draft
+from blog.views import (
+    article_detail,
+    article_list,
+    article_page,
+    article_preview_draft,
+    blog_index,
+)
 from home.auth_views import auth_check, auth_login, auth_logout
 from home.views import contact_page, contact_submit
 from network.views import network_member_list
@@ -58,6 +64,12 @@ urlpatterns = [
     # précéder la route générique `<slug:slug>/` ci-dessous, sinon /contact/
     # serait interprété comme une StaticContentPage et renverrait 404.
     path("contact/", contact_page, name="contact"),
+
+    # Blog rendu côté serveur (Phase 3). Routes explicites placées avant la
+    # route générique `<slug:slug>/` (sinon /blog/ serait pris pour une page
+    # statique). /blog/ = listing (+ filtre tag HTMX), /blog/<slug>/ = article.
+    path("blog/", blog_index, name="blog-index"),
+    path("blog/<slug:slug>/", article_page, name="article-page"),
 
     # Rendu serveur des pages statiques (À propos, Mentions légales, …) via le
     # template Wagtail natif. Route explicite par slug : on ne réactive PAS
