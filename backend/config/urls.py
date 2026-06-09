@@ -9,7 +9,7 @@ from wagtail.documents import urls as wagtaildocs_urls
 
 from blog.views import article_detail, article_list, article_preview_draft
 from home.auth_views import auth_check, auth_login, auth_logout
-from home.views import contact_submit
+from home.views import contact_page, contact_submit
 from network.views import network_member_list
 from pages.views import static_page_detail, static_page_html, static_page_preview_draft
 from projects.views import project_detail, project_featured, project_list, project_preview_draft
@@ -53,6 +53,11 @@ urlpatterns = [
     path("api/preview/project/", project_preview_draft, name="project-preview-draft"),
     path("api/preview/page/", static_page_preview_draft, name="static-page-preview-draft"),
     path("api/pages/<slug:slug>/", static_page_detail, name="static-page-detail"),
+
+    # Page de contact rendue côté serveur (formulaire Django + HTMX). Doit
+    # précéder la route générique `<slug:slug>/` ci-dessous, sinon /contact/
+    # serait interprété comme une StaticContentPage et renverrait 404.
+    path("contact/", contact_page, name="contact"),
 
     # Rendu serveur des pages statiques (À propos, Mentions légales, …) via le
     # template Wagtail natif. Route explicite par slug : on ne réactive PAS

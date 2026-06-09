@@ -1,0 +1,36 @@
+<form class="contact-form"
+      hx-post="{% url 'contact' %}"
+      hx-target="#form-container"
+      hx-swap="innerHTML"
+      novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <p class="contact-error">{{ form.non_field_errors.0 }}</p>
+  {% endif %}
+
+  <div class="contact-field">
+    <label for="{{ form.name.id_for_label }}">Nom</label>
+    {{ form.name }}
+    {% if form.name.errors %}<span class="contact-error">{{ form.name.errors.0 }}</span>{% endif %}
+  </div>
+
+  <div class="contact-field">
+    <label for="{{ form.email.id_for_label }}">Email</label>
+    {{ form.email }}
+    {% if form.email.errors %}<span class="contact-error">{{ form.email.errors.0 }}</span>{% endif %}
+  </div>
+
+  <div class="contact-field">
+    <label for="{{ form.subject.id_for_label }}">Sujet</label>
+    {{ form.subject }}
+    {% if form.subject.errors %}<span class="contact-error">{{ form.subject.errors.0 }}</span>{% endif %}
+  </div>
+
+  <div class="contact-field">
+    <label for="{{ form.message.id_for_label }}">Message</label>
+    {{ form.message }}
+    {% if form.message.errors %}<span class="contact-error">{{ form.message.errors.0 }}</span>{% endif %}
+  </div>
+
+  <button type="submit" class="contact-submit">Envoyer</button>
+</form>
