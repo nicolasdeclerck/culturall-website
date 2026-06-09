@@ -1,7 +1,9 @@
 {% load wagtailimages_tags %}
 <header class="header"
-        data-scroll-aware
-        x-init>
+        x-data="header"
+        :class="{ 'header--scrolled': scrolled }"
+        @scroll.window.passive="onScroll()"
+        @keydown.escape.window="close()">
   <a href="/" class="header-title">
     {% if settings.site_settings.SiteSettings.logo %}
       {% image settings.site_settings.SiteSettings.logo width-150 alt="Cultur'all" class="header-logo" %}
@@ -11,16 +13,16 @@
   </a>
   <button class="header-burger"
           type="button"
-          data-menu-toggle
-          aria-label="Ouvrir le menu"
-          aria-expanded="false">
-    <span aria-hidden="true">☰</span>
+          @click="toggle()"
+          :aria-expanded="menuOpen.toString()"
+          :aria-label="menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'">
+    <span aria-hidden="true" x-text="menuOpen ? '✕' : '☰'">☰</span>
   </button>
-  <nav class="header-nav" data-menu>
-    <a href="/projets">Nos Projets</a>
-    <a href="/blog">Blog</a>
-    <a href="/a-propos">À propos</a>
-    <a href="/contact">Contact</a>
+  <nav class="header-nav" :class="{ 'header-nav--open': menuOpen }">
+    <a href="/projets" @click="close()">Nos Projets</a>
+    <a href="/blog" @click="close()">Blog</a>
+    <a href="/a-propos" @click="close()">À propos</a>
+    <a href="/contact" @click="close()">Contact</a>
     {% if request.user.is_authenticated %}
       <form method="post" action="{% url 'auth-logout' %}" class="header-nav__logout">
         {% csrf_token %}
