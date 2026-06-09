@@ -1,8 +1,9 @@
 from django.http import Http404, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_GET
 from wagtail.rich_text import expand_db_html
 
-from .models import ProjectPage
+from .models import ProjectPage, ProjectsIndexPage
 
 
 def _base_queryset():
@@ -87,3 +88,24 @@ def project_preview_draft(request):
         raise Http404("Token introuvable ou expiré")
 
     return JsonResponse(_serialize_project(request, page))
+
+
+# ─── Rendu serveur (Phase 4) ───────────────────────────────────
+# Routes explicites tant que le catch-all Wagtail global est désactivé
+# (réactivation Phase 5). Rendu via Page.serve().
+
+
+@require_GET
+def projects_index(request):
+    """Liste des projets (page complète, ou partial HTMX si filtre par tag)."""
+    page = ProjectsIndexPage.objects.live().first()
+    if page is None:
+        raise Http404("Page projets introuvable")
+    return page.serve(request)
+
+
+@require_GET
+def project_page(request, slug):
+    """Détail d'un projet publié, rendu via son template Wagtail natif."""
+    project = get_object_or_404(ProjectPage.objects.live().public(), slug=slug)
+    return project.serve(request)

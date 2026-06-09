@@ -1,0 +1,35 @@
+{% load wagtailimages_tags %}
+
+{% if tags %}
+<div class="projects-filters">
+  <button type="button"
+          class="projects-filters__btn{% if not current_tag %} projects-filters__btn--active{% endif %}"
+          hx-get="{% url 'projects-index' %}"
+          hx-target="#project-list"
+          hx-push-url="true">Tous</button>
+  {% for tag in tags %}
+  <button type="button"
+          class="projects-filters__btn{% if current_tag == tag %} projects-filters__btn--active{% endif %}"
+          hx-get="{% url 'projects-index' %}?tag={{ tag|urlencode }}"
+          hx-target="#project-list"
+          hx-push-url="true">{{ tag }}</button>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if not projects %}
+  <p class="projets-page__message">Aucun projet pour le moment.</p>
+{% else %}
+<div class="projets-grid">
+  {% for project in projects %}
+  <a href="/projets/{{ project.slug }}/" class="project-card{% if not project.thumbnail %} project-card--no-thumbnail{% endif %}">
+    {% if project.thumbnail %}
+      {% image project.thumbnail fill-600x400 class="project-card__thumbnail" alt="" loading="lazy" %}
+      <div class="project-card__overlay"></div>
+    {% endif %}
+    <span class="project-card__tag">{% with project.tags.all|first as first_tag %}{% if first_tag %}{{ first_tag.name }}{% endif %}{% endwith %}</span>
+    <span class="project-card__title">{{ project.title }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}{{ page.title }} — Cultur'all{% endblock %}
+
+{% block content %}
+<div class="page projets-page">
+  <div class="project-detail-wrapper">
+    <a href="/projets/" class="project-detail__back">
+      <span class="project-detail__back-icon" aria-hidden="true">←</span>
+      <span>Projets</span>
+    </a>
+
+    <article class="project-detail">
+      <h1>{{ page.title }}</h1>
+
+      {% if page.tags.all or page.year or page.video_duration %}
+      <div class="project-detail__byline">
+        {% for tag in page.tags.all %}
+          <span class="project-detail__byline-item">{{ tag.name }}</span>
+        {% endfor %}
+        {% if page.year %}<span class="project-detail__byline-item">{{ page.year }}</span>{% endif %}
+        {% if page.video_duration %}<span class="project-detail__byline-item">{{ page.video_duration }}</span>{% endif %}
+      </div>
+      {% endif %}
+
+      {% if page.youtube_id %}
+      <div class="project-detail__video">
+        <iframe src="https://www.youtube.com/embed/{{ page.youtube_id }}"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+                loading="lazy"
+                allowfullscreen
+                title="{{ page.title }}"></iframe>
+      </div>
+      {% endif %}
+
+      <div class="project-detail__content">
+        <div class="content-overlay__body">{{ page.description|richtext }}</div>
+        {% if page.credits %}
+        <aside class="project-detail__credits">
+          <h2 class="project-detail__credits-heading">Crédits</h2>
+          <div class="project-detail__credits-body">{{ page.credits|richtext }}</div>
+        </aside>
+        {% endif %}
+      </div>
+    </article>
+  </div>
+</div>
+{% endblock %}

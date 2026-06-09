@@ -1,12 +1,21 @@
 import json
 
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods, require_POST
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from .forms import ContactForm
-from .models import ContactSubmission
+from .models import ContactSubmission, HomePage
+
+
+@require_GET
+def home_page(request):
+    """Page d'accueil rendue côté serveur (vidéo landing + projets à la une + réseau)."""
+    page = HomePage.objects.live().first()
+    if page is None:
+        raise Http404("Page d'accueil introuvable")
+    return page.serve(request)
 
 
 @csrf_exempt

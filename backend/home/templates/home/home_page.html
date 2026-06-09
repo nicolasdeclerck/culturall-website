@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load wagtailimages_tags %}
+
+{% block title %}Cultur'all{% endblock %}
+
+{% block content %}
+<div class="landing">
+  <div class="landing-video">
+    <iframe
+      src="https://www.youtube.com/embed/0L8953RVKGU?autoplay=1&mute=1&loop=1&playlist=0L8953RVKGU&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&cc_load_policy=0"
+      allow="autoplay; encrypted-media"
+      title="Vidéo de fond Cultur'all"></iframe>
+  </div>
+</div>
+
+{% if featured_projects %}
+<section class="projects-section">
+  <h2 class="projects-section__title">Les projets à la une</h2>
+  <div class="projects-section__cards">
+    {% for project in featured_projects %}
+    <a href="/projets/{{ project.slug }}/" class="projects-section__card{% if not project.thumbnail %} projects-section__card--no-thumbnail{% endif %}">
+      {% if project.thumbnail %}
+        {% image project.thumbnail fill-600x400 class="projects-section__card-image" alt="" loading="lazy" %}
+      {% endif %}
+      <div class="projects-section__card-overlay"></div>
+      <span class="projects-section__card-tag">{% with project.tags.all|first as first_tag %}{% if first_tag %}{{ first_tag.name }}{% endif %}{% endwith %}</span>
+      <span class="projects-section__card-title">{{ project.title }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  <a href="/projets/" class="projects-section__link">Voir tous les projets →</a>
+</section>
+{% endif %}
+
+{% if network_members %}
+<section class="network-section" x-data="{ activeType: null }">
+  <h2 class="network-section__title">Notre Réseau</h2>
+
+  {% if network_types|length > 1 %}
+  <div class="network-filters">
+    <button type="button"
+            class="network-filters__btn"
+            :class="{ 'network-filters__btn--active': activeType === null }"
+            @click="activeType = null">Tous</button>
+    {% for type in network_types %}
+    <button type="button"
+            class="network-filters__btn"
+            :class="{ 'network-filters__btn--active': activeType === '{{ type|escapejs }}' }"
+            @click="activeType = '{{ type|escapejs }}'">{{ type }}</button>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="network-grid">
+    {% for member in network_members %}
+    <div class="network-card"
+         title="{{ member.name }}"
+         x-show="activeType === null || activeType === '{{ member.member_type|escapejs }}'">
+      {% if member.logo %}
+        {% image member.logo max-200x200 as logo_rendition %}
+        <img src="{{ logo_rendition.url }}" alt="{{ member.name }}" class="network-card__logo" loading="lazy">
+      {% else %}
+        <span class="network-card__name">{{ member.name }}</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}
