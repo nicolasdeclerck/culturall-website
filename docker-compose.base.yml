@@ -20,6 +20,8 @@ services:
       - DJANGO_SECRET_KEY
       - DEBUG
       - ALLOWED_HOSTS
+      - TURNSTILE_SITE_KEY
+      - TURNSTILE_SECRET_KEY
       - DATABASE_URL
       - MINIO_ROOT_USER
       - MINIO_ROOT_PASSWORD

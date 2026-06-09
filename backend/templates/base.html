@@ -14,6 +14,7 @@
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
   <script src="{% static 'js/site.js' %}" defer></script>
   <script src="{% static 'js/alpine.min.js' %}" defer></script>
+  {% block extra_head %}{% endblock %}
 </head>
 <body>
   {% include "_header.html" %}

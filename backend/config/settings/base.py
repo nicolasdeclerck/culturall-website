@@ -18,6 +18,12 @@ CSRF_TRUSTED_ORIGINS = [
     o.strip() for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()
 ]
 
+# ─── Cloudflare Turnstile (anti-bots du formulaire de contact) ─
+# Si la clé secrète n'est pas renseignée (dev, tests, CI), la vérification
+# est désactivée afin de ne pas bloquer les environnements sans clés.
+TURNSTILE_SITE_KEY = os.environ.get("TURNSTILE_SITE_KEY", "")
+TURNSTILE_SECRET_KEY = os.environ.get("TURNSTILE_SECRET_KEY", "")
+
 # ─── Apps ──────────────────────────────────────────────────────
 INSTALLED_APPS = [
     "blog",
@@ -82,6 +88,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "wagtail.contrib.settings.context_processors.settings",
+                "home.context_processors.turnstile",
             ],
         },
     },
