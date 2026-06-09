@@ -44,3 +44,7 @@ class TestHomePage:
         make_project(title="P")
         body = client.get("/").content.decode()
         assert "network-section" not in body
+
+    def test_head_request_allowed(self, client, make_project):
+        make_project(title="P")
+        assert client.head("/").status_code == 200

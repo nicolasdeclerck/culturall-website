@@ -62,8 +62,10 @@ jobs:
             $COMPOSE_CMD pull django
 
             echo "==> Restarting services with new images..."
-            # nginx est désactivé en prod (Traefik fait le reverse proxy)
-            $COMPOSE_CMD up -d --force-recreate --no-build django minio postgres
+            # nginx est désactivé en prod (Traefik fait le reverse proxy).
+            # --remove-orphans nettoie les conteneurs de services retirés du
+            # compose (ex. l'ancien service nextjs après la bascule monolithe).
+            $COMPOSE_CMD up -d --force-recreate --no-build --remove-orphans django minio postgres
 
             echo "==> Running Django/Wagtail migrations..."
             $COMPOSE_CMD exec -T django python manage.py migrate --noinput

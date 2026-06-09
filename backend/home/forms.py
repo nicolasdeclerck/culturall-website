@@ -4,9 +4,8 @@ from django import forms
 class ContactForm(forms.Form):
     """Formulaire de contact rendu côté serveur (équivalent du ContactForm.tsx).
 
-    Reprend la validation de l'endpoint JSON `contact_submit` : les quatre
-    champs sont requis (les valeurs composées uniquement d'espaces sont
-    rejetées, CharField appliquant `strip=True` par défaut).
+    Les quatre champs sont requis (les valeurs composées uniquement d'espaces
+    sont rejetées, CharField appliquant `strip=True` par défaut).
     """
 
     name = forms.CharField(
