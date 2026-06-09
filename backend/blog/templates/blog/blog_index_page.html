@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block title %}Blog — Cultur'all{% endblock %}
+
+{% block content %}
+<div class="page blog-page">
+  <h1>Blog</h1>
+  {% if page.intro %}<div>{{ page.intro|richtext }}</div>{% endif %}
+
+  <div id="article-list">
+    {% include "blog/_article_list.html" %}
+  </div>
+</div>
+{% endblock %}

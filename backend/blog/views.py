@@ -1,8 +1,9 @@
 from django.http import Http404, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_GET
 from wagtail.rich_text import expand_db_html
 
-from .models import ArticlePage
+from .models import ArticlePage, BlogIndexPage
 
 
 def _serialize_article(request, article):
@@ -89,3 +90,25 @@ def article_preview_draft(request):
         raise Http404("Token introuvable ou expiré")
 
     return JsonResponse(_serialize_article(request, page))
+
+
+# ─── Rendu serveur (Phase 3) ───────────────────────────────────
+# Routes explicites tant que le catch-all Wagtail global est désactivé
+# (réactivation Phase 5). Le rendu passe par Page.serve() : BlogIndexPage
+# gère le filtre par tag + le partial HTMX via get_context/get_template.
+
+
+@require_GET
+def blog_index(request):
+    """Liste des articles (page complète, ou partial HTMX si filtre par tag)."""
+    page = BlogIndexPage.objects.live().first()
+    if page is None:
+        raise Http404("Blog introuvable")
+    return page.serve(request)
+
+
+@require_GET
+def article_page(request, slug):
+    """Détail d'un article publié, rendu via son template Wagtail natif."""
+    article = get_object_or_404(ArticlePage.objects.live().public(), slug=slug)
+    return article.serve(request)

@@ -36,6 +36,35 @@ class BlogIndexPage(Page):
     class Meta:
         verbose_name = "Index de blog"
 
+    def _published_articles(self):
+        return (
+            ArticlePage.objects.child_of(self)
+            .live()
+            .public()
+            .prefetch_related("tags")
+            .select_related("illustration")
+            .order_by("-first_published_at")
+        )
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        all_articles = self._published_articles()
+        current_tag = request.GET.get("tag") or None
+
+        articles = all_articles.filter(tags__name=current_tag) if current_tag else all_articles
+
+        context["articles"] = articles
+        context["current_tag"] = current_tag
+        # Tags utilisés par l'ensemble des articles publiés (indépendant du filtre).
+        context["tags"] = sorted({tag.name for article in all_articles for tag in article.tags.all()})
+        return context
+
+    def get_template(self, request, *args, **kwargs):
+        # En requête HTMX (filtre par tag), on ne renvoie que la liste à swapper.
+        if getattr(request, "htmx", False):
+            return "blog/_article_list.html"
+        return super().get_template(request, *args, **kwargs)
+
 
 class ArticlePage(HeadlessPreviewMixin, Page):
     """Article de blog publié dans l'arbre Wagtail."""
