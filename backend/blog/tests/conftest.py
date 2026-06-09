@@ -1,4 +1,5 @@
 import pytest
+from django.utils import timezone
 from wagtail.models import Page, Site
 
 from blog.models import ArticlePage, BlogIndexPage
@@ -37,6 +38,10 @@ def make_article(blog_index):
     def _make(title="Article", content="<p>contenu</p>", **kwargs):
         counter["n"] += 1
         kwargs.setdefault("slug", f"article-{counter['n']}")
+        # add_child() insère la page mais ne la « publie » pas : sans cela
+        # first_published_at reste NULL et le tri -first_published_at devient
+        # dépendant du SGBD (NULLS FIRST sur Postgres, NULLS LAST sur SQLite).
+        kwargs.setdefault("first_published_at", timezone.now())
         article = ArticlePage(title=title, content=content, **kwargs)
         blog_index.add_child(instance=article)
         return article

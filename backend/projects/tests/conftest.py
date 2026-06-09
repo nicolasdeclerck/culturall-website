@@ -1,4 +1,5 @@
 import pytest
+from django.utils import timezone
 from wagtail.models import Page, Site
 
 from home.models import HomePage
@@ -37,6 +38,10 @@ def make_project(projects_index):
     def _make(title="Projet", youtube_url="https://youtube.com/watch?v=test", **kwargs):
         counter["n"] += 1
         kwargs.setdefault("slug", f"projet-{counter['n']}")
+        # add_child() insère la page mais ne la « publie » pas : sans cela
+        # first_published_at reste NULL et le tri -first_published_at devient
+        # dépendant du SGBD (NULLS FIRST sur Postgres, NULLS LAST sur SQLite).
+        kwargs.setdefault("first_published_at", timezone.now())
         project = ProjectPage(title=title, youtube_url=youtube_url, **kwargs)
         projects_index.add_child(instance=project)
         return project
