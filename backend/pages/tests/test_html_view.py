@@ -73,6 +73,9 @@ class TestStaticPageServerRendering:
     def test_only_get_allowed(self, client):
         assert client.post(url("a-propos")).status_code == 405
 
+    def test_head_request_allowed(self, client):
+        assert client.head(url("a-propos")).status_code == 200
+
     def test_native_preview_renders_template(self):
         """La preview Wagtail native rend le template page statique (plus de headless)."""
         page = StaticContentPage.objects.get(slug="a-propos")

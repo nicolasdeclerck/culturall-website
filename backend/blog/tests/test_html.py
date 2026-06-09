@@ -66,6 +66,10 @@ class TestBlogIndex:
         assert 'class="header"' not in body
         assert "blog-masonry" in body
 
+    def test_head_request_allowed(self, client, make_article):
+        make_article(title="Article HEAD")
+        assert client.head("/blog/").status_code == 200
+
 
 class TestArticleDetail:
     def test_renders_published_article(self, client, make_article):

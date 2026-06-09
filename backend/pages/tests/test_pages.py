@@ -1,69 +1,8 @@
-import json
-
 import pytest
-from django.http import Http404
-from django.test import RequestFactory
 
 from pages.models import StaticContentPage
-from pages.views import static_page_detail
 
 pytestmark = pytest.mark.django_db
-
-
-@pytest.fixture
-def rf():
-    return RequestFactory()
-
-
-class TestStaticPageDetailEndpoint:
-    def test_returns_seeded_page(self, rf):
-        request = rf.get("/api/pages/mentions-legales/")
-        response = static_page_detail(request, slug="mentions-legales")
-
-        assert response.status_code == 200
-        data = json.loads(response.content)
-        assert data["slug"] == "mentions-legales"
-        assert data["title"] == "Mentions légales"
-        assert "<p>" in data["body"]
-
-    def test_returns_404_when_slug_does_not_exist(self, rf):
-        request = rf.get("/api/pages/inexistante/")
-        with pytest.raises(Http404):
-            static_page_detail(request, slug="inexistante")
-
-    def test_returns_404_when_page_unpublished(self, rf):
-        page = StaticContentPage.objects.get(slug="a-propos")
-        page.unpublish()
-
-        request = rf.get("/api/pages/a-propos/")
-        with pytest.raises(Http404):
-            static_page_detail(request, slug="a-propos")
-
-    def test_empty_body_returns_empty_string(self, rf):
-        page = StaticContentPage.objects.get(slug="a-propos")
-        page.body = ""
-        page.save()
-
-        request = rf.get("/api/pages/a-propos/")
-        response = static_page_detail(request, slug="a-propos")
-
-        data = json.loads(response.content)
-        assert data["body"] == ""
-
-    def test_only_get_allowed(self, rf):
-        request = rf.post("/api/pages/mentions-legales/")
-        response = static_page_detail(request, slug="mentions-legales")
-        assert response.status_code == 405
-
-    def test_body_is_rendered_html(self, rf):
-        page = StaticContentPage.objects.get(slug="mentions-legales")
-        page.body = "<p>Hello <strong>world</strong></p>"
-        page.save()
-
-        request = rf.get("/api/pages/mentions-legales/")
-        response = static_page_detail(request, slug="mentions-legales")
-        data = json.loads(response.content)
-        assert "<strong>" in data["body"]
 
 
 class TestSeedDataMigration:

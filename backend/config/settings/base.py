@@ -50,12 +50,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    "corsheaders",
     "django_htmx",
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -119,19 +117,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 WAGTAIL_SITE_NAME = "culturall-website"
 WAGTAILADMIN_BASE_URL = os.environ.get("WAGTAILADMIN_BASE_URL", "http://localhost:8000")
 WAGTAILDOCS_EXTENSIONS = ["csv", "docx", "key", "odt", "pdf", "pptx", "rtf", "txt", "xlsx", "zip"]
-# Les routes API détail utilisent le converter Django `<slug:>` qui ne matche
+# Les routes de pages utilisent le converter Django `<slug:>` qui ne matche
 # que `[-a-zA-Z0-9_]+`. Sans ce flag, un titre avec accent (ex. « éducatifs »)
-# génère un slug unicode inaccessible côté API → 404. Cf. issue #138.
+# génère un slug unicode inaccessible via ces routes → 404. Cf. issue #138.
 WAGTAIL_ALLOW_UNICODE_SLUGS = False
-
-# ─── CORS ─────────────────────────────────────────────────────
-CORS_ALLOWED_ORIGINS = [
-    o.strip()
-    for o in os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(",")
-    if o.strip()
-]
-# Le frontend appelle l'API en `credentials: 'include'` (cookies de session
-# Django pour le check d'auth). Sans ce flag, django-cors-headers ne renvoie
-# pas `Access-Control-Allow-Credentials: true` et le navigateur bloque la
-# réponse même si l'origine est dans la whitelist.
-CORS_ALLOW_CREDENTIALS = True

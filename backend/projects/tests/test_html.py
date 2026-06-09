@@ -52,6 +52,10 @@ class TestProjectsIndex:
         assert 'class="header"' not in body
         assert "projets-grid" in body
 
+    def test_head_request_allowed(self, client, make_project):
+        make_project(title="Projet HEAD")
+        assert client.head("/projets/").status_code == 200
+
 
 class TestProjectDetail:
     def test_renders_with_video(self, client, make_project):

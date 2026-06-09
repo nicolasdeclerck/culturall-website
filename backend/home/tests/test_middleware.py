@@ -9,7 +9,7 @@ class TestLoginRequiredMiddleware:
         site_settings.require_authentication = True
         site_settings.save()
 
-        resp = client.get("/api/projects/")
+        resp = client.get("/contact/")
         assert resp.status_code == 401
         assert resp.json()["error"] == "Authentification requise."
 
@@ -17,7 +17,7 @@ class TestLoginRequiredMiddleware:
         site_settings.require_authentication = False
         site_settings.save()
 
-        resp = client.get("/api/projects/")
+        resp = client.get("/contact/")
         assert resp.status_code == 200
 
     def test_allows_authenticated_when_enabled(self, client: Client, user, site_settings):
@@ -25,7 +25,7 @@ class TestLoginRequiredMiddleware:
         site_settings.save()
 
         client.force_login(user)
-        resp = client.get("/api/projects/")
+        resp = client.get("/contact/")
         assert resp.status_code == 200
 
     @pytest.mark.parametrize("path", [
