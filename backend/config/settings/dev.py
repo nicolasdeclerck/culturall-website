@@ -12,4 +12,6 @@ STORAGES = {
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
 }
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# Le backend email est résolu dans base.py : backend console tant que
+# EMAIL_HOST n'est pas renseigné (cas par défaut en dev), SMTP sinon. Pour
+# tester un vrai serveur mail en local, renseigner EMAIL_* dans .env.dev.

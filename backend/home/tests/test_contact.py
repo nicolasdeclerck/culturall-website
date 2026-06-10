@@ -1,7 +1,9 @@
 import pytest
+from django.core import mail
 from django.test import Client, override_settings
 
 from home import turnstile as turnstile_module
+from home.emails import send_contact_notification
 from home.models import ContactSubmission
 from home.turnstile import verify_turnstile
 
@@ -156,6 +158,69 @@ class TestVerifyTurnstileHelper:
 
         monkeypatch.setattr(turnstile_module.request, "urlopen", _boom)
         assert verify_turnstile("") is False
+
+
+class TestContactEmailNotification:
+    """Notification email envoyée à l'association à chaque soumission."""
+
+    url = "/contact/"
+    HTMX = {"HTTP_HX_REQUEST": "true"}
+
+    valid_payload = {
+        "name": "Alice",
+        "email": "alice@example.com",
+        "subject": "Question",
+        "message": "Bonjour, je souhaite en savoir plus.",
+    }
+
+    @override_settings(CONTACT_RECIPIENT_EMAIL="asso@cultur-all.org")
+    def test_notification_sent_to_association(self, client: Client):
+        resp = client.post(self.url, self.valid_payload, **self.HTMX)
+
+        assert resp.status_code == 200
+        assert ContactSubmission.objects.count() == 1
+        assert len(mail.outbox) == 1
+
+        msg = mail.outbox[0]
+        assert msg.to == ["asso@cultur-all.org"]
+        # Répondre au mail écrit directement au visiteur.
+        assert msg.reply_to == ["alice@example.com"]
+        assert "Question" in msg.subject
+        assert "Alice" in msg.body
+        assert "alice@example.com" in msg.body
+        assert "je souhaite en savoir plus" in msg.body
+
+    @override_settings(CONTACT_RECIPIENT_EMAIL="")
+    def test_no_notification_when_recipient_not_configured(self, client: Client):
+        resp = client.post(self.url, self.valid_payload, **self.HTMX)
+
+        assert resp.status_code == 200
+        # La demande est tout de même enregistrée.
+        assert ContactSubmission.objects.count() == 1
+        assert len(mail.outbox) == 0
+
+    @override_settings(CONTACT_RECIPIENT_EMAIL="asso@cultur-all.org")
+    def test_submission_succeeds_even_if_send_fails(self, client: Client, monkeypatch):
+        def _boom(*a, **k):
+            raise OSError("connexion SMTP impossible")
+
+        monkeypatch.setattr("home.emails.EmailMessage.send", _boom)
+
+        resp = client.post(self.url, self.valid_payload, **self.HTMX)
+
+        # Le visiteur voit quand même le succès et la demande est persistée.
+        assert resp.status_code == 200
+        assert "contact-success" in resp.content.decode()
+        assert ContactSubmission.objects.count() == 1
+        assert len(mail.outbox) == 0
+
+    @override_settings(CONTACT_RECIPIENT_EMAIL="")
+    def test_helper_returns_false_when_recipient_not_configured(self, db):
+        submission = ContactSubmission.objects.create(
+            name="Bob", email="bob@example.com", subject="S", message="M"
+        )
+        assert send_contact_notification(submission) is False
+        assert len(mail.outbox) == 0
 
 
 class TestContactSubmissionModel:

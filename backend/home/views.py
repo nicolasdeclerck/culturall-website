@@ -2,6 +2,7 @@ from django.http import Http404
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods, require_safe
 
+from .emails import send_contact_notification
 from .forms import ContactForm
 from .models import ContactSubmission, HomePage
 from .turnstile import verify_turnstile
@@ -40,7 +41,11 @@ def contact_page(request):
         )
 
         if form_valid and human:
-            ContactSubmission.objects.create(**form.cleaned_data)
+            submission = ContactSubmission.objects.create(**form.cleaned_data)
+            # Notifie l'association. L'échec d'envoi est absorbé par le
+            # helper : la demande est déjà persistée, on n'interrompt jamais
+            # le parcours visiteur pour un problème de serveur mail.
+            send_contact_notification(submission)
             if request.htmx:
                 return render(request, "home/_contact_success.html")
             return render(request, "home/contact_page.html", {"success": True})
