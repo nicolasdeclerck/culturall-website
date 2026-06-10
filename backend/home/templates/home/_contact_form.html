@@ -32,5 +32,12 @@
     {% if form.message.errors %}<span class="contact-error">{{ form.message.errors.0 }}</span>{% endif %}
   </div>
 
+  {% if TURNSTILE_SITE_KEY %}
+  <div class="cf-turnstile"
+       data-sitekey="{{ TURNSTILE_SITE_KEY }}"
+       data-theme="dark"
+       data-language="fr"></div>
+  {% endif %}
+
   <button type="submit" class="contact-submit">Envoyer</button>
 </form>

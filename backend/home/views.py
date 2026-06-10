@@ -4,6 +4,15 @@ from django.views.decorators.http import require_http_methods, require_safe
 
 from .forms import ContactForm
 from .models import ContactSubmission, HomePage
+from .turnstile import verify_turnstile
+
+
+def _client_ip(request):
+    """IP de l'appelant en tenant compte d'un éventuel proxy (X-Forwarded-For)."""
+    forwarded = request.META.get("HTTP_X_FORWARDED_FOR")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.META.get("REMOTE_ADDR")
 
 
 @require_safe
@@ -25,11 +34,19 @@ def contact_page(request):
     """
     if request.method == "POST":
         form = ContactForm(request.POST)
-        if form.is_valid():
+        form_valid = form.is_valid()
+        human = verify_turnstile(
+            request.POST.get("cf-turnstile-response", ""), _client_ip(request)
+        )
+
+        if form_valid and human:
             ContactSubmission.objects.create(**form.cleaned_data)
             if request.htmx:
                 return render(request, "home/_contact_success.html")
             return render(request, "home/contact_page.html", {"success": True})
+
+        if not human:
+            form.add_error(None, "La vérification anti-robot a échoué. Merci de réessayer.")
 
         if request.htmx:
             return render(request, "home/_contact_form.html", {"form": form})

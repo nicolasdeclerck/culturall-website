@@ -2,6 +2,26 @@
 
 {% block title %}Contact — Cultur'all{% endblock %}
 
+{% block extra_head %}
+  {% if TURNSTILE_SITE_KEY %}
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
+  <script>
+    // Le rendu implicite ne s'applique qu'au chargement initial. Après un swap
+    // HTMX (formulaire ré-affiché avec ses erreurs), le widget est neuf : on le
+    // (re)rend explicitement.
+    document.addEventListener('htmx:afterSwap', function () {
+      if (!window.turnstile) return;
+      document.querySelectorAll('.cf-turnstile').forEach(function (el) {
+        if (!el.dataset.rendered) {
+          window.turnstile.render(el);
+          el.dataset.rendered = 'true';
+        }
+      });
+    });
+  </script>
+  {% endif %}
+{% endblock %}
+
 {% block content %}
 <main class="page page--centered">
   <h1>Contact</h1>
