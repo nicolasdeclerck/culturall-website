@@ -147,6 +147,7 @@ body {
   padding: 2rem;
   text-align: center;
   color: #fff;
+  text-transform: uppercase;
 }
 
 .landing-overlay__title {
