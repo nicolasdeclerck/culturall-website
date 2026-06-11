@@ -117,12 +117,52 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
+  /* Ratio de la vidéo Vimeo : 2.37:1 (42.19%). On dimensionne l'iframe
+     à ce ratio et on prend la plus grande dimension pour toujours couvrir
+     le viewport (équivalent object-fit: cover pour un iframe). */
   width: 110vw;
-  height: 61.875vw; /* 16:9 ratio, scaled 110% */
+  height: 46.41vw; /* 110vw * 0.4219 */
   min-height: 110vh;
-  min-width: 195.55vh; /* 16:9 ratio, scaled 110% */
+  min-width: 260.73vh; /* 110vh / 0.4219 */
   transform: translate(-50%, -50%);
   border: none;
+}
+
+/* Voile sombre par-dessus la vidéo pour la lisibilité de l'encart */
+.landing-video::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.landing-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  width: min(90%, 50rem);
+  padding: 2rem;
+  text-align: center;
+  color: #fff;
+}
+
+.landing-overlay__title {
+  margin: 0 0 1rem;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
+}
+
+.landing-overlay__subtitle {
+  margin: 0;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1.4;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
 }
 
 /* Pages intérieures */
