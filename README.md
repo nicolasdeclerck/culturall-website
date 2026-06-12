@@ -84,6 +84,7 @@ La production utilise des images Docker pré-buildées, poussées sur GHCR par l
 - Les enregistrements DNS pointant vers le VPS :
   - `culturall-website.nickorp.com` (site)
   - `media.cultur-all.org` (médias MinIO)
+  - `stats-culturall.nickorp.com` (tableau de bord Plausible — optionnel, mesure d'audience)
 
 ### 1. Cloner le dépôt sur le VPS
 
@@ -154,6 +155,18 @@ Un environnement éphémère peut être lancé pour exécuter les tests browser 
 ```
 
 Les TNR tournent aussi automatiquement chaque nuit à 2h UTC via GitHub Actions.
+
+## Mesure d'audience (Plausible)
+
+Le nombre de **visiteurs par page** est mesuré via une instance **Plausible
+Community Edition** auto-hébergée (sans cookie, RGPD-friendly). Le script de
+mesure n'est injecté que pour les **visiteurs anonymes** : les utilisateurs
+connectés sont exclus des statistiques.
+
+- Activation côté site : variables `PLAUSIBLE_DOMAIN` / `PLAUSIBLE_SCRIPT_URL`
+  (cf. `.env.example`). Laissées vides, la mesure est désactivée.
+- Stack dédiée : `docker-compose.analytics.yml` (+ `.env.analytics.example`).
+- Déploiement et exploitation : voir [`docs/analytics-plausible.md`](docs/analytics-plausible.md).
 
 ## Structure du projet
 

@@ -1,0 +1,117 @@
+# Stack Plausible Community Edition — mesure d'audience auto-hébergée.
+#
+# Indépendante de l'application : elle se déploie/maintient séparément du
+# site (pas de ClickHouse imposé au stack principal ni à la CI). Elle rejoint
+# le réseau Traefik EXTERNE déjà en place sur le VPS et expose le tableau de
+# bord sur https://stats-culturall.nickorp.com.
+#
+# Usage :
+#   docker compose -p culturall-analytics \
+#     -f docker-compose.analytics.yml \
+#     --env-file .env.analytics \
+#     up -d
+#
+# Pré-requis :
+#   - Réseau docker externe Traefik (n8n-traefik_default) déjà créé
+#   - DNS : stats-culturall.nickorp.com → IP du VPS
+#   - .env.analytics rempli (cf. .env.analytics.example)
+#
+# Après le premier démarrage : ouvrir https://stats-culturall.nickorp.com, créer le
+# compte admin, puis ajouter le site « cultur-all.org ». Renseigner enfin
+# PLAUSIBLE_DOMAIN / PLAUSIBLE_SCRIPT_URL dans le .env.prod du site et
+# redémarrer le conteneur django.
+#
+# Adapté de https://github.com/plausible/community-edition (v3.0.1).
+#
+# Placeholders à remplacer :
+#   stats-culturall.nickorp.com : sous-domaine du tableau de bord Plausible
+#   n8n-traefik_default  : nom du réseau Traefik externe
+#   myresolver           : nom du cert resolver Let's Encrypt côté Traefik
+
+services:
+  plausible_db:
+    image: postgres:16-alpine
+    restart: always
+    volumes:
+      - plausible_db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${PLAUSIBLE_DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      start_period: 1m
+
+  plausible_events_db:
+    image: clickhouse/clickhouse-server:24.12-alpine
+    restart: always
+    volumes:
+      - plausible_event_data:/var/lib/clickhouse
+      - plausible_event_logs:/var/log/clickhouse-server
+      - ./docker/plausible/clickhouse/logs.xml:/etc/clickhouse-server/config.d/logs.xml:ro
+      - ./docker/plausible/clickhouse/ipv4-only.xml:/etc/clickhouse-server/config.d/ipv4-only.xml:ro
+      - ./docker/plausible/clickhouse/low-resources.xml:/etc/clickhouse-server/config.d/low-resources.xml:ro
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    environment:
+      - CLICKHOUSE_SKIP_USER_SETUP=1
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 -O - http://127.0.0.1:8123/ping || exit 1"]
+      start_period: 1m
+
+  plausible:
+    image: ghcr.io/plausible/community-edition:v3.0.1
+    restart: always
+    command: sh -c "/entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"
+    depends_on:
+      plausible_db:
+        condition: service_healthy
+      plausible_events_db:
+        condition: service_healthy
+    volumes:
+      - plausible_data:/var/lib/plausible
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    environment:
+      - TMPDIR=/var/lib/plausible/tmp
+      - BASE_URL=${BASE_URL}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - TOTP_VAULT_KEY=${TOTP_VAULT_KEY}
+      # Désactive l'inscription publique : seul l'admin initial peut créer un
+      # compte. Mettre « invite_only » pour autoriser les invitations.
+      - DISABLE_REGISTRATION=${DISABLE_REGISTRATION:-true}
+      - DATABASE_URL=postgres://postgres:${PLAUSIBLE_DB_PASSWORD}@plausible_db:5432/plausible_db
+      - CLICKHOUSE_DATABASE_URL=http://plausible_events_db:8123/plausible_events_db
+    networks:
+      - default
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=n8n-traefik_default"
+
+      # Tableau de bord Plausible — https://stats-culturall.nickorp.com
+      - "traefik.http.routers.culturall-stats.rule=Host(`stats-culturall.nickorp.com`)"
+      - "traefik.http.routers.culturall-stats.entrypoints=websecure"
+      - "traefik.http.routers.culturall-stats.tls=true"
+      - "traefik.http.routers.culturall-stats.tls.certresolver=myresolver"
+      - "traefik.http.services.culturall-stats.loadbalancer.server.port=8000"
+
+      # Redirect HTTP → HTTPS
+      - "traefik.http.routers.culturall-stats-http.rule=Host(`stats-culturall.nickorp.com`)"
+      - "traefik.http.routers.culturall-stats-http.entrypoints=web"
+      - "traefik.http.routers.culturall-stats-http.middlewares=culturall-stats-redirect-to-https"
+      - "traefik.http.middlewares.culturall-stats-redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.culturall-stats-redirect-to-https.redirectscheme.permanent=true"
+
+volumes:
+  plausible_db_data:
+  plausible_event_data:
+  plausible_event_logs:
+  plausible_data:
+
+networks:
+  traefik:
+    external: true
+    name: n8n-traefik_default

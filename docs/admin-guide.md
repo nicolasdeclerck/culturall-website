@@ -267,6 +267,7 @@ phase de préprod). Ce réglage se fait dans :
 | Section « Notre Réseau » (accueil)         | Fragments → Membres du réseau                 |
 | Filtres Partenaires / Sponsors / etc.      | Fragments → Membres du réseau, champ *Type*   |
 | Messages reçus via le formulaire contact   | Contacts *(lecture seule)*                    |
+| Statistiques de fréquentation par page     | Tableau de bord Plausible *(voir § 12)*       |
 | Site public ou protégé par login           | Paramètres → Paramètres du site               |
 | Illustrations utilisées partout            | Images (menu latéral)                         |
 
@@ -299,6 +300,51 @@ phase de préprod). Ce réglage se fait dans :
 | Un nouveau bouton de filtre apparaît dans la section Réseau. | Une nouvelle valeur de *Type* a été saisie. Corrigez l'orthographe dans la fiche membre concernée.           |
 | La vidéo d'un projet ne se lance pas.                      | URL YouTube mal formée. Copiez l'URL complète depuis la barre d'adresse YouTube (format `youtube.com/watch?v=…`). |
 | Le site redirige tout le monde vers `/login`.              | *Authentification requise* est cochée. Paramètres → Paramètres du site → décochez.                           |
+
+---
+
+## 12. Statistiques de fréquentation (Plausible)
+
+Le nombre de **visiteurs par page** est mesuré par **Plausible**, un outil
+d'analyse d'audience auto-hébergé, **respectueux de la vie privée** : il
+n'utilise **aucun cookie** et ne nécessite donc **pas de bannière de
+consentement**.
+
+> **Les utilisateurs connectés ne sont pas comptés.** Quand vous êtes
+> authentifié(e) (back-office), vos propres visites sont automatiquement
+> exclues des statistiques : les chiffres reflètent donc le public réel.
+
+### 12.1. Accéder au tableau de bord
+
+| Environnement | URL du tableau de bord            |
+| ------------- | --------------------------------- |
+| Production    | `https://stats-culturall.nickorp.com`    |
+
+Connectez-vous avec le compte Plausible (distinct du compte d'administration
+Wagtail), créé lors de l'installation par un administrateur technique.
+
+### 12.2. Voir les visiteurs par page
+
+1. Sélectionnez la période en haut à droite (7 derniers jours, 30 jours, mois
+   en cours…).
+2. Faites défiler jusqu'à l'encadré **« Top Pages »** : il liste les pages les
+   plus visitées du site.
+3. Pour chaque page, deux chiffres :
+   - **Visiteurs uniques** : nombre de personnes distinctes ayant vu la page.
+   - **Pages vues** (*pageviews*) : nombre total d'affichages (une même
+     personne qui revient compte plusieurs fois).
+4. Cliquez sur **« Details »** (en bas de l'encadré) pour la liste complète,
+   triable et exportable en CSV.
+
+### 12.3. Bon à savoir
+
+- Les chiffres sont **anonymes** : aucune donnée personnelle identifiable
+  n'est stockée.
+- Le filtrage par tag d'un article ou d'un projet (boutons de filtre) ne
+  recharge pas la page entière : ces interactions ne génèrent donc pas de
+  vue supplémentaire, ce qui est normal.
+- Le déploiement et la maintenance de l'instance Plausible sont décrits dans
+  `docs/analytics-plausible.md` (documentation technique).
 
 ---
 
