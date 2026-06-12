@@ -24,6 +24,36 @@ CSRF_TRUSTED_ORIGINS = [
 TURNSTILE_SITE_KEY = os.environ.get("TURNSTILE_SITE_KEY", "")
 TURNSTILE_SECRET_KEY = os.environ.get("TURNSTILE_SECRET_KEY", "")
 
+# ─── Email (serveur SMTP existant) ─────────────────────────────
+# Connexion pilotée par variables d'environnement (cf. .env.example).
+# Si EMAIL_HOST n'est pas renseigné (dev, tests, CI), on bascule sur le
+# backend console : les mails sont écrits dans les logs au lieu d'être
+# envoyés, ce qui évite de bloquer les environnements sans serveur mail.
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+# STARTTLS (port 587) OU SSL implicite (port 465) — activer l'un OU l'autre.
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "False").lower() in ("1", "true", "yes")
+EMAIL_TIMEOUT = int(os.environ.get("EMAIL_TIMEOUT", "10"))
+EMAIL_BACKEND = os.environ.get(
+    "EMAIL_BACKEND",
+    "django.core.mail.backends.smtp.EmailBackend"
+    if EMAIL_HOST
+    else "django.core.mail.backends.console.EmailBackend",
+)
+
+# Adresse d'expéditeur (From) par défaut des mails sortants. SERVER_EMAIL
+# est utilisée par Django pour les mails d'erreur (5xx) envoyés aux ADMINS.
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "no-reply@cultur-all.org")
+SERVER_EMAIL = os.environ.get("SERVER_EMAIL", DEFAULT_FROM_EMAIL)
+
+# Destinataire des notifications du formulaire de contact (l'association).
+# Si vide, aucune notification n'est envoyée : la demande reste enregistrée
+# en base et consultable dans l'admin Wagtail.
+CONTACT_RECIPIENT_EMAIL = os.environ.get("CONTACT_RECIPIENT_EMAIL", "")
+
 # ─── Apps ──────────────────────────────────────────────────────
 INSTALLED_APPS = [
     "blog",

@@ -111,7 +111,24 @@ NEXT_PUBLIC_API_URL=https://culturall-website.nickorp.com
 NODE_ENV=production
 REGISTRY=ghcr.io/nicolasdeclerck/culturall-website
 IMAGE_TAG=latest
+
+# Serveur mail existant (SMTP) — voir .env.example pour le détail
+EMAIL_HOST=<hôte SMTP>
+EMAIL_PORT=587
+EMAIL_HOST_USER=<utilisateur SMTP>
+EMAIL_HOST_PASSWORD=<mot de passe SMTP>
+EMAIL_USE_TLS=True
+DEFAULT_FROM_EMAIL=no-reply@cultur-all.org
+CONTACT_RECIPIENT_EMAIL=<adresse de l'association>
 ```
+
+> **Email.** L'application se connecte à un serveur SMTP existant via les
+> variables `EMAIL_*`. À chaque soumission du formulaire de contact, une
+> notification est envoyée à `CONTACT_RECIPIENT_EMAIL` (avec l'adresse du
+> visiteur en `Reply-To`). Si `EMAIL_HOST` est vide, les mails sont écrits
+> dans les logs (backend console) ; si `CONTACT_RECIPIENT_EMAIL` est vide,
+> aucune notification n'est envoyée — la demande reste consultable dans
+> l'admin Wagtail dans tous les cas.
 
 ### 3. Configurer les secrets GitHub Actions
 
