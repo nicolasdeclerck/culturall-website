@@ -1,0 +1,5 @@
+{% load wagtailimages_tags %}
+<figure class="custom-section__figure">
+  {% image self.image width-1200 class="custom-section__image" alt=self.caption loading="lazy" %}
+  {% if self.caption %}<figcaption class="custom-section__caption">{{ self.caption }}</figcaption>{% endif %}
+</figure>

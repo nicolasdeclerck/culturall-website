@@ -1230,3 +1230,156 @@ body {
     animation: none;
   }
 }
+
+/* ─── Section personnalisable (StreamField HomePage) ───────────── */
+.custom-section {
+  position: relative;
+  z-index: 1;
+  background: #f7f7f7;
+  padding: 4rem 2rem;
+  color: #111;
+}
+
+.custom-section__inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.custom-section__heading {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 1.5rem;
+}
+
+.custom-section__richtext {
+  line-height: 1.7;
+  margin: 0 0 1.5rem;
+}
+
+.custom-section__richtext a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.custom-section__figure {
+  margin: 0 0 1.5rem;
+  text-align: center;
+}
+
+.custom-section__image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.custom-section__caption {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.custom-section__button {
+  display: inline-block;
+  margin: 0.5rem 0 1.5rem;
+  padding: 0.75rem 1.75rem;
+  background: #111;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 999px;
+  transition: opacity 0.2s ease;
+}
+
+.custom-section__button:hover {
+  opacity: 0.85;
+}
+
+.custom-section__video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 0 0 1.5rem;
+}
+
+.custom-section__video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 8px;
+}
+
+.custom-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin: 0 0 1.5rem;
+}
+
+.custom-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 0 0 1.5rem;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.custom-card-grid .custom-card {
+  margin: 0;
+}
+
+.custom-card--link {
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.custom-card--link:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+}
+
+.custom-card__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+
+.custom-card__body {
+  padding: 1.5rem;
+}
+
+.custom-card__title {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.custom-card__subtitle {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #666;
+}
+
+.custom-card__description {
+  margin: 0;
+  line-height: 1.6;
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .custom-section {
+    padding: 3rem 1.25rem;
+  }
+
+  .custom-section__heading {
+    font-size: 1.6rem;
+  }
+}

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load wagtailimages_tags %}
+{% load wagtailimages_tags wagtailcore_tags %}
 
 {% block content %}
 <div class="landing">
@@ -66,6 +66,16 @@
         <span class="network-card__name">{{ member.name }}</span>
       {% endif %}
     </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if page.custom_section %}
+<section class="custom-section">
+  <div class="custom-section__inner">
+    {% for block in page.custom_section %}
+      {% include_block block %}
     {% endfor %}
   </div>
 </section>

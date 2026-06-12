@@ -14,10 +14,13 @@ from functools import cached_property
 
 from django.db import models
 from wagtail.admin.panels import FieldPanel
+from wagtail.fields import StreamField
 from wagtail.models import Page
 from wagtail.permission_policies import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
+
+from home.blocks import CustomSectionBlock
 
 
 class HomePage(Page):
@@ -38,9 +41,20 @@ class HomePage(Page):
         help_text="Texte de description affiché sous le titre principal.",
     )
 
+    custom_section = StreamField(
+        CustomSectionBlock(),
+        blank=True,
+        verbose_name="Section personnalisable",
+        help_text=(
+            "Zone libre affichée sous la section « Notre Réseau ». "
+            "Ajoutez les blocs souhaités, dans l'ordre voulu."
+        ),
+    )
+
     content_panels = Page.content_panels + [
         FieldPanel("hero_title"),
         FieldPanel("hero_subtitle"),
+        FieldPanel("custom_section"),
     ]
 
     def get_context(self, request, *args, **kwargs):
