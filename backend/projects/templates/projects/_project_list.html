@@ -24,7 +24,7 @@
   {% for project in projects %}
   <a href="/projets/{{ project.slug }}/" class="project-card{% if not project.thumbnail %} project-card--no-thumbnail{% endif %}">
     {% if project.thumbnail %}
-      {% image project.thumbnail fill-600x400 class="project-card__thumbnail" alt="" loading="lazy" %}
+      {% image project.thumbnail fill-600x400 class="project-card__thumbnail" alt=project.thumbnail.description loading="lazy" %}
       <div class="project-card__overlay"></div>
     {% endif %}
     <span class="project-card__tag">{% with project.tags.all|first as first_tag %}{% if first_tag %}{{ first_tag.name }}{% endif %}{% endwith %}</span>
