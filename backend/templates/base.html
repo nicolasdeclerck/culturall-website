@@ -6,11 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{% if page %}{{ page.seo_title|default:page.title }}{% block title_suffix %} — Cultur'all{% endblock %}{% else %}Cultur'all{% endif %}{% endblock %}</title>
   {% block meta %}
-  <meta name="description" content="Cultur'all — Site vitrine">
+  <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}Cultur'all — Site vitrine{% endif %}">
   {% endblock %}
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   {# Socle JS : htmx (interactions serveur), site.js (composants Alpine), Alpine (réactivité). #}
-  {# site.js doit précéder alpine.min.js pour enregistrer ses composants avant l'init d'Alpine. #}
+  {# site.js doit précéder alpine.min.js pour enregistrer ses ≥composants avant l'init d'Alpine. #}
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
   <script src="{% static 'js/site.js' %}" defer></script>
   <script src="{% static 'js/alpine.min.js' %}" defer></script>
