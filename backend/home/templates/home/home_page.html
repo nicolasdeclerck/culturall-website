@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {% load wagtailimages_tags %}
 
-{% block title %}Cultur'all{% endblock %}
-
 {% block content %}
 <div class="landing">
   <div class="landing-video">
@@ -13,8 +11,8 @@
       title="Vidéo de fond Cultur'all"></iframe>
   </div>
   <div class="landing-overlay">
-    <h1 class="landing-overlay__title">Cultur'all</h1>
-    <p class="landing-overlay__subtitle">Création et Production de contenus audiovisuels à Lille : documentaires, clips, captations et contenus dans les Hauts-de-France</p>
+    <h1 class="landing-overlay__title">{{ page.hero_title }}</h1>
+    {% if page.hero_subtitle %}<h1 class="landing-overlay__subtitle">{{ page.hero_subtitle }}</h1>{% endif %}
   </div>
 </div>
 

@@ -21,6 +21,28 @@ from wagtail.snippets.views.snippets import SnippetViewSet
 
 
 class HomePage(Page):
+    hero_title = models.CharField(
+        "Titre principal",
+        max_length=255,
+        default="Cultur'all",
+        help_text="Titre affiché en grand sur la vidéo d'accueil.",
+    )
+    hero_subtitle = models.TextField(
+        "Sous-titre",
+        blank=True,
+        default=(
+            "Création et Production de contenus audiovisuels à Lille : "
+            "documentaires, clips, captations et contenus dans les "
+            "Hauts-de-France"
+        ),
+        help_text="Texte de description affiché sous le titre principal.",
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel("hero_title"),
+        FieldPanel("hero_subtitle"),
+    ]
+
     def get_context(self, request, *args, **kwargs):
         # Imports locaux pour éviter tout souci d'ordre de chargement des apps.
         from network.models import NetworkMember
