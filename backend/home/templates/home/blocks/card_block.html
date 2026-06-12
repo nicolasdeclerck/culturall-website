@@ -1,0 +1,13 @@
+{% load wagtailimages_tags wagtailcore_tags %}
+{% if self.link_page %}
+<a href="{% pageurl self.link_page %}" class="custom-card custom-card--link">
+{% else %}
+<article class="custom-card">
+{% endif %}
+  {% image self.image fill-600x400 class="custom-card__image" alt=self.title loading="lazy" %}
+  <div class="custom-card__body">
+    <h3 class="custom-card__title">{{ self.title }}</h3>
+    {% if self.subtitle %}<p class="custom-card__subtitle">{{ self.subtitle }}</p>{% endif %}
+    {% if self.description %}<p class="custom-card__description">{{ self.description|linebreaksbr }}</p>{% endif %}
+  </div>
+{% if self.link_page %}</a>{% else %}</article>{% endif %}
