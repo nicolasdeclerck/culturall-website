@@ -70,13 +70,17 @@ Renseigner dans `.env.analytics` :
 
 ```bash
 BASE_URL=https://stats-culturall.nickorp.com
-SECRET_KEY_BASE=$(openssl rand -base64 48)
-TOTP_VAULT_KEY=$(openssl rand -base64 32)
-PLAUSIBLE_DB_PASSWORD=<mot de passe fort>
-DISABLE_REGISTRATION=true
+SECRET_KEY_BASE=$(openssl rand -base64 48)   # ≥ 64 caractères, requis
+TOTP_VAULT_KEY=$(openssl rand -base64 32)     # exactement 32 octets
+PLAUSIBLE_DB_PASSWORD=$(openssl rand -hex 24) # hex → sûr dans la DATABASE_URL
+DISABLE_REGISTRATION=false                     # ⚠️ false au 1er lancement (cf. § 4)
 ```
 
 > `.env.analytics` est ignoré par Git (cf. `.gitignore`) : ne jamais le committer.
+
+> **`DISABLE_REGISTRATION=false` est nécessaire au premier démarrage** pour
+> pouvoir créer le compte admin via l'UI. On le repasse à `true` juste après
+> (cf. § 4).
 
 ### 3. Lancer la stack Plausible
 
@@ -93,10 +97,20 @@ Let's Encrypt pour `stats-culturall.nickorp.com`.
 
 ### 4. Créer le compte admin et le site suivi
 
-1. Ouvrir `https://stats-culturall.nickorp.com` → créer le **compte administrateur**.
+1. Ouvrir `https://stats-culturall.nickorp.com` → créer le **compte administrateur**
+   (aucune vérification email : `ENABLE_EMAIL_VERIFICATION` est `false` par défaut).
 2. **Add a website** → domaine **`cultur-all.org`** (sans `https://`).
    Plausible affiche alors un snippet ; on n'en a pas besoin (déjà intégré au
    site), mais on retient la valeur du `data-domain` = `cultur-all.org`.
+3. **Verrouiller les inscriptions** : repasser `DISABLE_REGISTRATION=true` dans
+   `.env.analytics`, puis relancer pour appliquer :
+
+   ```bash
+   docker compose -p culturall-analytics \
+     -f docker-compose.analytics.yml \
+     --env-file .env.analytics \
+     up -d
+   ```
 
 ### 5. Activer la mesure côté site
 
