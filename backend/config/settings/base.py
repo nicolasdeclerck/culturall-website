@@ -31,7 +31,7 @@ TURNSTILE_SECRET_KEY = os.environ.get("TURNSTILE_SECRET_KEY", "")
 # exclus des statistiques, conformément au besoin métier.
 #   - PLAUSIBLE_DOMAIN     : le « data-domain » du site suivi (ex. cultur-all.org)
 #   - PLAUSIBLE_SCRIPT_URL : l'URL du script servi par l'instance Plausible
-#                            (ex. https://stats.cultur-all.org/js/script.js)
+#                            (ex. https://stats-culturall.nickorp.com/js/script.js)
 # Laisser les deux vides désactive complètement la mesure (dev, tests, CI).
 PLAUSIBLE_DOMAIN = os.environ.get("PLAUSIBLE_DOMAIN", "")
 PLAUSIBLE_SCRIPT_URL = os.environ.get("PLAUSIBLE_SCRIPT_URL", "")

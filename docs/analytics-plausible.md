@@ -36,10 +36,10 @@ Les variables sont exposées aux templates par le context processor
 ## Architecture
 
 ```
-                         ┌──────────────────────────────┐
-  Navigateur visiteur ──▶│ stats.cultur-all.org (Traefik)│──▶ plausible
-   (script.js + events)  └──────────────────────────────┘        │
-                                                     ┌────────────┴────────────┐
+                         ┌────────────────────────────────────────┐
+  Navigateur visiteur ──▶│ stats-culturall.nickorp.com (Traefik)  │──▶ plausible
+   (script.js + events)  └────────────────────────────────────────┘      │
+                                                     ┌───────────────────┴─────┐
                                                      ▼                         ▼
                                               plausible_db            plausible_events_db
                                               (PostgreSQL)               (ClickHouse)
@@ -57,7 +57,7 @@ place sur le VPS.
 Créer un enregistrement pointant vers le VPS :
 
 ```
-stats.cultur-all.org  →  <IP du VPS>
+stats-culturall.nickorp.com  →  <IP du VPS>
 ```
 
 ### 2. Configurer les secrets de l'instance
@@ -69,7 +69,7 @@ cp .env.analytics.example .env.analytics
 Renseigner dans `.env.analytics` :
 
 ```bash
-BASE_URL=https://stats.cultur-all.org
+BASE_URL=https://stats-culturall.nickorp.com
 SECRET_KEY_BASE=$(openssl rand -base64 48)
 TOTP_VAULT_KEY=$(openssl rand -base64 32)
 PLAUSIBLE_DB_PASSWORD=<mot de passe fort>
@@ -89,11 +89,11 @@ docker compose -p culturall-analytics \
 
 Le service `plausible` crée et migre ses bases automatiquement au démarrage
 (`db createdb && db migrate && run`). Traefik émet le certificat TLS
-Let's Encrypt pour `stats.cultur-all.org`.
+Let's Encrypt pour `stats-culturall.nickorp.com`.
 
 ### 4. Créer le compte admin et le site suivi
 
-1. Ouvrir `https://stats.cultur-all.org` → créer le **compte administrateur**.
+1. Ouvrir `https://stats-culturall.nickorp.com` → créer le **compte administrateur**.
 2. **Add a website** → domaine **`cultur-all.org`** (sans `https://`).
    Plausible affiche alors un snippet ; on n'en a pas besoin (déjà intégré au
    site), mais on retient la valeur du `data-domain` = `cultur-all.org`.
@@ -104,7 +104,7 @@ Dans le `.env.prod` du **site** (pas `.env.analytics`) :
 
 ```bash
 PLAUSIBLE_DOMAIN=cultur-all.org
-PLAUSIBLE_SCRIPT_URL=https://stats.cultur-all.org/js/script.js
+PLAUSIBLE_SCRIPT_URL=https://stats-culturall.nickorp.com/js/script.js
 ```
 
 Puis redémarrer le conteneur Django pour recharger l'environnement :
@@ -119,7 +119,7 @@ docker compose -p culturall-website \
 
 - Ouvrir le site en **navigation privée** (donc anonyme), visiter quelques pages.
 - Dans l'onglet **Réseau** du navigateur : une requête vers
-  `stats.cultur-all.org/api/event` (200) doit partir à chaque page.
+  `stats-culturall.nickorp.com/api/event` (200) doit partir à chaque page.
 - En étant **connecté** au back-office : **aucune** requête `script.js` /
   `api/event` ne doit partir (visites non comptées).
 - Le tableau de bord Plausible affiche les visites sous **« Top Pages »**.

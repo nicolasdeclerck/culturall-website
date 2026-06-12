@@ -3,7 +3,7 @@
 # Indépendante de l'application : elle se déploie/maintient séparément du
 # site (pas de ClickHouse imposé au stack principal ni à la CI). Elle rejoint
 # le réseau Traefik EXTERNE déjà en place sur le VPS et expose le tableau de
-# bord sur https://stats.cultur-all.org.
+# bord sur https://stats-culturall.nickorp.com.
 #
 # Usage :
 #   docker compose -p culturall-analytics \
@@ -13,10 +13,10 @@
 #
 # Pré-requis :
 #   - Réseau docker externe Traefik (n8n-traefik_default) déjà créé
-#   - DNS : stats.cultur-all.org → IP du VPS
+#   - DNS : stats-culturall.nickorp.com → IP du VPS
 #   - .env.analytics rempli (cf. .env.analytics.example)
 #
-# Après le premier démarrage : ouvrir https://stats.cultur-all.org, créer le
+# Après le premier démarrage : ouvrir https://stats-culturall.nickorp.com, créer le
 # compte admin, puis ajouter le site « cultur-all.org ». Renseigner enfin
 # PLAUSIBLE_DOMAIN / PLAUSIBLE_SCRIPT_URL dans le .env.prod du site et
 # redémarrer le conteneur django.
@@ -24,7 +24,7 @@
 # Adapté de https://github.com/plausible/community-edition (v3.0.1).
 #
 # Placeholders à remplacer :
-#   stats.cultur-all.org : sous-domaine du tableau de bord Plausible
+#   stats-culturall.nickorp.com : sous-domaine du tableau de bord Plausible
 #   n8n-traefik_default  : nom du réseau Traefik externe
 #   myresolver           : nom du cert resolver Let's Encrypt côté Traefik
 
@@ -91,15 +91,15 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=n8n-traefik_default"
 
-      # Tableau de bord Plausible — https://stats.cultur-all.org
-      - "traefik.http.routers.culturall-stats.rule=Host(`stats.cultur-all.org`)"
+      # Tableau de bord Plausible — https://stats-culturall.nickorp.com
+      - "traefik.http.routers.culturall-stats.rule=Host(`stats-culturall.nickorp.com`)"
       - "traefik.http.routers.culturall-stats.entrypoints=websecure"
       - "traefik.http.routers.culturall-stats.tls=true"
       - "traefik.http.routers.culturall-stats.tls.certresolver=myresolver"
       - "traefik.http.services.culturall-stats.loadbalancer.server.port=8000"
 
       # Redirect HTTP → HTTPS
-      - "traefik.http.routers.culturall-stats-http.rule=Host(`stats.cultur-all.org`)"
+      - "traefik.http.routers.culturall-stats-http.rule=Host(`stats-culturall.nickorp.com`)"
       - "traefik.http.routers.culturall-stats-http.entrypoints=web"
       - "traefik.http.routers.culturall-stats-http.middlewares=culturall-stats-redirect-to-https"
       - "traefik.http.middlewares.culturall-stats-redirect-to-https.redirectscheme.scheme=https"

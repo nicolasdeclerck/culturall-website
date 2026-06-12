@@ -318,7 +318,7 @@ consentement**.
 
 | Environnement | URL du tableau de bord            |
 | ------------- | --------------------------------- |
-| Production    | `https://stats.cultur-all.org`    |
+| Production    | `https://stats-culturall.nickorp.com`    |
 
 Connectez-vous avec le compte Plausible (distinct du compte d'administration
 Wagtail), créé lors de l'installation par un administrateur technique.

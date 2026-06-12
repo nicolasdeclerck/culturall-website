@@ -84,7 +84,7 @@ La production utilise des images Docker pré-buildées, poussées sur GHCR par l
 - Les enregistrements DNS pointant vers le VPS :
   - `culturall-website.nickorp.com` (site)
   - `media.cultur-all.org` (médias MinIO)
-  - `stats.cultur-all.org` (tableau de bord Plausible — optionnel, mesure d'audience)
+  - `stats-culturall.nickorp.com` (tableau de bord Plausible — optionnel, mesure d'audience)
 
 ### 1. Cloner le dépôt sur le VPS
 
