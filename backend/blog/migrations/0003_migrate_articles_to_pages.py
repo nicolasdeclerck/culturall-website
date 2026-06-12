@@ -23,15 +23,27 @@ def migrate_articles_to_pages(apps, schema_editor):
     # modèles runtime, pas ceux retournés par apps.get_model.
     from blog.models import ArticlePage as RuntimeArticlePage
     from blog.models import BlogIndexPage as RuntimeBlogIndexPage
-    from home.models import HomePage as RuntimeHomePage
+    from wagtail.models import Page
 
-    home = RuntimeHomePage.objects.first()
+    # On récupère la HomePage comme `Page` de base (et non via le modèle
+    # runtime HomePage) : treebeard re-SELECT le parent via sa propre classe,
+    # et le modèle runtime HomePage chargerait des colonnes (ex. hero_title)
+    # absentes tant que home.0004 n'a pas tourné sur une base fraîche.
+    home = Page.objects.filter(
+        content_type__app_label="home", content_type__model="homepage"
+    ).first()
     if home is None:
         return
 
     blog_index = RuntimeBlogIndexPage.objects.descendant_of(home).first()
     if blog_index is None:
-        blog_index = RuntimeBlogIndexPage(title="Blog", slug="blog")
+        # locale_id explicite : sans lui, Page.save() appelle get_default_locale()
+        # qui résout le parent via parent.specific_class (HomePage) et SELECT
+        # ses colonnes propres (hero_*), absentes tant que home.0004 n'a pas
+        # tourné sur une base fraîche.
+        blog_index = RuntimeBlogIndexPage(
+            title="Blog", slug="blog", locale_id=home.locale_id
+        )
         home.add_child(instance=blog_index)
         blog_index.save_revision().publish()
 

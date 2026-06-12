@@ -21,17 +21,29 @@ def migrate_projects_to_pages(apps, schema_editor):
 
     # La manipulation d'arbre Wagtail (add_child, MP_Node) requiert les
     # modèles runtime, pas ceux retournés par apps.get_model.
-    from home.models import HomePage as RuntimeHomePage
     from projects.models import ProjectPage as RuntimeProjectPage
     from projects.models import ProjectsIndexPage as RuntimeProjectsIndexPage
+    from wagtail.models import Page
 
-    home = RuntimeHomePage.objects.first()
+    # On récupère la HomePage comme `Page` de base (et non via le modèle
+    # runtime HomePage) : treebeard re-SELECT le parent via sa propre classe,
+    # et le modèle runtime HomePage chargerait des colonnes (ex. hero_title)
+    # absentes tant que home.0004 n'a pas tourné sur une base fraîche.
+    home = Page.objects.filter(
+        content_type__app_label="home", content_type__model="homepage"
+    ).first()
     if home is None:
         return
 
     projects_index = RuntimeProjectsIndexPage.objects.descendant_of(home).first()
     if projects_index is None:
-        projects_index = RuntimeProjectsIndexPage(title="Projets", slug="projets")
+        # locale_id explicite : sans lui, Page.save() appelle get_default_locale()
+        # qui résout le parent via parent.specific_class (HomePage) et SELECT
+        # ses colonnes propres (hero_*), absentes tant que home.0004 n'a pas
+        # tourné sur une base fraîche.
+        projects_index = RuntimeProjectsIndexPage(
+            title="Projets", slug="projets", locale_id=home.locale_id
+        )
         home.add_child(instance=projects_index)
         projects_index.save_revision().publish()
 
