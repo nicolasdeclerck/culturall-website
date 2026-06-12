@@ -24,6 +24,18 @@ CSRF_TRUSTED_ORIGINS = [
 TURNSTILE_SITE_KEY = os.environ.get("TURNSTILE_SITE_KEY", "")
 TURNSTILE_SECRET_KEY = os.environ.get("TURNSTILE_SECRET_KEY", "")
 
+# ─── Plausible Analytics (auto-hébergé, sans cookie) ───────────
+# Mesure d'audience côté client via une instance Plausible Community Edition
+# auto-hébergée. Le script de mesure n'est injecté QUE pour les visiteurs
+# anonymes (cf. templates/base.html) : les utilisateurs connectés sont donc
+# exclus des statistiques, conformément au besoin métier.
+#   - PLAUSIBLE_DOMAIN     : le « data-domain » du site suivi (ex. cultur-all.org)
+#   - PLAUSIBLE_SCRIPT_URL : l'URL du script servi par l'instance Plausible
+#                            (ex. https://stats.cultur-all.org/js/script.js)
+# Laisser les deux vides désactive complètement la mesure (dev, tests, CI).
+PLAUSIBLE_DOMAIN = os.environ.get("PLAUSIBLE_DOMAIN", "")
+PLAUSIBLE_SCRIPT_URL = os.environ.get("PLAUSIBLE_SCRIPT_URL", "")
+
 # ─── Apps ──────────────────────────────────────────────────────
 INSTALLED_APPS = [
     "blog",
@@ -89,6 +101,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "wagtail.contrib.settings.context_processors.settings",
                 "home.context_processors.turnstile",
+                "home.context_processors.analytics",
             ],
         },
     },

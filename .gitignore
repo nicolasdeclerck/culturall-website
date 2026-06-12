@@ -3,7 +3,9 @@
 .env.dev
 .env.preprod
 .env.prod
+.env.analytics
 !.env.example
+!.env.analytics.example
 
 # Worktrees / state
 .claude-state.json
