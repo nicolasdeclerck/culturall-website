@@ -14,10 +14,6 @@
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
   <script src="{% static 'js/site.js' %}" defer></script>
   <script src="{% static 'js/alpine.min.js' %}" defer></script>
-  {# Mesure d'audience Plausible (auto-hébergée, sans cookie). Injectée
-     UNIQUEMENT pour les visiteurs anonymes : les utilisateurs connectés
-     (back-office) sont exclus des statistiques. Désactivée tant que
-     PLAUSIBLE_DOMAIN / PLAUSIBLE_SCRIPT_URL ne sont pas renseignés. #}
   {% if PLAUSIBLE_DOMAIN and PLAUSIBLE_SCRIPT_URL and not request.user.is_authenticated %}
   <script defer data-domain="{{ PLAUSIBLE_DOMAIN }}" src="{{ PLAUSIBLE_SCRIPT_URL }}"></script>
   {% endif %}
