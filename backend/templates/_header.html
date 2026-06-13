@@ -1,4 +1,4 @@
-{% load wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags navigation_tags %}
 <header class="header"
         x-data="header"
         :class="{ 'header--scrolled': scrolled }"
@@ -19,9 +19,14 @@
     <span aria-hidden="true" x-text="menuOpen ? '✕' : '☰'">☰</span>
   </button>
   <nav class="header-nav" :class="{ 'header-nav--open': menuOpen }">
-    <a href="/projets" @click="close()">Nos Projets</a>
-    <a href="/a-propos" @click="close()">À propos</a>
-    <a href="/contact" @click="close()">Contact</a>
+    {# Menu administrable nativement : pages de 1er niveau cochées « Show in #}
+    {# menus » (onglet Promote), dans l'ordre de l'arbre Wagtail. #}
+    {% get_site_root as site_root %}
+    {% if site_root %}
+      {% for menuitem in site_root.get_children.live.in_menu %}
+        <a href="{% pageurl menuitem %}" @click="close()">{{ menuitem.title }}</a>
+      {% endfor %}
+    {% endif %}
     {% if request.user.is_authenticated %}
       <form method="post" action="{% url 'auth-logout' %}" class="header-nav__logout">
         {% csrf_token %}

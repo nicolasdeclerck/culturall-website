@@ -120,7 +120,7 @@ class TestContactTurnstile:
 
     @override_settings(TURNSTILE_SECRET_KEY="secret")
     def test_post_rejected_when_verification_fails(self, client: Client, monkeypatch):
-        monkeypatch.setattr("home.views.verify_turnstile", lambda *a, **k: False)
+        monkeypatch.setattr("home.models.verify_turnstile", lambda *a, **k: False)
         resp = client.post(self.url, self.valid_payload, **self.HTMX)
 
         assert resp.status_code == 200
@@ -131,7 +131,7 @@ class TestContactTurnstile:
 
     @override_settings(TURNSTILE_SECRET_KEY="secret")
     def test_post_accepted_when_verification_succeeds(self, client: Client, monkeypatch):
-        monkeypatch.setattr("home.views.verify_turnstile", lambda *a, **k: True)
+        monkeypatch.setattr("home.models.verify_turnstile", lambda *a, **k: True)
         resp = client.post(self.url, self.valid_payload, **self.HTMX)
 
         assert resp.status_code == 200

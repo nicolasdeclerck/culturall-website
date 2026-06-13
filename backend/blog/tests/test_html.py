@@ -95,9 +95,11 @@ class TestArticleDetail:
         article.unpublish()
         assert client.get(f"/blog/{article.slug}/").status_code == 404
 
-    def test_only_get_allowed(self, client, make_article):
+    def test_post_served_natively(self, client, make_article):
+        # Service natif Wagtail : un POST sur la page détail rend la page (200),
+        # il n'y a plus de vue custom restreignant les méthodes.
         article = make_article(title="X")
-        assert client.post(f"/blog/{article.slug}/").status_code == 405
+        assert client.post(f"/blog/{article.slug}/").status_code == 200
 
     def test_native_preview_renders_template(self, make_article):
         """La preview Wagtail native rend le template article (plus de headless)."""
