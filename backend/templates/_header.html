@@ -20,7 +20,6 @@
   </button>
   <nav class="header-nav" :class="{ 'header-nav--open': menuOpen }">
     <a href="/projets" @click="close()">Nos Projets</a>
-    <a href="/blog" @click="close()">Blog</a>
     <a href="/a-propos" @click="close()">À propos</a>
     <a href="/contact" @click="close()">Contact</a>
     {% if request.user.is_authenticated %}
