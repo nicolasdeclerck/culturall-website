@@ -4,13 +4,13 @@
 <div class="blog-filters">
   <button type="button"
           class="blog-filters__btn{% if not current_tag %} blog-filters__btn--active{% endif %}"
-          hx-get="{% url 'blog-index' %}"
+          hx-get="{% pageurl page %}"
           hx-target="#article-list"
           hx-push-url="true">Tous</button>
   {% for tag in tags %}
   <button type="button"
           class="blog-filters__btn{% if current_tag == tag %} blog-filters__btn--active{% endif %}"
-          hx-get="{% url 'blog-index' %}?tag={{ tag|urlencode }}"
+          hx-get="{% pageurl page %}?tag={{ tag|urlencode }}"
           hx-target="#article-list"
           hx-push-url="true">{{ tag }}</button>
   {% endfor %}

@@ -1,16 +1,16 @@
-{% load wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags %}
 
 {% if tags %}
 <div class="projects-filters">
   <button type="button"
           class="projects-filters__btn{% if not current_tag %} projects-filters__btn--active{% endif %}"
-          hx-get="{% url 'projects-index' %}"
+          hx-get="{% pageurl page %}"
           hx-target="#project-list"
           hx-push-url="true">Tous</button>
   {% for tag in tags %}
   <button type="button"
           class="projects-filters__btn{% if current_tag == tag %} projects-filters__btn--active{% endif %}"
-          hx-get="{% url 'projects-index' %}?tag={{ tag|urlencode }}"
+          hx-get="{% pageurl page %}?tag={{ tag|urlencode }}"
           hx-target="#project-list"
           hx-push-url="true">{{ tag }}</button>
   {% endfor %}

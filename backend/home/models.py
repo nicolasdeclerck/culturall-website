@@ -6,13 +6,17 @@ de racine à l'arbre Wagtail (parent direct de `BlogIndexPage` et, à terme,
 des autres pages d'accueil de section). Le `Site` Wagtail par défaut pointe
 sur cette `HomePage`.
 
-Le rendu HTML est fait côté serveur par Wagtail (catch-all activé dans
-`config/urls.py`). La `HomePage` est servie sur `/` par la vue `home.views.home_page`.
+Le rendu HTML est fait côté serveur par Wagtail : toutes les pages (accueil,
+projets, blog, pages statiques, contact) sont servies nativement par le
+catch-all Wagtail (`config/urls.py`). La `HomePage` est le root page du `Site`
+Wagtail par défaut et est donc servie sur `/`.
 """
 
 from functools import cached_property
 
 from django.db import models
+from django.http import HttpResponseNotAllowed
+from django.shortcuts import render
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import StreamField
 from wagtail.models import Page
@@ -21,6 +25,8 @@ from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
 
 from home.blocks import CustomSectionBlock
+from home.forms import ContactForm
+from home.turnstile import verify_turnstile
 
 
 class HomePage(Page):
@@ -77,6 +83,69 @@ class HomePage(Page):
         context["network_members"] = members
         context["network_types"] = sorted({m.member_type for m in members})
         return context
+
+
+def _client_ip(request):
+    """IP de l'appelant en tenant compte d'un éventuel proxy (X-Forwarded-For)."""
+    forwarded = request.META.get("HTTP_X_FORWARDED_FOR")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.META.get("REMOTE_ADDR")
+
+
+class ContactPage(Page):
+    """Page de contact, servie nativement par Wagtail.
+
+    Le rendu (template + `get_context`) est natif ; `serve()` ajoute la
+    gestion de la soumission POST du formulaire : vérification Cloudflare
+    Turnstile puis enregistrement d'une `ContactSubmission`. En requête HTMX,
+    seul le partial à swapper dans `#form-container` est renvoyé (succès ou
+    formulaire ré-affiché avec ses erreurs) ; sinon la page complète est
+    re-rendue (amélioration progressive).
+    """
+
+    template = "home/contact_page.html"
+
+    parent_page_types = ["home.HomePage"]
+    subpage_types = []
+    max_count = 1
+
+    class Meta:
+        verbose_name = "Page de contact"
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        context.setdefault("form", ContactForm())
+        return context
+
+    def serve(self, request, *args, **kwargs):
+        if request.method == "POST":
+            return self._handle_submission(request)
+        if request.method not in ("GET", "HEAD"):
+            return HttpResponseNotAllowed(["GET", "HEAD", "POST"])
+        return super().serve(request, *args, **kwargs)
+
+    def _handle_submission(self, request):
+        form = ContactForm(request.POST)
+        form_valid = form.is_valid()
+        human = verify_turnstile(
+            request.POST.get("cf-turnstile-response", ""), _client_ip(request)
+        )
+
+        if form_valid and human:
+            ContactSubmission.objects.create(**form.cleaned_data)
+            if request.htmx:
+                return render(request, "home/_contact_success.html", {"page": self})
+            return render(
+                request, "home/contact_page.html", {"page": self, "success": True}
+            )
+
+        if not human:
+            form.add_error(None, "La vérification anti-robot a échoué. Merci de réessayer.")
+
+        if request.htmx:
+            return render(request, "home/_contact_form.html", {"page": self, "form": form})
+        return render(request, "home/contact_page.html", {"page": self, "form": form})
 
 
 class ReadOnlyPermissionPolicy(ModelPermissionPolicy):

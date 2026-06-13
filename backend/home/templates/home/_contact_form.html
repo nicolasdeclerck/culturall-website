@@ -1,5 +1,6 @@
+{% load wagtailcore_tags %}
 <form class="contact-form"
-      hx-post="{% url 'contact' %}"
+      hx-post="{% pageurl page %}"
       hx-target="#form-container"
       hx-swap="innerHTML"
       novalidate>

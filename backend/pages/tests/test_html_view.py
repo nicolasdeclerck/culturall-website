@@ -6,7 +6,6 @@ Phase 1 de la migration monolithe Wagtail : généralise le rendu serveur
 
 import pytest
 from django.test import Client
-from django.urls import reverse
 
 from pages.models import StaticContentPage
 
@@ -19,7 +18,9 @@ def client():
 
 
 def url(slug):
-    return reverse("static-page-html", kwargs={"slug": slug})
+    # Les pages statiques sont servies nativement par Wagtail à l'URL de leur
+    # emplacement dans l'arbre (enfants directs de la HomePage servie sur /).
+    return f"/{slug}/"
 
 
 class TestStaticPageServerRendering:
@@ -51,7 +52,9 @@ class TestStaticPageServerRendering:
         body = client.get(url("a-propos")).content.decode()
 
         assert 'class="header"' in body
-        assert "Nos Projets" in body
+        # Le menu est construit nativement depuis l'arbre : le libellé suit le
+        # titre de la page d'index (« Projets »).
+        assert "Projets" in body
         assert "Mentions légales" in body
         assert 'class="site-footer"' in body
 
@@ -70,8 +73,10 @@ class TestStaticPageServerRendering:
     def test_returns_404_for_unknown_slug(self, client):
         assert client.get(url("slug-inexistant")).status_code == 404
 
-    def test_only_get_allowed(self, client):
-        assert client.post(url("a-propos")).status_code == 405
+    def test_post_served_natively(self, client):
+        # Plus de vue custom restreignant les méthodes : Wagtail sert la page
+        # nativement, un POST rend donc la page (200).
+        assert client.post(url("a-propos")).status_code == 200
 
     def test_head_request_allowed(self, client):
         assert client.head(url("a-propos")).status_code == 200
