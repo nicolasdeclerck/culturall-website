@@ -549,7 +549,7 @@ body {
 .project-detail-wrapper,
 .article-detail-wrapper,
 .static-page-wrapper {
-  max-width: 880px;
+  max-width: 1300px;
   margin: 0 auto;
 }
 
