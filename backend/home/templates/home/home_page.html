@@ -18,7 +18,7 @@
 
 {% if featured_projects %}
 <section class="projects-section">
-  <h2 class="projects-section__title">Les projets à la une</h2>
+  <h2 class="projects-section__title">{{ page.featured_projects_title }}</h2>
   <div class="projects-section__cards">
     {% for project in featured_projects %}
     <a href="/projets/{{ project.slug }}/" class="projects-section__card{% if not project.thumbnail %} projects-section__card--no-thumbnail{% endif %}">

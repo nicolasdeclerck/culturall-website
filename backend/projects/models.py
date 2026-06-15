@@ -1,6 +1,5 @@
 import re
 
-from django.core.exceptions import ValidationError
 from django.db import models
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalKey
@@ -9,8 +8,6 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
 from wagtail.images import get_image_model_string
 from wagtail.models import Page
-
-MAX_FEATURED_PROJECTS = 3
 
 # Extrait l'ID d'une vidéo YouTube depuis les formats watch / youtu.be / embed / shorts.
 _YOUTUBE_ID_RE = re.compile(
@@ -90,7 +87,6 @@ class ProjectPage(Page):
     year = models.CharField("Année de création", max_length=20, blank=True)
     video_duration = models.CharField("Durée de la vidéo", max_length=50, blank=True)
     credits = RichTextField("Crédits", blank=True)
-    featured = models.BooleanField("À la une", default=False)
 
     content_panels = Page.content_panels + [
         FieldPanel("description"),
@@ -100,7 +96,6 @@ class ProjectPage(Page):
         FieldPanel("tags"),
         FieldPanel("youtube_url"),
         FieldPanel("thumbnail"),
-        FieldPanel("featured"),
     ]
 
     parent_page_types = ["projects.ProjectsIndexPage"]
@@ -109,21 +104,6 @@ class ProjectPage(Page):
     class Meta:
         verbose_name = "Projet"
         verbose_name_plural = "Projets"
-
-    def clean(self):
-        super().clean()
-        if self.featured:
-            qs = ProjectPage.objects.filter(featured=True)
-            if self.pk:
-                qs = qs.exclude(pk=self.pk)
-            if qs.count() >= MAX_FEATURED_PROJECTS:
-                raise ValidationError(
-                    {"featured": f"Il ne peut y avoir plus de {MAX_FEATURED_PROJECTS} projets à la une."}
-                )
-
-    def save(self, *args, **kwargs):
-        self.clean()
-        super().save(*args, **kwargs)
 
     @property
     def youtube_id(self):
