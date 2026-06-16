@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}{% if page %}{{ page.seo_title|default:page.title }}{% block title_suffix %} — Cultur'all{% endblock %}{% else %}Cultur'all{% endif %}{% endblock %}</title>
+  <title>{% block title %}{% if page %}Cultur'All - {{ page.seo_title|default:page.title }}{% block title_suffix %}{% endblock %}{% else %}Cultur'all{% endif %}{% endblock %}</title>
   {% block meta %}
   <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}Cultur'all — Site vitrine{% endif %}">
   {% endblock %}
