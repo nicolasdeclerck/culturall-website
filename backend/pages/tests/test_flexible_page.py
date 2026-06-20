@@ -73,7 +73,8 @@ class TestFlexiblePageRendering:
 
         body = client.get("/vide/").content.decode()
         assert "Vide" in body
-        assert "custom-section__inner" not in body
+        # Le titre garde sa section ; seule la section de contenu est absente.
+        assert '<section class="custom-section"' not in body
 
     def test_returns_404_when_unpublished(self, client, flexible_page):
         flexible_page.unpublish()
