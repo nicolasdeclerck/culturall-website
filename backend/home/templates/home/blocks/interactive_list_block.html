@@ -1,0 +1,44 @@
+{% load wagtailcore_tags %}
+{% comment %}
+  Liste interactive à deux volets.
+  - Desktop (≥1024px) : titres à gauche, détail à droite au survol/focus, avec
+    une transition verticale (diaporama de haut en bas).
+  - Mobile / tablette : liste simple titre + sous-titre (volet droit masqué).
+  L'état actif est piloté par Alpine ; le 1er item est actif par défaut (rendu
+  côté serveur) pour rester correct même sans JS.
+{% endcomment %}
+<div class="ilist" x-data="{ active: 0 }">
+  <ul class="ilist__items">
+    {% for item in self.items %}
+    <li class="ilist__item">
+      {% if item.link_page %}
+      <a href="{% pageurl item.link_page %}"
+         class="ilist__trigger ilist__trigger--link{% if forloop.first %} ilist__trigger--active{% endif %}"
+         :class="{ 'ilist__trigger--active': active === {{ forloop.counter0 }} }"
+         @mouseenter="active = {{ forloop.counter0 }}"
+         @focus="active = {{ forloop.counter0 }}">
+        <h3 class="ilist__title">{{ item.title }}<span class="ilist__arrow" aria-hidden="true">→</span></h3>
+        {% if item.subtitle %}<h4 class="ilist__subtitle-inline">{{ item.subtitle }}</h4>{% endif %}
+      </a>
+      {% else %}
+      <div class="ilist__trigger{% if forloop.first %} ilist__trigger--active{% endif %}"
+           :class="{ 'ilist__trigger--active': active === {{ forloop.counter0 }} }"
+           @mouseenter="active = {{ forloop.counter0 }}">
+        <h3 class="ilist__title">{{ item.title }}</h3>
+        {% if item.subtitle %}<h4 class="ilist__subtitle-inline">{{ item.subtitle }}</h4>{% endif %}
+      </div>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+
+  <div class="ilist__detail" aria-live="polite">
+    {% for item in self.items %}
+    <article class="ilist__panel{% if forloop.first %} ilist__panel--active{% endif %}"
+             :class="{ 'ilist__panel--active': active === {{ forloop.counter0 }} }">
+      {% if item.subtitle %}<h4 class="ilist__panel-subtitle">{{ item.subtitle }}</h4>{% endif %}
+      {% if item.content %}<div class="ilist__panel-text">{{ item.content|richtext }}</div>{% endif %}
+    </article>
+    {% endfor %}
+  </div>
+</div>

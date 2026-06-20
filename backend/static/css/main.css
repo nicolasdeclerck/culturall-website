@@ -1232,12 +1232,13 @@ body {
 }
 
 /* ─── Section personnalisable (StreamField HomePage) ───────────── */
+/* Section personnalisable (home + Page flexible) : pas de fond propre, on
+   laisse celui de la page (thème sombre) et la couleur de police classique
+   du site (blanche, héritée). */
 .custom-section {
   position: relative;
   z-index: 1;
-  background: #f7f7f7;
   padding: 4rem 2rem;
-  color: #111;
 }
 
 .custom-section__inner {
@@ -1276,15 +1277,15 @@ body {
 .custom-section__caption {
   margin-top: 0.5rem;
   font-size: 0.9rem;
-  color: #555;
+  opacity: 0.7;
 }
 
 .custom-section__button {
   display: inline-block;
   margin: 0.5rem 0 1.5rem;
   padding: 0.75rem 1.75rem;
-  background: #111;
-  color: #fff;
+  background: #fff;
+  color: #111;
   font-weight: 600;
   text-decoration: none;
   border-radius: 999px;
@@ -1324,6 +1325,7 @@ body {
   overflow: hidden;
   margin: 0 0 1.5rem;
   background: #fff;
+  color: #111;
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
@@ -1333,7 +1335,7 @@ body {
 }
 
 .custom-card--link {
-  color: inherit;
+  color: #111;
   text-decoration: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -1372,6 +1374,162 @@ body {
   margin: 0;
   line-height: 1.6;
   color: #333;
+}
+
+/* ─── Bloc « Liste interactive » ───────────────────────────────── */
+/* Mobile / tablette (base) : liste simple titre + sous-titre, volet droit
+   masqué. Le passage à la mise en page deux colonnes (desktop) se fait à
+   partir de 1024px pour que les tablettes gardent la version simplifiée. */
+.ilist {
+  margin: 0 0 1.5rem;
+}
+
+.ilist__items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ilist__item + .ilist__item {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.ilist__trigger {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: none;
+  padding: 1rem 0;
+  cursor: default;
+}
+
+/* Item porteur d'un lien : cliquable, avec une flèche d'indication. */
+.ilist__trigger--link {
+  cursor: pointer;
+}
+
+.ilist__arrow {
+  display: inline-block;
+  margin-left: 0.4rem;
+  transition: transform 0.25s ease;
+}
+
+.ilist__title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.ilist__subtitle-inline {
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.ilist__detail {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .ilist {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .ilist__trigger {
+    position: relative;
+    opacity: 0.55;
+    transition: opacity 0.25s ease, padding-left 0.25s ease;
+  }
+
+  .ilist__trigger::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 0;
+    height: 2px;
+    background: currentColor;
+    transform: translateY(-50%);
+    transition: width 0.25s ease;
+  }
+
+  .ilist__trigger--active,
+  .ilist__trigger:hover {
+    opacity: 1;
+    padding-left: 2rem;
+  }
+
+  .ilist__trigger--active::before,
+  .ilist__trigger:hover::before {
+    width: 1.25rem;
+  }
+
+  .ilist__trigger--link:hover .ilist__arrow,
+  .ilist__trigger--link.ilist__trigger--active .ilist__arrow {
+    transform: translateX(0.35rem);
+  }
+
+  /* Sur desktop, le sous-titre est rendu dans le volet de droite. */
+  .ilist__subtitle-inline {
+    display: none;
+  }
+
+  /* Volet droit : sans fond ni cadre, le texte s'affiche directement sur le
+     fond de la page. Panneaux empilés dans la même cellule (grid-area 1/1) ;
+     la hauteur s'aligne sur le panneau le plus grand et reste stable. */
+  .ilist__detail {
+    display: grid;
+  }
+
+  /* Remplacement sans superposition : l'opacité bascule instantanément (pas de
+     fondu, donc on ne voit jamais deux textes à la fois) tandis que le texte
+     actif glisse depuis le haut. */
+  .ilist__panel {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transform: translateY(-1.5rem);
+    transition: transform 0.45s ease;
+    pointer-events: none;
+  }
+
+  .ilist__panel--active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .ilist__panel-subtitle {
+    margin: 0 0 0.75rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .ilist__panel-text {
+    line-height: 1.7;
+    opacity: 0.9;
+  }
+}
+
+/* Respecte la préférence « animations réduites » : pas de glissement. */
+@media (prefers-reduced-motion: reduce) {
+  .ilist__trigger,
+  .ilist__trigger::before,
+  .ilist__arrow,
+  .ilist__panel {
+    transition: none;
+  }
+
+  .ilist__panel {
+    transform: none;
+  }
 }
 
 @media (max-width: 768px) {
