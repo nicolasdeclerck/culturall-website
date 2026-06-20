@@ -1241,6 +1241,15 @@ body {
   padding: 4rem 2rem;
 }
 
+/* Sur la Page flexible, la section est imbriquée dans .page qui gère déjà les
+   marges latérales : on évite de doubler le padding horizontal (surtout
+   gênant sur mobile). La home, dont la section n'est pas dans .page, n'est
+   pas concernée. */
+.page .custom-section {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .custom-section__inner {
   max-width: 900px;
   margin: 0 auto;
