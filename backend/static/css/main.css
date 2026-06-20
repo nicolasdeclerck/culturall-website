@@ -1376,6 +1376,142 @@ body {
   color: #333;
 }
 
+/* ─── Bloc « Liste interactive » ───────────────────────────────── */
+/* Mobile / tablette (base) : liste simple titre + sous-titre, volet droit
+   masqué. Le passage à la mise en page deux colonnes (desktop) se fait à
+   partir de 1024px pour que les tablettes gardent la version simplifiée. */
+.ilist {
+  margin: 0 0 1.5rem;
+}
+
+.ilist__items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ilist__item + .ilist__item {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.ilist__trigger {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  padding: 1rem 0;
+  cursor: default;
+}
+
+.ilist__title {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.ilist__subtitle-inline {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  opacity: 0.7;
+}
+
+.ilist__detail {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .ilist {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .ilist__trigger {
+    position: relative;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 0.25s ease, padding-left 0.25s ease;
+  }
+
+  .ilist__trigger::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 0;
+    height: 2px;
+    background: currentColor;
+    transform: translateY(-50%);
+    transition: width 0.25s ease;
+  }
+
+  .ilist__trigger--active,
+  .ilist__trigger:hover {
+    opacity: 1;
+    padding-left: 2rem;
+  }
+
+  .ilist__trigger--active::before,
+  .ilist__trigger:hover::before {
+    width: 1.25rem;
+  }
+
+  /* Sur desktop, le sous-titre est rendu dans le volet de droite. */
+  .ilist__subtitle-inline {
+    display: none;
+  }
+
+  /* Volet droit : panneaux empilés dans la même cellule (grid-area 1/1) ;
+     la hauteur s'aligne sur le panneau le plus grand et reste stable. */
+  .ilist__detail {
+    display: grid;
+    overflow: hidden;
+  }
+
+  .ilist__panel {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transform: translateY(-1.75rem);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+    pointer-events: none;
+  }
+
+  .ilist__panel--active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .ilist__panel-subtitle {
+    margin: 0 0 0.75rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .ilist__panel-text {
+    line-height: 1.7;
+    opacity: 0.9;
+  }
+}
+
+/* Respecte la préférence « animations réduites » : pas de glissement. */
+@media (prefers-reduced-motion: reduce) {
+  .ilist__trigger,
+  .ilist__trigger::before,
+  .ilist__panel {
+    transition: none;
+  }
+
+  .ilist__panel {
+    transform: none;
+  }
+}
+
 @media (max-width: 768px) {
   .custom-section {
     padding: 3rem 1.25rem;

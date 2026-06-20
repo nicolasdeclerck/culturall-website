@@ -67,6 +67,36 @@ class CardGridBlock(blocks.StructBlock):
         template = "home/blocks/card_grid_block.html"
 
 
+class InteractiveListItemBlock(blocks.StructBlock):
+    """Un item de la « Liste interactive » : titre + détail (sous-titre + texte)."""
+
+    title = blocks.CharBlock(label="Titre", max_length=120)
+    subtitle = blocks.CharBlock(label="Sous-titre", required=False, max_length=200)
+    content = blocks.RichTextBlock(label="Contenu détaillé", required=False)
+
+    class Meta:
+        icon = "doc-full"
+        label = "Item de la liste"
+
+
+class InteractiveListBlock(blocks.StructBlock):
+    """Liste interactive à deux volets.
+
+    Sur desktop : la liste des titres s'affiche à gauche ; au survol (ou au
+    focus clavier) d'un titre, le détail de l'item (sous-titre + texte riche)
+    apparaît à droite avec une transition verticale type diaporama. Sur mobile
+    et tablette, on retombe sur une simple liste titre + sous-titre (le volet
+    de droite et l'interaction au survol sont masqués).
+    """
+
+    items = blocks.ListBlock(InteractiveListItemBlock(), label="Items", min_num=1)
+
+    class Meta:
+        icon = "list-ul"
+        label = "Liste interactive"
+        template = "home/blocks/interactive_list_block.html"
+
+
 class CustomSectionBlock(blocks.StreamBlock):
     """Palette de blocs proposée à l'admin dans la section personnalisable."""
 
@@ -78,6 +108,7 @@ class CustomSectionBlock(blocks.StreamBlock):
     )
     image = ImageBlock()
     card_grid = CardGridBlock()
+    interactive_list = InteractiveListBlock()
     button = ButtonBlock()
     video = EmbedBlock(
         label="Vidéo (Vimeo, YouTube…)",
