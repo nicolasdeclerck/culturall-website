@@ -1240,6 +1240,13 @@ body {
   color: #111;
 }
 
+/* « Page flexible » (pages.FlexiblePage) : pas de couleur de fond pour le
+   moment (on neutralise le gris hérité de .custom-section). Pour en définir
+   une plus tard, remplacer `transparent` par la couleur voulue ici. */
+.custom-section--flexible {
+  background: transparent;
+}
+
 .custom-section__inner {
   max-width: 900px;
   margin: 0 auto;
