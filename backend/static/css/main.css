@@ -1232,29 +1232,13 @@ body {
 }
 
 /* ─── Section personnalisable (StreamField HomePage) ───────────── */
+/* Section personnalisable (home + Page flexible) : pas de fond propre, on
+   laisse celui de la page (thème sombre) et la couleur de police classique
+   du site (blanche, héritée). */
 .custom-section {
   position: relative;
   z-index: 1;
-  background: #f7f7f7;
   padding: 4rem 2rem;
-  color: #111;
-}
-
-/* « Page flexible » (pages.FlexiblePage) : pas de couleur de fond pour le
-   moment (on neutralise le gris hérité de .custom-section). Pour en définir
-   une plus tard, remplacer `transparent` par la couleur voulue ici. Le fond
-   restant celui de la page (sombre), on rétablit la couleur de police
-   classique du site (blanche, héritée de .page) au lieu du #111 foncé. */
-.custom-section--flexible {
-  background: transparent;
-  color: inherit;
-}
-
-/* Légende d'image : version atténuée lisible sur fond sombre (au lieu du
-   gris foncé #555 prévu pour le fond clair de la home). */
-.custom-section--flexible .custom-section__caption {
-  color: inherit;
-  opacity: 0.7;
 }
 
 .custom-section__inner {
@@ -1293,15 +1277,15 @@ body {
 .custom-section__caption {
   margin-top: 0.5rem;
   font-size: 0.9rem;
-  color: #555;
+  opacity: 0.7;
 }
 
 .custom-section__button {
   display: inline-block;
   margin: 0.5rem 0 1.5rem;
   padding: 0.75rem 1.75rem;
-  background: #111;
-  color: #fff;
+  background: #fff;
+  color: #111;
   font-weight: 600;
   text-decoration: none;
   border-radius: 999px;
@@ -1341,6 +1325,7 @@ body {
   overflow: hidden;
   margin: 0 0 1.5rem;
   background: #fff;
+  color: #111;
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
@@ -1350,7 +1335,7 @@ body {
 }
 
 .custom-card--link {
-  color: inherit;
+  color: #111;
   text-decoration: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
