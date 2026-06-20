@@ -11,16 +11,23 @@
   <ul class="ilist__items">
     {% for item in self.items %}
     <li class="ilist__item">
-      <button type="button"
-              class="ilist__trigger{% if forloop.first %} ilist__trigger--active{% endif %}"
-              :class="{ 'ilist__trigger--active': active === {{ forloop.counter0 }} }"
-              @mouseenter="active = {{ forloop.counter0 }}"
-              @focus="active = {{ forloop.counter0 }}">
-        <span class="ilist__title">{{ item.title }}</span>
-        {% if item.subtitle %}
-        <span class="ilist__subtitle-inline">{{ item.subtitle }}</span>
-        {% endif %}
-      </button>
+      {% if item.link_page %}
+      <a href="{% pageurl item.link_page %}"
+         class="ilist__trigger ilist__trigger--link{% if forloop.first %} ilist__trigger--active{% endif %}"
+         :class="{ 'ilist__trigger--active': active === {{ forloop.counter0 }} }"
+         @mouseenter="active = {{ forloop.counter0 }}"
+         @focus="active = {{ forloop.counter0 }}">
+        <h3 class="ilist__title">{{ item.title }}<span class="ilist__arrow" aria-hidden="true">→</span></h3>
+        {% if item.subtitle %}<h4 class="ilist__subtitle-inline">{{ item.subtitle }}</h4>{% endif %}
+      </a>
+      {% else %}
+      <div class="ilist__trigger{% if forloop.first %} ilist__trigger--active{% endif %}"
+           :class="{ 'ilist__trigger--active': active === {{ forloop.counter0 }} }"
+           @mouseenter="active = {{ forloop.counter0 }}">
+        <h3 class="ilist__title">{{ item.title }}</h3>
+        {% if item.subtitle %}<h4 class="ilist__subtitle-inline">{{ item.subtitle }}</h4>{% endif %}
+      </div>
+      {% endif %}
     </li>
     {% endfor %}
   </ul>
@@ -29,7 +36,7 @@
     {% for item in self.items %}
     <article class="ilist__panel{% if forloop.first %} ilist__panel--active{% endif %}"
              :class="{ 'ilist__panel--active': active === {{ forloop.counter0 }} }">
-      {% if item.subtitle %}<h3 class="ilist__panel-subtitle">{{ item.subtitle }}</h3>{% endif %}
+      {% if item.subtitle %}<h4 class="ilist__panel-subtitle">{{ item.subtitle }}</h4>{% endif %}
       {% if item.content %}<div class="ilist__panel-text">{{ item.content|richtext }}</div>{% endif %}
     </article>
     {% endfor %}

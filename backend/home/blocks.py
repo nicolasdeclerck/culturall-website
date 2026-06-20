@@ -73,6 +73,11 @@ class InteractiveListItemBlock(blocks.StructBlock):
     title = blocks.CharBlock(label="Titre", max_length=120)
     subtitle = blocks.CharBlock(label="Sous-titre", required=False, max_length=200)
     content = blocks.RichTextBlock(label="Contenu détaillé", required=False)
+    link_page = blocks.PageChooserBlock(
+        label="Lien vers une page",
+        required=False,
+        help_text="Optionnel : rend l'item cliquable vers cette page du site.",
+    )
 
     class Meta:
         icon = "doc-full"

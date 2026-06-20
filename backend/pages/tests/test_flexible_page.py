@@ -121,6 +121,13 @@ class TestInteractiveListBlock:
         # Le texte riche est bien rendu en HTML.
         assert "<strong>A</strong>" in body
 
+    def test_titles_are_h3_and_subtitles_h4(self, client, page_with_list):
+        body = client.get("/liste/").content.decode()
+
+        assert '<h3 class="ilist__title">Item A' in body
+        assert '<h4 class="ilist__subtitle-inline">Sous-titre A</h4>' in body
+        assert '<h4 class="ilist__panel-subtitle">Sous-titre A</h4>' in body
+
     def test_first_item_active_by_default_for_no_js(self, client, page_with_list):
         body = client.get("/liste/").content.decode()
 
@@ -130,3 +137,35 @@ class TestInteractiveListBlock:
         assert "ilist__panel--active" in body
         assert 'x-data="{ active: 0 }"' in body
         assert "@mouseenter" in body
+
+    def test_item_without_link_is_not_a_link(self, client, page_with_list):
+        body = client.get("/liste/").content.decode()
+        # Sans lien : item non cliquable (pas de classe ni d'ancre dédiée).
+        assert "ilist__trigger--link" not in body
+        assert '<div class="ilist__trigger' in body
+
+    def test_item_with_link_renders_anchor_to_page(self, client):
+        from pages.models import StaticContentPage
+
+        target = StaticContentPage.objects.get(slug="a-propos")
+        home = HomePage.objects.first()
+        page = FlexiblePage(
+            title="Liste liée",
+            slug="liste-liee",
+            body=[
+                (
+                    "interactive_list",
+                    {
+                        "items": [
+                            {"title": "Vers À propos", "link_page": target},
+                        ]
+                    },
+                )
+            ],
+        )
+        home.add_child(instance=page)
+        page.save_revision().publish()
+
+        body = client.get("/liste-liee/").content.decode()
+        assert "ilist__trigger--link" in body
+        assert 'href="/a-propos/"' in body
