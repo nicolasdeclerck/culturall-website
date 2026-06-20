@@ -1242,9 +1242,19 @@ body {
 
 /* « Page flexible » (pages.FlexiblePage) : pas de couleur de fond pour le
    moment (on neutralise le gris hérité de .custom-section). Pour en définir
-   une plus tard, remplacer `transparent` par la couleur voulue ici. */
+   une plus tard, remplacer `transparent` par la couleur voulue ici. Le fond
+   restant celui de la page (sombre), on rétablit la couleur de police
+   classique du site (blanche, héritée de .page) au lieu du #111 foncé. */
 .custom-section--flexible {
   background: transparent;
+  color: inherit;
+}
+
+/* Légende d'image : version atténuée lisible sur fond sombre (au lieu du
+   gris foncé #555 prévu pour le fond clair de la home). */
+.custom-section--flexible .custom-section__caption {
+  color: inherit;
+  opacity: 0.7;
 }
 
 .custom-section__inner {
