@@ -16,8 +16,9 @@ html, body {
 }
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Syne Mono', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.5;
+  letter-spacing: 0.15em;
   color: #fff;
   background: #000;
 }
@@ -1351,13 +1352,22 @@ body {
 
 .custom-banner__overlay {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
   min-height: 360px;
   padding: 3rem 2rem;
-  text-align: center;
   background: rgba(0, 0, 0, 0.6);
+}
+
+/* Le voile reste pleine largeur ; ce conteneur recentre le contenu sur la même
+   grille que le reste de la page (.custom-section__inner : 1300px + padding). */
+.custom-banner__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  max-width: 1300px;
+  text-align: left;
 }
 
 .custom-banner__heading {
@@ -1368,7 +1378,7 @@ body {
 }
 
 .custom-banner__text {
-  max-width: 720px;
+  max-width: 960px;
   line-height: 1.7;
   margin: 0 0 1rem;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
