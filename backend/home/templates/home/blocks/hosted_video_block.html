@@ -9,6 +9,7 @@
       class="custom-section__video-player"
       controls
       preload="metadata"
+      {% if self.video.width and self.video.height %}width="{{ self.video.width }}" height="{{ self.video.height }}"{% endif %}
       {% if self.video.thumbnail %}poster="{{ self.video.thumbnail.url }}"{% endif %}
     >
       {% for source in self.video.sources %}

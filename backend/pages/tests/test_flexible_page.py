@@ -212,6 +212,34 @@ class TestHostedVideoBlock:
         body = client.get("/video-hebergee/").content.decode()
         assert "Notre dernière vidéo" in body
 
+    def test_uses_video_dimensions_when_available(self, client):
+        """Quand la largeur/hauteur sont renseignées, elles sont reportées sur
+        la balise <video> pour que le bloc épouse le ratio de la vidéo."""
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from wagtailmedia.models import get_media_model
+
+        media = get_media_model().objects.create(
+            title="Vidéo dimensionnée",
+            file=SimpleUploadedFile(
+                "dim.mp4", b"\x00\x00\x00\x18ftypmp42", content_type="video/mp4"
+            ),
+            type="video",
+            width=1280,
+            height=720,
+        )
+        home = HomePage.objects.first()
+        page = FlexiblePage(
+            title="Vidéo dim",
+            slug="video-dim",
+            body=[("hosted_video", {"video": media})],
+        )
+        home.add_child(instance=page)
+        page.save_revision().publish()
+
+        body = client.get("/video-dim/").content.decode()
+        assert 'width="1280"' in body
+        assert 'height="720"' in body
+
 
 class TestAmbientVideoBlock:
     """Bloc « Vidéo d'ambiance » : lecture auto, muette, en boucle, sans
