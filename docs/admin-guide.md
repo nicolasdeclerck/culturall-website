@@ -254,13 +254,13 @@ projet et lus par un lecteur natif, sans dépendre d'un service tiers.
   contrôle — idéal en fond de section ou en bannière. Le son est forcément
   coupé : les navigateurs n'autorisent la lecture automatique que sur une
   vidéo muette. Privilégiez une vidéo **courte et légère**.
-- **Taille à l'affichage** : le bloc « Vidéo hébergée » **s'adapte
-  automatiquement aux proportions** de la vidéo (une vidéo verticale reste
-  verticale, une horizontale reste horizontale), sans jamais dépasser la
-  largeur de la colonne. Pour un affichage parfait dès le chargement (sans
-  petit saut de mise en page), renseignez la **largeur** et la **hauteur** en
-  pixels dans la fiche de la vidéo (menu **Médias**) ; sinon le navigateur les
-  déduit tout seul à la lecture.
+- **Taille à l'affichage** : les deux blocs (« Vidéo hébergée » **et** « Vidéo
+  d'ambiance ») **s'adaptent automatiquement aux proportions** de la vidéo
+  (une vidéo verticale reste verticale, une horizontale reste horizontale),
+  sans jamais dépasser la largeur de la colonne. Pour un affichage parfait dès
+  le chargement (sans petit saut de mise en page), renseignez la **largeur** et
+  la **hauteur** en pixels dans la fiche de la vidéo (menu **Médias**) ; sinon
+  le navigateur les déduit tout seul à la lecture.
 
 > ℹ️ **Format des vidéos** : utilisez des fichiers **MP4 encodés en H.264**
 > (le standard du web). Les MP4 en **HEVC / H.265** (souvent produits par les
