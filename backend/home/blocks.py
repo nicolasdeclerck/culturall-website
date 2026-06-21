@@ -163,9 +163,45 @@ class AmbientVideoBlock(blocks.StructBlock):
         template = "home/blocks/ambient_video_block.html"
 
 
+class BannerBlock(blocks.StructBlock):
+    """Bannière pleine largeur : une image de fond sur laquelle se superposent,
+    centrés, un titre, un texte et un bouton optionnels.
+
+    L'image est obligatoire (c'est le fond) ; titre, texte et bouton sont tous
+    facultatifs. Un voile sombre est appliqué sur l'image pour garder le texte
+    blanc lisible. Le bouton pointe en priorité vers une page du site
+    (`button_page`), sinon vers un lien externe (`button_url`).
+    """
+
+    image = ImageChooserBlock(label="Image de fond")
+    heading = blocks.CharBlock(label="Titre", required=False, max_length=255)
+    text = blocks.RichTextBlock(
+        label="Texte",
+        required=False,
+        features=["bold", "italic", "link"],
+    )
+    button_text = blocks.CharBlock(label="Libellé du bouton", required=False, max_length=80)
+    button_page = blocks.PageChooserBlock(
+        label="Bouton — lien vers une page",
+        required=False,
+        help_text="Optionnel : page du site visée par le bouton.",
+    )
+    button_url = blocks.URLBlock(
+        label="Bouton — lien externe",
+        required=False,
+        help_text="Utilisé seulement si aucune page n'est choisie ci-dessus.",
+    )
+
+    class Meta:
+        icon = "image"
+        label = "Bannière"
+        template = "home/blocks/banner_block.html"
+
+
 class CustomSectionBlock(blocks.StreamBlock):
     """Palette de blocs proposée à l'admin dans la section personnalisable."""
 
+    banner = BannerBlock()
     heading = HeadingBlock()
     paragraph = blocks.RichTextBlock(
         label="Texte riche",

@@ -8,6 +8,10 @@
   {% block meta %}
   <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}Cultur'all — Site vitrine{% endif %}">
   {% endblock %}
+  {# Police du site (Google Fonts) — appliquée à tout le site via body dans main.css. #}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   {# Socle JS : htmx (interactions serveur), site.js (composants Alpine), Alpine (réactivité). #}
   {# site.js doit précéder alpine.min.js pour enregistrer ses ≥composants avant l'init d'Alpine. #}

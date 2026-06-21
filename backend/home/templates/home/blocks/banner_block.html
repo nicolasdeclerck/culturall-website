@@ -1,0 +1,21 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+{% comment %}
+  Bannière : image de fond (cover) + titre / texte / bouton centrés par-dessus,
+  avec un voile sombre pour la lisibilité. Titre, texte et bouton sont optionnels.
+{% endcomment %}
+{% image self.image width-2000 as banner_img %}
+<div class="custom-banner" style="background-image: url('{{ banner_img.url }}');">
+  <div class="custom-banner__overlay">
+    <div class="custom-banner__inner">
+      {% if self.heading %}<h2 class="custom-banner__heading">{{ self.heading }}</h2>{% endif %}
+      {% if self.text %}<div class="custom-banner__text">{{ self.text|richtext }}</div>{% endif %}
+      {% if self.button_text %}
+        {% if self.button_page %}
+          <a class="custom-banner__button" href="{% pageurl self.button_page %}">{{ self.button_text }}</a>
+        {% elif self.button_url %}
+          <a class="custom-banner__button" href="{{ self.button_url }}">{{ self.button_text }}</a>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>

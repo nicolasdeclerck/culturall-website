@@ -1,3 +1,4 @@
+from django.db import models
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Page
@@ -33,6 +34,16 @@ class FlexiblePage(Page):
     de ses templates et de son style déjà en place.
     """
 
+    banner = models.ForeignKey(
+        "wagtailimages.Image",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+        verbose_name="Bannière",
+        help_text="Optionnel : image affichée en fond de l'en-tête de la page.",
+    )
+
     body = StreamField(
         CustomSectionBlock(),
         blank=True,
@@ -41,6 +52,7 @@ class FlexiblePage(Page):
     )
 
     content_panels = Page.content_panels + [
+        FieldPanel("banner"),
         FieldPanel("body"),
     ]
 
