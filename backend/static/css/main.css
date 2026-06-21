@@ -1336,6 +1336,11 @@ body {
   background: #000;
 }
 
+/* Vidéo d'ambiance : lecture auto, muette, en boucle, sans contrôles. */
+.custom-section__ambient-video {
+  margin: 0 0 1.5rem;
+}
+
 .custom-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));

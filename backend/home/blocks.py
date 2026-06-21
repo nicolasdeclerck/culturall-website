@@ -122,6 +122,29 @@ class HostedVideoBlock(blocks.StructBlock):
         template = "home/blocks/hosted_video_block.html"
 
 
+class AmbientVideoBlock(blocks.StructBlock):
+    """Vidéo « d'ambiance » : lecture automatique, en boucle et SANS son,
+    sans contrôles — typiquement en fond de section ou en bannière.
+
+    Le son est volontairement coupé : les navigateurs n'autorisent la lecture
+    automatique que sur une vidéo muette (`autoplay` impose `muted`). Comme il
+    n'y a pas de contrôles, mieux vaut une vidéo courte et légère.
+    """
+
+    video = VideoChooserBlock(label="Fichier vidéo")
+    loop = blocks.BooleanBlock(
+        label="Lecture en boucle",
+        required=False,
+        default=True,
+        help_text="Recommence la vidéo automatiquement à la fin (recommandé).",
+    )
+
+    class Meta:
+        icon = "media"
+        label = "Vidéo d'ambiance (auto, sans son)"
+        template = "home/blocks/ambient_video_block.html"
+
+
 class CustomSectionBlock(blocks.StreamBlock):
     """Palette de blocs proposée à l'admin dans la section personnalisable."""
 
@@ -141,6 +164,7 @@ class CustomSectionBlock(blocks.StreamBlock):
         template="home/blocks/video_block.html",
     )
     hosted_video = HostedVideoBlock()
+    ambient_video = AmbientVideoBlock()
 
     class Meta:
         label = "Section personnalisable"

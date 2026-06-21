@@ -211,3 +211,42 @@ class TestHostedVideoBlock:
     def test_renders_caption(self, client, page_with_video):
         body = client.get("/video-hebergee/").content.decode()
         assert "Notre dernière vidéo" in body
+
+
+class TestAmbientVideoBlock:
+    """Bloc « Vidéo d'ambiance » : lecture auto, muette, en boucle, sans
+    contrôles (autoplay impose muted côté navigateur)."""
+
+    @pytest.fixture
+    def page_with_ambient(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from wagtailmedia.models import get_media_model
+
+        media = get_media_model().objects.create(
+            title="Boucle d'ambiance",
+            file=SimpleUploadedFile(
+                "ambiance.mp4", b"\x00\x00\x00\x18ftypmp42", content_type="video/mp4"
+            ),
+            type="video",
+        )
+        home = HomePage.objects.first()
+        page = FlexiblePage(
+            title="Ambiance",
+            slug="ambiance",
+            body=[("ambient_video", {"video": media})],
+        )
+        home.add_child(instance=page)
+        page.save_revision().publish()
+        return page
+
+    def test_autoplays_muted_looped_without_controls(self, client, page_with_ambient):
+        body = client.get("/ambiance/").content.decode()
+
+        assert "custom-section__video-player--ambient" in body
+        # Autoplay autorisé uniquement si muet + inline ; boucle activée par défaut.
+        assert "autoplay" in body
+        assert "muted" in body
+        assert "playsinline" in body
+        assert "loop" in body
+        # Pas de contrôles natifs sur une vidéo d'ambiance.
+        assert "controls" not in body

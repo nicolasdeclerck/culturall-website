@@ -249,6 +249,17 @@ projet et lus par un lecteur natif, sans dépendre d'un service tiers.
   choisissez la vidéo dans la bibliothèque, puis (au besoin) saisissez une
   légende. Le bloc **« Vidéo (Vimeo, YouTube…) »** reste disponible pour les
   vidéos intégrées.
+- **Vidéo d'ambiance** : le bloc **« Vidéo d'ambiance (auto, sans son) »** lit
+  la vidéo **automatiquement, en boucle et sans le son**, sans barre de
+  contrôle — idéal en fond de section ou en bannière. Le son est forcément
+  coupé : les navigateurs n'autorisent la lecture automatique que sur une
+  vidéo muette. Privilégiez une vidéo **courte et légère**.
+
+> ℹ️ **Format des vidéos** : utilisez des fichiers **MP4 encodés en H.264**
+> (le standard du web). Les MP4 en **HEVC / H.265** (souvent produits par les
+> iPhones et appareils récents) ne se lisent pas dans les navigateurs : le
+> visiteur verrait « Aucune vidéo dont le format … n'a été trouvé ». En cas de
+> doute, ré-exportez la vidéo en H.264 avant de la téléverser.
 
 > ℹ️ **Taille des fichiers** : l'envoi est limité à **50 Mo** par fichier.
 > Compressez les vidéos longues ou lourdes avant de les téléverser (un export
