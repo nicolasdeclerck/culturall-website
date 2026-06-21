@@ -1251,8 +1251,30 @@ body {
 }
 
 .custom-section--head {
-  padding-top: 0;
-  padding-bottom: 0;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+/* En-tête avec image de bannière en fond : l'image couvre toute la largeur,
+   le titre est centré par-dessus avec un voile sombre pour rester lisible. */
+.custom-section--banner {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.custom-section--banner .custom-section__inner {
+  position: relative;
+  z-index: 1;
+}
+
+.custom-section--banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
 }
 
 .custom-section__inner {
@@ -1307,6 +1329,69 @@ body {
 }
 
 .custom-section__button:hover {
+  opacity: 0.85;
+}
+
+/* Bloc « Bannière » : image de fond pleine largeur avec titre / texte / bouton
+   centrés par-dessus. Voile sombre (::before via l'overlay) pour la lisibilité
+   du texte blanc. */
+.custom-banner {
+  position: relative;
+  /* Full-bleed : déborde du conteneur centré (.custom-section__inner, max 1300px
+     + padding latéral) pour occuper toute la largeur de la fenêtre. */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.custom-banner__overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+  padding: 3rem 2rem;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.custom-banner__heading {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.custom-banner__text {
+  max-width: 720px;
+  line-height: 1.7;
+  margin: 0 0 1rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.custom-banner__text a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.custom-banner__button {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  background: #fff;
+  color: #111;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 999px;
+  transition: opacity 0.2s ease;
+}
+
+.custom-banner__button:hover {
   opacity: 0.85;
 }
 

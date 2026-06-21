@@ -1,13 +1,23 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags %}
+{% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
 <main class="page page--flush">
+  {% if page.banner %}
+  {% image page.banner width-2000 as banner_img %}
+  <div class="custom-section custom-section--head custom-section--banner"
+       style="background-image: url('{{ banner_img.url }}');">
+    <div class="custom-section__inner">
+      <h1>{{ page.title }}</h1>
+    </div>
+  </div>
+  {% else %}
   <div class="custom-section custom-section--head">
     <div class="custom-section__inner">
       <h1>{{ page.title }}</h1>
     </div>
   </div>
+  {% endif %}
 
   {% if page.body %}
   <section class="custom-section">
