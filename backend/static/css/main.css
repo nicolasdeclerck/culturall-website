@@ -1461,11 +1461,51 @@ body {
   font-weight: 700;
 }
 
+/* Détail dépliable rendu SOUS le titre : replié par défaut, déplié sur l'item
+   actif (appui sur mobile) et — sur desktop — au survol. L'astuce grid
+   0fr → 1fr anime la hauteur en douceur quel que soit le contenu. */
+.ilist__reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.35s ease, opacity 0.35s ease;
+}
+
+.ilist__reveal-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.ilist__trigger--active .ilist__reveal {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
 .ilist__subtitle-inline {
-  margin: 0.35rem 0 0;
+  margin: 0.6rem 0 0;
   font-size: 0.95rem;
-  font-weight: 400;
-  opacity: 0.7;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.ilist__text-inline {
+  margin: 0.4rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+/* Vidéo dépliée sous le titre (mobile : affichée en premier). Sur desktop, la
+   vidéo passe dans le volet de droite et cette copie est masquée. */
+.ilist__reveal-video {
+  margin: 0.75rem 0 0.25rem;
+}
+
+.ilist__video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
 }
 
 .ilist__detail {
@@ -1473,7 +1513,9 @@ body {
 }
 
 @media (min-width: 1024px) {
-  .ilist {
+  /* Deux colonnes seulement si au moins un item porte une vidéo ; sinon le
+     volet de droite resterait vide (détail déplié sous le titre). */
+  .ilist--has-video {
     display: grid;
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
     gap: 2.5rem;
@@ -1486,11 +1528,13 @@ body {
     transition: opacity 0.25s ease, padding-left 0.25s ease;
   }
 
+  /* Marqueur ancré sur la ligne du titre (et non au centre du déclencheur, qui
+     grandit quand le détail se déplie sous le titre). */
   .ilist__trigger::before {
     content: "";
     position: absolute;
     left: 0;
-    top: 50%;
+    top: 1.75rem;
     width: 0;
     height: 2px;
     background: currentColor;
@@ -1514,21 +1558,30 @@ body {
     transform: translateX(0.35rem);
   }
 
-  /* Sur desktop, le sous-titre est rendu dans le volet de droite. */
-  .ilist__subtitle-inline {
+  /* Sur desktop, le détail se déplie aussi au survol (pas seulement sur l'item
+     actif), pour conserver le retour visuel immédiat au passage de la souris. */
+  .ilist__trigger:hover .ilist__reveal {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  /* La vidéo est rendue dans le volet de droite : on masque la copie dépliée
+     sous le titre (réservée au mobile). */
+  .ilist__reveal-video {
     display: none;
   }
 
-  /* Volet droit : sans fond ni cadre, le texte s'affiche directement sur le
-     fond de la page. Panneaux empilés dans la même cellule (grid-area 1/1) ;
-     la hauteur s'aligne sur le panneau le plus grand et reste stable. */
-  .ilist__detail {
+  /* Volet droit : la vidéo de l'item actif s'affiche directement sur le fond de
+     la page. Panneaux empilés dans la même cellule (grid-area 1/1) ; la hauteur
+     s'aligne sur le panneau le plus grand et reste stable. Affiché uniquement
+     quand la liste comporte au moins une vidéo. */
+  .ilist--has-video .ilist__detail {
     display: grid;
   }
 
   /* Remplacement sans superposition : l'opacité bascule instantanément (pas de
-     fondu, donc on ne voit jamais deux textes à la fois) tandis que le texte
-     actif glisse depuis le haut. */
+     fondu, donc on ne voit jamais deux vidéos à la fois) tandis que la vidéo
+     active glisse depuis le haut. */
   .ilist__panel {
     grid-area: 1 / 1;
     opacity: 0;
@@ -1543,15 +1596,11 @@ body {
     pointer-events: auto;
   }
 
-  .ilist__panel-subtitle {
-    margin: 0 0 0.75rem;
-    font-size: 1.4rem;
-    font-weight: 700;
-  }
-
-  .ilist__panel-text {
-    line-height: 1.7;
-    opacity: 0.9;
+  /* La vidéo occupe toute la largeur du volet, en gardant son ratio natif. */
+  .ilist__panel .ilist__video {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
   }
 }
 
@@ -1560,6 +1609,7 @@ body {
   .ilist__trigger,
   .ilist__trigger::before,
   .ilist__arrow,
+  .ilist__reveal,
   .ilist__panel {
     transition: none;
   }

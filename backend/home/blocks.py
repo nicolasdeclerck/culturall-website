@@ -69,11 +69,20 @@ class CardGridBlock(blocks.StructBlock):
 
 
 class InteractiveListItemBlock(blocks.StructBlock):
-    """Un item de la « Liste interactive » : titre + détail (sous-titre + texte)."""
+    """Un item de la « Liste interactive » : titre, détail (sous-titre + texte)
+    déplié sous le titre au survol, et vidéo affichée dans le volet de droite."""
 
     title = blocks.CharBlock(label="Titre", max_length=120)
     subtitle = blocks.CharBlock(label="Sous-titre", required=False, max_length=200)
     content = blocks.RichTextBlock(label="Contenu détaillé", required=False)
+    video = VideoChooserBlock(
+        label="Vidéo",
+        required=False,
+        help_text=(
+            "Optionnel : s'affiche dans le volet de droite au survol de l'item "
+            "(sous le titre sur mobile). Fichier téléversé via « Médias »."
+        ),
+    )
     link_page = blocks.PageChooserBlock(
         label="Lien vers une page",
         required=False,
@@ -89,13 +98,22 @@ class InteractiveListBlock(blocks.StructBlock):
     """Liste interactive à deux volets.
 
     Sur desktop : la liste des titres s'affiche à gauche ; au survol (ou au
-    focus clavier) d'un titre, le détail de l'item (sous-titre + texte riche)
-    apparaît à droite avec une transition verticale type diaporama. Sur mobile
-    et tablette, on retombe sur une simple liste titre + sous-titre (le volet
-    de droite et l'interaction au survol sont masqués).
+    focus clavier) d'un titre, son détail (sous-titre + texte riche) se déplie
+    sous le titre tandis que sa vidéo apparaît à droite avec une transition
+    verticale type diaporama. Sur mobile et tablette, un appui sur le titre
+    déplie tout le détail sous celui-ci (vidéo en premier, puis textes). Le
+    premier item est actif par défaut.
     """
 
     items = blocks.ListBlock(InteractiveListItemBlock(), label="Items", min_num=1)
+
+    def get_context(self, value, parent_context=None):
+        context = super().get_context(value, parent_context=parent_context)
+        # Le volet de droite (deux colonnes sur desktop) n'a de sens que si au
+        # moins un item porte une vidéo ; sinon on reste sur une seule colonne
+        # (détail déplié sous le titre) pour ne pas laisser un vide à droite.
+        context["has_video"] = any(item.get("video") for item in value["items"])
+        return context
 
     class Meta:
         icon = "list-ul"
