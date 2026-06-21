@@ -1,0 +1,23 @@
+{% comment %}
+  Vidéo d'un item de « Liste interactive ».
+  Muette + en boucle + playsinline : la lecture est pilotée par Alpine
+  (méthode `play()` du composant racine), qui ne lance QUE la vidéo de l'item
+  actif réellement visible (cf. `data-index` + test `offsetParent`). Le 1er item
+  porte `autoplay` comme repli sans JS. `video` est une instance Media
+  (wagtailmedia) ; `index` est l'indice 0-based de l'item.
+{% endcomment %}
+<video
+  class="ilist__video"
+  data-index="{{ index }}"
+  muted
+  playsinline
+  loop
+  preload="metadata"
+  {% if index == 0 %}autoplay{% endif %}
+  {% if video.width and video.height %}width="{{ video.width }}" height="{{ video.height }}"{% endif %}
+  {% if video.thumbnail %}poster="{{ video.thumbnail.url }}"{% endif %}
+>
+  {% for source in video.sources %}
+    <source src="{{ source.src }}"{% if source.type %} type="{{ source.type }}"{% endif %}>
+  {% endfor %}
+</video>

@@ -115,28 +115,36 @@ class TestInteractiveListBlock:
     def test_renders_titles_subtitles_and_rich_content(self, client, page_with_list):
         body = client.get("/liste/").content.decode()
 
-        # Titres (volet gauche) et sous-titres (volet droit + inline mobile).
+        # Titres (volet gauche) et détail (sous-titre + texte) dépliés sous le titre.
         assert "Item A" in body
         assert "Item B" in body
         assert "Sous-titre A" in body
         # Le texte riche est bien rendu en HTML.
         assert "<strong>A</strong>" in body
 
-    def test_titles_are_h3_and_subtitles_h4(self, client, page_with_list):
+    def test_titles_are_h3_and_detail_is_revealed_under_title(self, client, page_with_list):
         body = client.get("/liste/").content.decode()
 
         assert '<h3 class="ilist__title">Item A' in body
+        # Sous-titre et texte sont désormais dépliés sous le titre (volet gauche).
         assert '<h4 class="ilist__subtitle-inline">Sous-titre A</h4>' in body
-        assert '<h4 class="ilist__panel-subtitle">Sous-titre A</h4>' in body
+        assert '<div class="ilist__reveal">' in body
+        assert '<div class="ilist__text-inline">' in body
+        # Plus de sous-titre / texte dans le volet de droite (réservé à la vidéo).
+        assert "ilist__panel-subtitle" not in body
+        assert "ilist__panel-text" not in body
+        # Sans aucune vidéo : pas de mise en page deux colonnes (volet droit vide).
+        assert "ilist--has-video" not in body
 
     def test_first_item_active_by_default_for_no_js(self, client, page_with_list):
         body = client.get("/liste/").content.decode()
 
         # État actif rendu côté serveur sur le 1er item (fallback sans JS) et
-        # câblage Alpine présent pour l'interaction au survol.
+        # câblage Alpine présent pour l'interaction au survol / à l'appui.
         assert "ilist__trigger--active" in body
         assert "ilist__panel--active" in body
-        assert 'x-data="{ active: 0 }"' in body
+        assert "active: 0" in body
+        assert 'x-init="play(0)"' in body
         assert "@mouseenter" in body
 
     def test_item_without_link_is_not_a_link(self, client, page_with_list):
@@ -170,6 +178,75 @@ class TestInteractiveListBlock:
         body = client.get("/liste-liee/").content.decode()
         assert "ilist__trigger--link" in body
         assert 'href="/a-propos/"' in body
+
+
+class TestInteractiveListItemVideo:
+    """Chaque item peut porter une vidéo : affichée à droite au survol (desktop)
+    et dépliée sous le titre (mobile), lecture pilotée par Alpine."""
+
+    @pytest.fixture
+    def page_with_video_list(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from wagtailmedia.models import get_media_model
+
+        media = get_media_model().objects.create(
+            title="Clip d'item",
+            file=SimpleUploadedFile(
+                "item.mp4", b"\x00\x00\x00\x18ftypmp42", content_type="video/mp4"
+            ),
+            type="video",
+        )
+        home = HomePage.objects.first()
+        page = FlexiblePage(
+            title="Liste vidéo",
+            slug="liste-video",
+            body=[
+                (
+                    "interactive_list",
+                    {
+                        "items": [
+                            {
+                                "title": "Avec vidéo",
+                                "subtitle": "Sous-titre",
+                                "content": "<p>Détail</p>",
+                                "video": media,
+                            },
+                            {"title": "Sans vidéo"},
+                        ]
+                    },
+                )
+            ],
+        )
+        home.add_child(instance=page)
+        page.save_revision().publish()
+        return page
+
+    def test_item_video_renders_muted_looped_player(self, client, page_with_video_list):
+        body = client.get("/liste-video/").content.decode()
+
+        # Lecteur natif muet + en boucle, lecture inline (autoplay piloté par JS).
+        assert 'class="ilist__video"' in body
+        assert "muted" in body
+        assert "loop" in body
+        assert "playsinline" in body
+        assert 'type="video/mp4"' in body
+        assert "item" in body  # nom de fichier de la source
+
+    def test_video_present_in_both_reveal_and_right_panel(self, client, page_with_video_list):
+        """La vidéo de l'item est rendue à la fois sous le titre (mobile) et dans
+        le volet de droite (desktop) ; la copie non visible est mise en pause par
+        Alpine via le test `offsetParent`."""
+        body = client.get("/liste-video/").content.decode()
+
+        assert '<div class="ilist__reveal-video">' in body
+        assert body.count('class="ilist__video"') == 2
+        # Au moins une vidéo : la mise en page deux colonnes (volet droit) est activée.
+        assert "ilist--has-video" in body
+
+    def test_first_item_video_has_autoplay_fallback(self, client, page_with_video_list):
+        body = client.get("/liste-video/").content.decode()
+        # Repli sans JS : le 1er item (actif par défaut) porte autoplay.
+        assert "autoplay" in body
 
 
 class TestHostedVideoBlock:

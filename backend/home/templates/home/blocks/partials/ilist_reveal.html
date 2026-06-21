@@ -1,0 +1,19 @@
+{% comment %}
+  Détail dépliable d'un item de « Liste interactive », rendu SOUS le titre.
+  - Mobile : affiche la vidéo (en premier) puis les textes ; déplié à l'appui.
+  - Desktop : la vidéo est masquée ici (rendue dans le volet de droite), seuls
+    les textes restent ; dépliés au survol/focus.
+  `item` = StructValue de l'item, `index` = indice 0-based.
+{% endcomment %}
+{% load wagtailcore_tags %}
+{% if item.video or item.subtitle or item.content %}
+<div class="ilist__reveal"><div class="ilist__reveal-inner">
+  {% if item.video %}
+  <div class="ilist__reveal-video">
+    {% include "home/blocks/partials/ilist_video.html" with video=item.video index=index %}
+  </div>
+  {% endif %}
+  {% if item.subtitle %}<h4 class="ilist__subtitle-inline">{{ item.subtitle }}</h4>{% endif %}
+  {% if item.content %}<div class="ilist__text-inline">{{ item.content|richtext }}</div>{% endif %}
+</div></div>
+{% endif %}
