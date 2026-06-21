@@ -1238,7 +1238,7 @@ body {
 .custom-section {
   position: relative;
   z-index: 1;
-  padding: 4rem 2rem;
+  padding: 1rem 2rem;
 }
 
 /* Page flexible : tout le padding horizontal provient de .custom-section
@@ -1621,7 +1621,7 @@ body {
 
 @media (max-width: 768px) {
   .custom-section {
-    padding: 3rem 1.25rem;
+    padding: 1rem 1.25rem;
   }
 
   .custom-section__heading {
