@@ -1326,6 +1326,29 @@ body {
   border-radius: 8px;
 }
 
+/* Vidéo auto-hébergée (lecteur HTML5 natif) : le lecteur épouse les dimensions
+   natives de la vidéo (ratio préservé), sans jamais dépasser la largeur du
+   conteneur ni la hauteur de l'écran, et reste centré. Les attributs
+   width/height de la balise <video> fournissent le ratio en amont du
+   chargement (pas de décalage de mise en page). */
+.custom-section__video-player {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 80vh;
+  height: auto;
+  margin-inline: auto;
+  border-radius: 8px;
+  background: #000;
+}
+
+/* Conteneur de la vidéo d'ambiance (lecture auto, muette, en boucle). Le
+   lecteur lui-même hérite de .custom-section__video-player : il épouse donc
+   les dimensions natives de la vidéo, comme le bloc « Vidéo hébergée ». */
+.custom-section__ambient-video {
+  margin: 0 0 1.5rem;
+}
+
 .custom-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));

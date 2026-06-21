@@ -1,0 +1,23 @@
+{% comment %}
+  Vidéo d'ambiance : lecture automatique, muette, en boucle, sans contrôles.
+  `muted` + `playsinline` sont indispensables pour que l'autoplay soit autorisé
+  (notamment sur mobile / iOS). `self.video` est une instance Media wagtailmedia.
+{% endcomment %}
+{% if self.video %}
+  <div class="custom-section__ambient-video">
+    <video
+      class="custom-section__video-player custom-section__video-player--ambient"
+      autoplay
+      muted
+      playsinline
+      {% if self.loop %}loop{% endif %}
+      preload="auto"
+      {% if self.video.width and self.video.height %}width="{{ self.video.width }}" height="{{ self.video.height }}"{% endif %}
+      {% if self.video.thumbnail %}poster="{{ self.video.thumbnail.url }}"{% endif %}
+    >
+      {% for source in self.video.sources %}
+        <source src="{{ source.src }}"{% if source.type %} type="{{ source.type }}"{% endif %}>
+      {% endfor %}
+    </video>
+  </div>
+{% endif %}

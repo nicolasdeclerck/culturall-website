@@ -30,7 +30,7 @@ page d'accueil, la page Blog, la page Projets et la section Réseau.
 ### 1.2. Tableau de bord
 
 Après connexion, vous arrivez sur le tableau de bord Wagtail. Le menu
-vertical à gauche donne accès aux sections **Pages**, **Images**,
+vertical à gauche donne accès aux sections **Pages**, **Images**, **Médias**,
 **Contacts**, **Documents**, **Fragments**, **Rapports**, **Paramètres** et
 **Aide**.
 
@@ -234,6 +234,43 @@ stockées dans la **bibliothèque Images** de Wagtail (menu latéral **Images**)
 > ⚠️ **Ne supprimez pas une image encore utilisée** par un article/projet :
 > l'illustration ou la miniature sera manquante côté site. Vérifiez d'abord
 > les usages dans l'onglet *Usage* de la fiche image.
+
+### 7.1. Vidéos hébergées (Bibliothèque Médias)
+
+En plus des vidéos **intégrées** depuis YouTube/Vimeo, le site peut **héberger
+ses propres vidéos** : les fichiers sont stockés sur le bucket MinIO/S3 du
+projet et lus par un lecteur natif, sans dépendre d'un service tiers.
+
+- **Téléverser** : menu latéral **Médias** → **Ajouter une vidéo**. Indiquez un
+  titre et choisissez un fichier (`.mp4` recommandé pour une lecture sur tous
+  les navigateurs).
+- **Afficher sur une page** : dans une **Section personnalisable** (page
+  d'accueil) ou une **Page flexible**, ajoutez le bloc **« Vidéo hébergée »**,
+  choisissez la vidéo dans la bibliothèque, puis (au besoin) saisissez une
+  légende. Le bloc **« Vidéo (Vimeo, YouTube…) »** reste disponible pour les
+  vidéos intégrées.
+- **Vidéo d'ambiance** : le bloc **« Vidéo d'ambiance (auto, sans son) »** lit
+  la vidéo **automatiquement, en boucle et sans le son**, sans barre de
+  contrôle — idéal en fond de section ou en bannière. Le son est forcément
+  coupé : les navigateurs n'autorisent la lecture automatique que sur une
+  vidéo muette. Privilégiez une vidéo **courte et légère**.
+- **Taille à l'affichage** : les deux blocs (« Vidéo hébergée » **et** « Vidéo
+  d'ambiance ») **s'adaptent automatiquement aux proportions** de la vidéo
+  (une vidéo verticale reste verticale, une horizontale reste horizontale),
+  sans jamais dépasser la largeur de la colonne. Pour un affichage parfait dès
+  le chargement (sans petit saut de mise en page), renseignez la **largeur** et
+  la **hauteur** en pixels dans la fiche de la vidéo (menu **Médias**) ; sinon
+  le navigateur les déduit tout seul à la lecture.
+
+> ℹ️ **Format des vidéos** : utilisez des fichiers **MP4 encodés en H.264**
+> (le standard du web). Les MP4 en **HEVC / H.265** (souvent produits par les
+> iPhones et appareils récents) ne se lisent pas dans les navigateurs : le
+> visiteur verrait « Aucune vidéo dont le format … n'a été trouvé ». En cas de
+> doute, ré-exportez la vidéo en H.264 avant de la téléverser.
+
+> ℹ️ **Taille des fichiers** : l'envoi est limité à **50 Mo** par fichier.
+> Compressez les vidéos longues ou lourdes avant de les téléverser (un export
+> 1080p bien compressé suffit largement pour le web).
 
 ---
 

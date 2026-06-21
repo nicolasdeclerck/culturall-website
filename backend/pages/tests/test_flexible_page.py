@@ -170,3 +170,111 @@ class TestInteractiveListBlock:
         body = client.get("/liste-liee/").content.decode()
         assert "ilist__trigger--link" in body
         assert 'href="/a-propos/"' in body
+
+
+class TestHostedVideoBlock:
+    """Bloc « Vidéo hébergée » : fichier téléversé (wagtailmedia) lu via le
+    lecteur HTML5 natif, à distinguer de l'embed YouTube/Vimeo."""
+
+    @pytest.fixture
+    def page_with_video(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from wagtailmedia.models import get_media_model
+
+        media = get_media_model().objects.create(
+            title="Clip de démo",
+            file=SimpleUploadedFile(
+                "clip-demo.mp4", b"\x00\x00\x00\x18ftypmp42", content_type="video/mp4"
+            ),
+            type="video",
+        )
+        home = HomePage.objects.first()
+        page = FlexiblePage(
+            title="Vidéo hébergée",
+            slug="video-hebergee",
+            body=[("hosted_video", {"video": media, "caption": "Notre dernière vidéo"})],
+        )
+        home.add_child(instance=page)
+        page.save_revision().publish()
+        return page
+
+    def test_renders_native_html5_player(self, client, page_with_video):
+        body = client.get("/video-hebergee/").content.decode()
+
+        # Lecteur natif (pas d'iframe tierce) avec une <source> typée.
+        assert 'class="custom-section__video-player"' in body
+        assert "<video" in body
+        assert "controls" in body
+        assert 'type="video/mp4"' in body
+        assert "clip-demo" in body
+
+    def test_renders_caption(self, client, page_with_video):
+        body = client.get("/video-hebergee/").content.decode()
+        assert "Notre dernière vidéo" in body
+
+    def test_uses_video_dimensions_when_available(self, client):
+        """Quand la largeur/hauteur sont renseignées, elles sont reportées sur
+        la balise <video> pour que le bloc épouse le ratio de la vidéo."""
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from wagtailmedia.models import get_media_model
+
+        media = get_media_model().objects.create(
+            title="Vidéo dimensionnée",
+            file=SimpleUploadedFile(
+                "dim.mp4", b"\x00\x00\x00\x18ftypmp42", content_type="video/mp4"
+            ),
+            type="video",
+            width=1280,
+            height=720,
+        )
+        home = HomePage.objects.first()
+        page = FlexiblePage(
+            title="Vidéo dim",
+            slug="video-dim",
+            body=[("hosted_video", {"video": media})],
+        )
+        home.add_child(instance=page)
+        page.save_revision().publish()
+
+        body = client.get("/video-dim/").content.decode()
+        assert 'width="1280"' in body
+        assert 'height="720"' in body
+
+
+class TestAmbientVideoBlock:
+    """Bloc « Vidéo d'ambiance » : lecture auto, muette, en boucle, sans
+    contrôles (autoplay impose muted côté navigateur)."""
+
+    @pytest.fixture
+    def page_with_ambient(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from wagtailmedia.models import get_media_model
+
+        media = get_media_model().objects.create(
+            title="Boucle d'ambiance",
+            file=SimpleUploadedFile(
+                "ambiance.mp4", b"\x00\x00\x00\x18ftypmp42", content_type="video/mp4"
+            ),
+            type="video",
+        )
+        home = HomePage.objects.first()
+        page = FlexiblePage(
+            title="Ambiance",
+            slug="ambiance",
+            body=[("ambient_video", {"video": media})],
+        )
+        home.add_child(instance=page)
+        page.save_revision().publish()
+        return page
+
+    def test_autoplays_muted_looped_without_controls(self, client, page_with_ambient):
+        body = client.get("/ambiance/").content.decode()
+
+        assert "custom-section__video-player--ambient" in body
+        # Autoplay autorisé uniquement si muet + inline ; boucle activée par défaut.
+        assert "autoplay" in body
+        assert "muted" in body
+        assert "playsinline" in body
+        assert "loop" in body
+        # Pas de contrôles natifs sur une vidéo d'ambiance.
+        assert "controls" not in body
