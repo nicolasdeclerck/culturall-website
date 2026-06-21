@@ -1326,6 +1326,16 @@ body {
   border-radius: 8px;
 }
 
+/* Vidéo auto-hébergée (lecteur HTML5 natif) : rendu fluide comme une image. */
+.custom-section__video-player {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  background: #000;
+}
+
 .custom-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));

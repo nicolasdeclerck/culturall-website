@@ -10,6 +10,7 @@ possède son propre template de rendu dans `home/templates/home/blocks/`.
 from wagtail import blocks
 from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
+from wagtailmedia.blocks import VideoChooserBlock
 
 
 class HeadingBlock(blocks.StructBlock):
@@ -102,6 +103,25 @@ class InteractiveListBlock(blocks.StructBlock):
         template = "home/blocks/interactive_list_block.html"
 
 
+class HostedVideoBlock(blocks.StructBlock):
+    """Vidéo auto-hébergée sur le site.
+
+    L'éditeur téléverse un fichier vidéo depuis l'admin Wagtail (section
+    « Médias », fournie par `wagtailmedia`) ; le fichier est stocké sur le
+    MinIO du site et lu par le lecteur HTML5 natif, sans dépendre d'un service
+    tiers (YouTube, Vimeo). À distinguer du bloc « Vidéo » qui, lui, *intègre*
+    une vidéo hébergée ailleurs via oEmbed.
+    """
+
+    video = VideoChooserBlock(label="Fichier vidéo")
+    caption = blocks.CharBlock(label="Légende", required=False, max_length=255)
+
+    class Meta:
+        icon = "wagtailmedia-video"
+        label = "Vidéo hébergée"
+        template = "home/blocks/hosted_video_block.html"
+
+
 class CustomSectionBlock(blocks.StreamBlock):
     """Palette de blocs proposée à l'admin dans la section personnalisable."""
 
@@ -120,6 +140,7 @@ class CustomSectionBlock(blocks.StreamBlock):
         icon="media",
         template="home/blocks/video_block.html",
     )
+    hosted_video = HostedVideoBlock()
 
     class Meta:
         label = "Section personnalisable"

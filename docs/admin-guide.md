@@ -30,7 +30,7 @@ page d'accueil, la page Blog, la page Projets et la section Réseau.
 ### 1.2. Tableau de bord
 
 Après connexion, vous arrivez sur le tableau de bord Wagtail. Le menu
-vertical à gauche donne accès aux sections **Pages**, **Images**,
+vertical à gauche donne accès aux sections **Pages**, **Images**, **Médias**,
 **Contacts**, **Documents**, **Fragments**, **Rapports**, **Paramètres** et
 **Aide**.
 
@@ -234,6 +234,25 @@ stockées dans la **bibliothèque Images** de Wagtail (menu latéral **Images**)
 > ⚠️ **Ne supprimez pas une image encore utilisée** par un article/projet :
 > l'illustration ou la miniature sera manquante côté site. Vérifiez d'abord
 > les usages dans l'onglet *Usage* de la fiche image.
+
+### 7.1. Vidéos hébergées (Bibliothèque Médias)
+
+En plus des vidéos **intégrées** depuis YouTube/Vimeo, le site peut **héberger
+ses propres vidéos** : les fichiers sont stockés sur le bucket MinIO/S3 du
+projet et lus par un lecteur natif, sans dépendre d'un service tiers.
+
+- **Téléverser** : menu latéral **Médias** → **Ajouter une vidéo**. Indiquez un
+  titre et choisissez un fichier (`.mp4` recommandé pour une lecture sur tous
+  les navigateurs).
+- **Afficher sur une page** : dans une **Section personnalisable** (page
+  d'accueil) ou une **Page flexible**, ajoutez le bloc **« Vidéo hébergée »**,
+  choisissez la vidéo dans la bibliothèque, puis (au besoin) saisissez une
+  légende. Le bloc **« Vidéo (Vimeo, YouTube…) »** reste disponible pour les
+  vidéos intégrées.
+
+> ℹ️ **Taille des fichiers** : l'envoi est limité à **50 Mo** par fichier.
+> Compressez les vidéos longues ou lourdes avant de les téléverser (un export
+> 1080p bien compressé suffit largement pour le web).
 
 ---
 

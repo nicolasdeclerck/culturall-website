@@ -1,0 +1,24 @@
+{% comment %}
+  Vidéo auto-hébergée (fichier téléversé via wagtailmedia, servi depuis MinIO).
+  Lecteur HTML5 natif, sans script tiers. `self.video` est une instance Media :
+  `sources` fournit les couples (src, type) des balises <source>.
+{% endcomment %}
+<figure class="custom-section__figure">
+  {% if self.video %}
+    <video
+      class="custom-section__video-player"
+      controls
+      preload="metadata"
+      {% if self.video.thumbnail %}poster="{{ self.video.thumbnail.url }}"{% endif %}
+    >
+      {% for source in self.video.sources %}
+        <source src="{{ source.src }}"{% if source.type %} type="{{ source.type }}"{% endif %}>
+      {% endfor %}
+      <p>
+        Votre navigateur ne peut pas lire cette vidéo.
+        <a href="{{ self.video.url }}">Télécharger la vidéo</a>.
+      </p>
+    </video>
+  {% endif %}
+  {% if self.caption %}<figcaption class="custom-section__caption">{{ self.caption }}</figcaption>{% endif %}
+</figure>

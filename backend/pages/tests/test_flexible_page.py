@@ -170,3 +170,44 @@ class TestInteractiveListBlock:
         body = client.get("/liste-liee/").content.decode()
         assert "ilist__trigger--link" in body
         assert 'href="/a-propos/"' in body
+
+
+class TestHostedVideoBlock:
+    """Bloc « Vidéo hébergée » : fichier téléversé (wagtailmedia) lu via le
+    lecteur HTML5 natif, à distinguer de l'embed YouTube/Vimeo."""
+
+    @pytest.fixture
+    def page_with_video(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from wagtailmedia.models import get_media_model
+
+        media = get_media_model().objects.create(
+            title="Clip de démo",
+            file=SimpleUploadedFile(
+                "clip-demo.mp4", b"\x00\x00\x00\x18ftypmp42", content_type="video/mp4"
+            ),
+            type="video",
+        )
+        home = HomePage.objects.first()
+        page = FlexiblePage(
+            title="Vidéo hébergée",
+            slug="video-hebergee",
+            body=[("hosted_video", {"video": media, "caption": "Notre dernière vidéo"})],
+        )
+        home.add_child(instance=page)
+        page.save_revision().publish()
+        return page
+
+    def test_renders_native_html5_player(self, client, page_with_video):
+        body = client.get("/video-hebergee/").content.decode()
+
+        # Lecteur natif (pas d'iframe tierce) avec une <source> typée.
+        assert 'class="custom-section__video-player"' in body
+        assert "<video" in body
+        assert "controls" in body
+        assert 'type="video/mp4"' in body
+        assert "clip-demo" in body
+
+    def test_renders_caption(self, client, page_with_video):
+        body = client.get("/video-hebergee/").content.decode()
+        assert "Notre dernière vidéo" in body
