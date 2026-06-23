@@ -16,22 +16,13 @@
   </div>
 </div>
 
-{% if featured_projects %}
-<section class="projects-section">
-  <h2 class="projects-section__title">{{ page.featured_projects_title }}</h2>
-  <div class="projects-section__cards">
-    {% for project in featured_projects %}
-    <a href="/projets/{{ project.slug }}/" class="projects-section__card{% if not project.thumbnail %} projects-section__card--no-thumbnail{% endif %}">
-      {% if project.thumbnail %}
-        {% image project.thumbnail fill-600x400 class="projects-section__card-image" alt="" loading="lazy" %}
-      {% endif %}
-      <div class="projects-section__card-overlay"></div>
-      <span class="projects-section__card-tag">{% with project.tags.all|first as first_tag %}{% if first_tag %}{{ first_tag.name }}{% endif %}{% endwith %}</span>
-      <span class="projects-section__card-title">{{ project.title }}</span>
-    </a>
+{% if page.top_custom_section %}
+<section class="custom-section">
+  <div class="custom-section__inner">
+    {% for block in page.top_custom_section %}
+      {% include_block block %}
     {% endfor %}
   </div>
-  <a href="/projets/" class="projects-section__link">Voir tous les projets →</a>
 </section>
 {% endif %}
 

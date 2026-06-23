@@ -198,8 +198,26 @@ class BannerBlock(blocks.StructBlock):
         template = "home/blocks/banner_block.html"
 
 
-class CustomSectionBlock(blocks.StreamBlock):
-    """Palette de blocs proposée à l'admin dans la section personnalisable."""
+class SeparatorBlock(blocks.StructBlock):
+    """Espace vide vertical pour aérer le contenu. Hauteur réglable en rem."""
+
+    height = blocks.FloatBlock(
+        label="Hauteur (rem)",
+        default=2,
+        min_value=0,
+        help_text="Hauteur de l'espace vide, en rem (1 rem ≈ 16 px).",
+    )
+
+    class Meta:
+        icon = "minus"
+        label = "Séparateur (espace vide)"
+        template = "home/blocks/separator_block.html"
+
+
+class ColumnBlock(blocks.StreamBlock):
+    """Palette de blocs « simples », réutilisée telle quelle dans chaque colonne
+    du bloc « 2 colonnes ». Volontairement sans le bloc « 2 colonnes » lui-même
+    pour interdire toute imbrication de colonnes dans des colonnes."""
 
     banner = BannerBlock()
     heading = HeadingBlock()
@@ -219,6 +237,32 @@ class CustomSectionBlock(blocks.StreamBlock):
     )
     hosted_video = HostedVideoBlock()
     ambient_video = AmbientVideoBlock()
+    separator = SeparatorBlock()
+
+    class Meta:
+        label = "Colonne"
+
+
+class TwoColumnBlock(blocks.StructBlock):
+    """Deux colonnes côte à côte sur desktop, empilées sur mobile/tablette.
+
+    Chaque colonne contient librement les blocs de la palette `ColumnBlock`.
+    """
+
+    left = ColumnBlock(label="Colonne de gauche", required=False)
+    right = ColumnBlock(label="Colonne de droite", required=False)
+
+    class Meta:
+        icon = "grip"
+        label = "2 colonnes"
+        template = "home/blocks/two_column_block.html"
+
+
+class CustomSectionBlock(ColumnBlock):
+    """Palette de blocs proposée à l'admin dans la section personnalisable :
+    tous les blocs de `ColumnBlock` plus le bloc de mise en page « 2 colonnes »."""
+
+    two_column = TwoColumnBlock()
 
     class Meta:
         label = "Section personnalisable"
