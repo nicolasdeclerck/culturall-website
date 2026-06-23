@@ -8,6 +8,13 @@
   {% block meta %}
   <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}Cultur'all — Site vitrine{% endif %}">
   {% endblock %}
+  {# Favicons (icône « C » du logo Cultur'all). #}
+  <link rel="icon" href="{% static 'img/favicon.ico' %}" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
+  <link rel="manifest" href="{% static 'img/site.webmanifest' %}">
+  <meta name="theme-color" content="#1b5599">
   {# Police du site (Google Fonts) — appliquée à tout le site via body dans main.css. #}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
