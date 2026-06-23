@@ -17,10 +17,9 @@ from functools import cached_property
 from django.db import models
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import render
-from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, InlinePanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.fields import StreamField
-from wagtail.models import Orderable, Page
+from wagtail.models import Page
 from wagtail.permission_policies import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
@@ -28,9 +27,6 @@ from wagtail.snippets.views.snippets import SnippetViewSet
 from home.blocks import CustomSectionBlock
 from home.forms import ContactForm
 from home.turnstile import verify_turnstile
-
-# Nombre de projets affichés dans la section « Les projets à la une ».
-MAX_FEATURED_PROJECTS = 3
 
 
 class HomePage(Page):
@@ -51,17 +47,20 @@ class HomePage(Page):
         help_text="Texte de description affiché sous le titre principal.",
     )
 
-    featured_projects_title = models.CharField(
-        "Titre de la section projets",
-        max_length=255,
-        default="Les projets à la une",
-        help_text="Titre affiché au-dessus des projets mis en avant.",
+    top_custom_section = StreamField(
+        CustomSectionBlock(),
+        blank=True,
+        verbose_name="Section personnalisable (au-dessus du réseau)",
+        help_text=(
+            "Zone libre affichée au-dessus de la section « Notre Réseau ». "
+            "Ajoutez les blocs souhaités, dans l'ordre voulu."
+        ),
     )
 
     custom_section = StreamField(
         CustomSectionBlock(),
         blank=True,
-        verbose_name="Section personnalisable",
+        verbose_name="Section personnalisable (sous le réseau)",
         help_text=(
             "Zone libre affichée sous la section « Notre Réseau ». "
             "Ajoutez les blocs souhaités, dans l'ordre voulu."
@@ -71,66 +70,20 @@ class HomePage(Page):
     content_panels = Page.content_panels + [
         FieldPanel("hero_title"),
         FieldPanel("hero_subtitle"),
-        FieldPanel("featured_projects_title"),
-        InlinePanel(
-            "featured_projects",
-            label="Projet à la une",
-            heading="Les projets à la une",
-            max_num=MAX_FEATURED_PROJECTS,
-        ),
+        FieldPanel("top_custom_section"),
         FieldPanel("custom_section"),
     ]
 
     def get_context(self, request, *args, **kwargs):
-        # Imports locaux pour éviter tout souci d'ordre de chargement des apps.
+        # Import local pour éviter tout souci d'ordre de chargement des apps.
         from network.models import NetworkMember
-        from projects.models import ProjectPage
 
         context = super().get_context(request, *args, **kwargs)
-
-        # Projets sélectionnés dans l'admin, dans l'ordre choisi. On ne garde
-        # que ceux qui sont publiés et publics, sans casser l'ordre voulu.
-        featured_items = list(self.featured_projects.select_related("project").all())
-        published = (
-            ProjectPage.objects.live()
-            .public()
-            .filter(pk__in=[item.project_id for item in featured_items])
-            .select_related("thumbnail")
-            .prefetch_related("tags")
-            .in_bulk()
-        )
-        context["featured_projects"] = [
-            published[item.project_id]
-            for item in featured_items
-            if item.project_id in published
-        ]
 
         members = list(NetworkMember.objects.select_related("logo").all())
         context["network_members"] = members
         context["network_types"] = sorted({m.member_type for m in members})
         return context
-
-
-class FeaturedProject(Orderable):
-    """Projet mis en avant sur la page d'accueil, choisi et ordonné dans l'admin."""
-
-    page = ParentalKey(
-        HomePage,
-        on_delete=models.CASCADE,
-        related_name="featured_projects",
-    )
-    project = models.ForeignKey(
-        "projects.ProjectPage",
-        on_delete=models.CASCADE,
-        related_name="+",
-        verbose_name="Projet",
-    )
-
-    panels = [FieldPanel("project")]
-
-    class Meta(Orderable.Meta):
-        verbose_name = "Projet à la une"
-        verbose_name_plural = "Projets à la une"
 
 
 def _client_ip(request):

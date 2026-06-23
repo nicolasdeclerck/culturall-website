@@ -40,17 +40,3 @@ def make_project(home_tree):
         return project
 
     return _make
-
-
-@pytest.fixture
-def feature_projects(home_tree):
-    """Sélectionne des ProjectPage comme « à la une » sur la HomePage, dans l'ordre donné."""
-    from home.models import FeaturedProject
-
-    home = HomePage.objects.first()
-
-    def _feature(*projects):
-        for index, project in enumerate(projects):
-            FeaturedProject.objects.create(page=home, project=project, sort_order=index)
-
-    return _feature

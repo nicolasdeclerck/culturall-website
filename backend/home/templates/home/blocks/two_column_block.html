@@ -1,0 +1,13 @@
+{% load wagtailcore_tags %}
+<div class="two-column">
+  <div class="two-column__col">
+    {% for block in self.left %}
+      {% include_block block %}
+    {% endfor %}
+  </div>
+  <div class="two-column__col">
+    {% for block in self.right %}
+      {% include_block block %}
+    {% endfor %}
+  </div>
+</div>
