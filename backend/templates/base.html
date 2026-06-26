@@ -1,4 +1,6 @@
 {% load static wagtailcore_tags wagtailimages_tags %}
+  {% load static wagtailcore_tags wagtailimages_tags wagtailuserbar %}
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -36,5 +38,8 @@
   {% block content %}{% endblock %}
 
   {% include "_footer.html" %}
+  {% wagtailuserbar %}
+</body>
+
 </body>
 </html>
