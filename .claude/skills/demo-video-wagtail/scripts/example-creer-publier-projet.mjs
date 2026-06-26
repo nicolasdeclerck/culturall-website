@@ -84,12 +84,15 @@ const initScript = () => {
 
 const sleep = (p, ms) => p.waitForTimeout(ms);
 
-// Smoothly scroll the window by `total` px over several steps (visible in the video).
+// The Wagtail admin scrolls inside <main id="main">, NOT the window. Scroll that container.
 async function smoothScroll(page, total, steps = 24) {
   const per = total / steps;
   for (let i = 0; i < steps; i++) {
-    await page.evaluate((d) => window.scrollBy(0, d), per);
-    await page.waitForTimeout(40);
+    await page.evaluate((d) => {
+      const s = document.querySelector('#main') || document.scrollingElement;
+      s.scrollTop += d;
+    }, per);
+    await page.waitForTimeout(45);
   }
 }
 
@@ -174,18 +177,26 @@ async function caption(page, text, step) {
   await page.waitForLoadState('load');
   await sleep(page, 1500);
 
-  // ---- 2. Navigate the page tree: Cultur'all → Nos réalisations ------------
-  await page.goto(`${BASE}/admin/pages/${CULTURALL_ID}/`, { waitUntil: 'load' });
-  await caption(page, 'Arborescence : page racine « Cultur\'all » et ses enfants', 'Étape 2');
+  // ---- 2. From the dashboard, reach Cultur'all's subpages via the sidebar --
+  // (After login Wagtail lands on the dashboard /admin/.)
   await page.evaluate(([x, y]) => window.__pwMoveCursor && window.__pwMoveCursor(x, y), [state.pos.x, state.pos.y]);
-  await sleep(page, 2200);
+  await caption(page, 'Tableau de bord : ouvrez le menu « Pages » dans la barre latérale', 'Étape 2');
+  await sleep(page, 1700);
+  await clickEl(page, page.locator('.sidebar-menu-item__link:has-text("Pages")').first());
+  await sleep(page, 1100);
 
-  await caption(page, 'Cliquez sur « Nos réalisations » pour ouvrir la page', 'Étape 2');
+  await caption(page, 'Cliquez sur « Cultur\'all » pour afficher ses sous-pages', 'Étape 2');
+  await clickEl(page, page.locator(`.c-page-explorer__item__link[href="/admin/pages/${CULTURALL_ID}/"]`).first());
+  await page.waitForLoadState('load');
+  await caption(page, 'Voici les sous-pages de la page racine « Cultur\'all »', 'Étape 2');
+  await sleep(page, 2000);
+
+  await caption(page, 'Entrez dans la page « Nos réalisations »', 'Étape 2');
   const intoRealisations = page.locator(`a[href="/admin/pages/${PARENT_ID}/"]`).first();
   await clickEl(page, intoRealisations);
   await page.waitForLoadState('load');
   await caption(page, 'Page « Nos réalisations » (enfant de « Cultur\'all »)', 'Étape 2');
-  await sleep(page, 1800);
+  await sleep(page, 1600);
 
   // ---- 3. Add child page ---------------------------------------------------
   await caption(page, 'Cliquez sur le « + » pour ajouter une page enfant', 'Étape 3');
@@ -223,8 +234,8 @@ async function caption(page, text, step) {
 
   await caption(page, 'Descendez jusqu\'au bas du formulaire', 'Étape 4');
   await sleep(page, 400);
-  await smoothScroll(page, 600);
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await smoothScroll(page, 400);
+  await page.evaluate(() => { const s = document.querySelector('#main') || document.scrollingElement; s.scrollTop = s.scrollHeight; });
   await sleep(page, 1000);
 
   // ---- 5. Publish ----------------------------------------------------------

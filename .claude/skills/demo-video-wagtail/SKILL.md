@@ -95,6 +95,29 @@ d'une page… ». Pas pour de simples captures d'écran statiques (utiliser un s
 - **Langue de l'admin = français** : les libellés visibles sont en FR (« Enregistrer le
   brouillon », « Publier », « Plus d'actions »). Préférer des sélecteurs robustes (`name=`,
   `href=`) aux textes quand c'est possible ; sinon prévoir une regex FR/EN.
+- **Le scroll ne se fait PAS sur `window`** : dans l'admin, le contenu défile dans
+  `<main id="main" class="content-wrapper">`. `window.scrollBy` / `scrollTo` n'ont AUCUN effet
+  (le `<html>` a `scrollHeight === clientHeight`). ⇒ scroller `document.querySelector('#main')`
+  (`.scrollTop += …`). Les helpers `smoothScroll` / `scrollToBottom` le font déjà.
+- **Montrer un scroll = scroller avant de cliquer** : pour qu'un défilement soit VISIBLE,
+  faire `smoothScroll(...)` d'abord, *puis* `clickEl(champ)`. Sinon le `scrollIntoViewIfNeeded`
+  interne de `clickEl` amène le champ d'un coup (saut non filmé). Repère : sur le formulaire
+  Projet, le champ titre est à ~150 px et `#id_youtube_url` à ~1044 px (course de scroll utile
+  ~440 px).
+
+## Navigation depuis le tableau de bord (recommandé pour les démos)
+
+Après connexion, Wagtail affiche le **tableau de bord** (`/admin/`), pas l'explorateur. Pour
+montrer le chemin jusqu'aux sous-pages d'une page :
+
+1. Cliquer l'entrée **« Pages »** de la barre latérale :
+   `.sidebar-menu-item__link:has-text("Pages")` → ouvre un **panneau drilldown** (composant SPA,
+   l'URL reste `/admin/`).
+2. Dans ce panneau, **cliquer le TITRE de la page** (pas le chevron `>`, qui ne fait que
+   dérouler le panneau) : `.c-page-explorer__item__link[href="/admin/pages/<ID>/"]` → **navigation
+   pleine page** vers l'explorateur `/admin/pages/<ID>/` (liste des sous-pages).
+3. Depuis l'explorateur, entrer dans une sous-page via son chevron
+   `a[href="/admin/pages/<ID_ENFANT>/"]`.
 
 ## Nettoyage & ré-exécution
 
@@ -130,3 +153,8 @@ Ne pas sauter cette étape même si la séance s'est bien passée (noter « RAS 
   bouton add-subpage en icône (cibler par `href`), bouton Publier dans « Plus d'actions »,
   collision de slug → échec silencieux de publication (nettoyer avant relance), champs requis
   (`youtube_url`) obligatoires, module `playwright` à installer en local.
+- **2026-06-26** — Retours utilisateur sur la même démo : (1) il faut montrer le passage
+  tableau de bord → sous-pages de Cultur'all → ajout de la navigation via la sidebar « Pages »
+  puis le titre de page (cf. section dédiée) ; (2) le scroll vers le champ YouTube n'était pas
+  visible car `window.scrollBy` ne scrolle pas l'admin → corrigé en ciblant `#main`
+  (`smoothScroll`/`scrollToBottom`), et en scrollant AVANT de cliquer le champ.

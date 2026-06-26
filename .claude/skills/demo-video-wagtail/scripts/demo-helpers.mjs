@@ -134,17 +134,27 @@ export function makeDemo(page, startPos = { x: 90, y: 90 }) {
     await page.evaluate(() => window.__pwIntroHide());
     await sleep(600);
   }
+  // The Wagtail admin scrolls inside <main id="main">, NOT the window — scroll that.
   async function smoothScroll(total, steps = 24) {
     const per = total / steps;
     for (let i = 0; i < steps; i++) {
-      await page.evaluate((d) => window.scrollBy(0, d), per);
-      await page.waitForTimeout(40);
+      await page.evaluate((d) => {
+        const s = document.querySelector('#main') || document.scrollingElement;
+        s.scrollTop += d;
+      }, per);
+      await page.waitForTimeout(45);
     }
+  }
+  async function scrollToBottom() {
+    await page.evaluate(() => {
+      const s = document.querySelector('#main') || document.scrollingElement;
+      s.scrollTop = s.scrollHeight;
+    });
   }
   async function typeInto(locator, text, delay = 80) {
     await clickEl(locator);
     await locator.type(text, { delay });
   }
 
-  return { state, sleep, syncCursor, glide, moveToEl, clickEl, caption, intro, smoothScroll, typeInto };
+  return { state, sleep, syncCursor, glide, moveToEl, clickEl, caption, intro, smoothScroll, scrollToBottom, typeInto };
 }
