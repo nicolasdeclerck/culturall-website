@@ -1364,6 +1364,67 @@ body {
   align-items: start;
 }
 
+/* Bloc « Texte illustré » : texte et image côte à côte sur desktop (le texte,
+   sur fond noir, déborde légèrement sur la gauche de l'image), empilés sur
+   mobile (mise en page « colonne » par défaut, repassée en « ligne » dès 768px). */
+.illustrated-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0 0 1.5rem;
+}
+
+.illustrated-block__text {
+  background: #000;
+  color: #fff;
+  padding: 1.25rem 1.5rem;
+}
+
+.illustrated-block__title {
+  margin: 0 0 0.5rem;
+}
+
+.illustrated-block__content {
+  margin: 0;
+}
+
+.illustrated-block__illustration {
+  flex: none;
+}
+
+.illustrated-block__image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (min-width: 768px) {
+  .illustrated-block {
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+    /* bloc resserré et centré : plus de marge à gauche/droite */
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .illustrated-block__text {
+    position: relative;
+    z-index: 2;
+    /* largeur du texte + la moitié du débordement, pour que le contenu
+       remplisse tout le bloc et reste centré malgré le recouvrement */
+    flex: 0 0 calc(48% + 3.5rem);
+    /* déborde sur la gauche de l'image (recouvrement de 7rem) */
+    margin-right: -7rem;
+  }
+
+  .illustrated-block__illustration {
+    /* largeur de l'image + la moitié du débordement */
+    flex: 0 0 calc(52% + 3.5rem);
+  }
+}
+
 .custom-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
