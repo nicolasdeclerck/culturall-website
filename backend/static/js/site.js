@@ -14,6 +14,22 @@
 
 const SCROLL_THRESHOLD = 50;
 
+/**
+ * Initialise AOS (Animate On Scroll) : les éléments portant un attribut
+ * `data-aos` (ex. data-aos="fade-right") s'animent à leur entrée dans le
+ * viewport. L'animation ne se joue qu'une fois (`once: true`) et est
+ * désactivée si l'utilisateur préfère réduire les animations.
+ */
+if (window.AOS) {
+  AOS.init({
+    once: true,
+    duration: 700,
+    easing: "ease-out-cubic",
+    disable: () =>
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  });
+}
+
 document.addEventListener("alpine:init", () => {
   Alpine.data("header", () => ({
     scrolled: false,

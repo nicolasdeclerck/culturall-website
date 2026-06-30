@@ -12,6 +12,16 @@ from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
 from wagtailmedia.blocks import VideoChooserBlock
 
+class IllustratedBlock(blocks.StructBlock):
+    title = blocks.CharBlock(label="Titre", max_length=255)
+    content = blocks.RichTextBlock(label="Contenu détaillé", required=False)
+    image = ImageChooserBlock(label="Image")
+
+    class Meta:
+        icon = 'image'
+        label = 'Texte illustré'
+        template = 'home/blocks/illustrated_block.html'
+   
 
 class HeadingBlock(blocks.StructBlock):
     text = blocks.CharBlock(label="Texte du titre", max_length=255)
@@ -238,6 +248,7 @@ class ColumnBlock(blocks.StreamBlock):
     hosted_video = HostedVideoBlock()
     ambient_video = AmbientVideoBlock()
     separator = SeparatorBlock()
+    illustrated = IllustratedBlock()
 
     class Meta:
         label = "Colonne"

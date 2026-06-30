@@ -12,6 +12,19 @@ Site vitrine de l'association Cultur'all, permettant de présenter ses projets c
 | Reverse proxy | Nginx (preprod/TNR) · Traefik (production) |
 | CI/CD | GitHub Actions → GHCR → VPS |
 
+## Dépendances front-end (JS / CSS)
+
+Le site est rendu côté serveur (templates Django/Wagtail) : **pas de build front, pas de npm**. Les quelques librairies front sont des fichiers statiques autonomes, versionnés dans le dépôt sous `backend/static/` et inclus dans [`backend/templates/base.html`](backend/templates/base.html).
+
+| Librairie | Rôle sur le site | Documentation |
+|---|---|---|
+| **HTMX** | Permet de déclencher des requêtes serveur (et de remplacer des fragments de page) directement depuis des attributs HTML, sans écrire de JavaScript — pour les interactions dynamiques tout en restant en rendu serveur. | [htmx.org/docs](https://htmx.org/docs/) |
+| **Alpine.js** | Micro-framework de réactivité « dans le HTML » (attributs `x-data`, `x-show`…). Gère les comportements d'interface légers, par ex. le header (état « scrolled », menu mobile) défini dans `site.js`. | [alpinejs.dev](https://alpinejs.dev/) |
+| **AOS** (Animate On Scroll) | Anime l'apparition des éléments à leur entrée dans le viewport, pilotée par de simples attributs `data-aos` (ex. `data-aos="fade-right"`). Utilisé notamment par le bloc « Texte illustré » (slide du texte et de l'image). Initialisé dans `site.js`, désactivé automatiquement si l'utilisateur a activé « réduire les animations ». | [github.com/michalsnik/aos](https://github.com/michalsnik/aos) |
+| **site.js** | Code maison du site : enregistre les composants Alpine (header) et initialise AOS. | — |
+
+> Mise à jour d'une librairie : remplacer le fichier correspondant dans `backend/static/js/` (ou `css/`) par la nouvelle version, puis relancer `collectstatic` en production.
+
 ## Prérequis
 
 - Docker et Docker Compose
@@ -180,7 +193,7 @@ culturall-website/
 │   ├── pages/               #   Pages statiques (StaticContentPage)
 │   ├── network/             #   Membres du réseau (snippets)
 │   ├── templates/           #   base.html, header, footer
-│   ├── static/              #   CSS + JS (htmx, Alpine, site.js)
+│   ├── static/              #   CSS + JS (htmx, Alpine, AOS, site.js)
 │   └── site_settings/       #   Paramètres globaux du site
 ├── docker/                  # Dockerfile django + config nginx (preprod/TNR)
 ├── docker-compose.*.yml     # base + overrides (dev, test, preprod, prod)
