@@ -1,0 +1,18 @@
+{% load wagtailimages_tags %}
+<div class="illustrated-block">
+    <div class="illustrated-block__text">
+        {% if self.title %}
+            <h3 class="illustrated-block__title">{{ self.title }}</h3>
+        {% endif %}
+        {% if self.content %}
+            <div class="illutrated-block__content">
+                {{ self.content }}
+            </div>
+        {% endif %}      
+    </div>
+    <div>
+        {% if self.image %}
+            {% image self.image fill-600x400 class="illustrated-block__image" alt="self.title" loading="lazy" %}
+        {% endif %}
+    </div>
+</div>
