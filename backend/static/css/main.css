@@ -1371,21 +1371,43 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin: 0 0 1.5rem;
+  /* Full-bleed : occupe toute la largeur de l'écran (cf. .custom-banner). */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  margin-bottom: 1.5rem;
+  /* padding horizontal : le bloc ne colle plus aux bords (box-sizing pour que
+     le padding reste inclus dans les 100vw et n'ajoute pas de scroll) */
+  box-sizing: border-box;
+  padding: 0 clamp(1rem, 4vw, 3rem);
 }
 
 .illustrated-block__text {
-  background: #000;
+  /* Effet « liquid glass » : teinte claire très translucide + fort flou et
+     saturation de l'arrière-plan (la photo transparaît sous l'encadré), fine
+     bordure claire + ombre portée pour détacher le panneau. */
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
   color: #fff;
+  /* léger halo pour garder le texte blanc lisible sur un fond clair variable */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   padding: 1.25rem 1.5rem;
+  border-radius: 16px;
 }
 
 .illustrated-block__title {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1.2;
 }
 
 .illustrated-block__content {
   margin: 0;
+  font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+  line-height: 1.6;
 }
 
 .illustrated-block__illustration {
@@ -1396,32 +1418,35 @@ body {
   display: block;
   width: 100%;
   height: auto;
+  /* ratio paysage pour une photo un peu moins haute (recadrage centré) */
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 16px;
 }
 
 @media (min-width: 768px) {
   .illustrated-block {
     flex-direction: row;
+    /* l'image définit la hauteur ; l'encadré texte, plus court, se centre
+       verticalement par-dessus son bord gauche */
     align-items: center;
     gap: 0;
-    /* bloc resserré et centré : plus de marge à gauche/droite */
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
   }
 
   .illustrated-block__text {
     position: relative;
     z-index: 2;
-    /* largeur du texte + la moitié du débordement, pour que le contenu
-       remplisse tout le bloc et reste centré malgré le recouvrement */
-    flex: 0 0 calc(48% + 3.5rem);
-    /* déborde sur la gauche de l'image (recouvrement de 7rem) */
-    margin-right: -7rem;
+    /* colonne texte + la moitié du recouvrement */
+    flex: 0 0 calc(42% + 5rem);
+    /* la photo déborde sous l'encadré sur la gauche (recouvrement de 10rem) */
+    margin-right: -10rem;
+    /* padding généreux pour que le texte ne colle pas au bord de l'écran */
+    padding: 2.5rem clamp(2rem, 5vw, 5rem);
   }
 
   .illustrated-block__illustration {
-    /* largeur de l'image + la moitié du débordement */
-    flex: 0 0 calc(52% + 3.5rem);
+    /* photo élargie + la moitié du recouvrement */
+    flex: 0 0 calc(58% + 5rem);
   }
 }
 
@@ -1707,5 +1732,142 @@ body {
   .two-column {
     grid-template-columns: 1fr;
     gap: 1rem;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Bloc « Carrousel » (galerie de miniatures SwiperJS)                 *
+ * Init JS dans site.js ; markup dans home/blocks/carousel_block.html. *
+ * ------------------------------------------------------------------ */
+.carousel-block {
+  /* couleur de marque pour les flèches et les puces Swiper */
+  --swiper-theme-color: #1b5599;
+  --swiper-navigation-size: 34px;
+  /* Full-bleed : occupe toute la largeur de l'écran en débordant du conteneur
+     centré (.custom-section__inner). Même technique que .custom-banner. */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  margin-bottom: 1.5rem;
+}
+
+/* Dans une colonne du bloc « 2 colonnes », le full-bleed (100vw) déborderait
+   de la colonne : on le neutralise pour épouser la largeur de la colonne.
+   `min-width: 0` sur la colonne (item de grille, min-width auto par défaut) +
+   largeur définie (100%) sur le carrousel : sans ça, Swiper calcule la taille
+   des slides depuis un conteneur « auto » qui grandit avec son contenu, d'où un
+   zoom progressif infini. */
+.two-column__col {
+  min-width: 0;
+}
+
+.two-column__col .carousel-block,
+.two-column__col .illustrated-block {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.carousel-block__main {
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel-block__slide {
+  position: relative;
+}
+
+.carousel-block__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  /* plafonne la hauteur sur grand écran (sinon un 16:9 plein écran = trop haut) */
+  max-height: 80vh;
+  object-fit: cover;
+}
+
+.carousel-block__caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  font-size: 0.95rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.65));
+}
+
+.carousel-block__thumbs {
+  margin-top: 0.75rem;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.carousel-block__thumb {
+  height: auto;
+  opacity: 0.45;
+  cursor: pointer;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: opacity 0.2s ease;
+}
+
+/* la miniature active (synchronisée avec la grande image) reprend l'opacité */
+.carousel-block__thumbs .swiper-slide-thumb-active {
+  opacity: 1;
+}
+
+.carousel-block__thumb-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+/* ------------------------------------------------------------------ *
+ * Bloc « Chiffres clés » (compteurs animés CountUp.js)               *
+ * Init JS dans site.js ; markup dans home/blocks/key_figures_block.  *
+ * Chiffre au-dessus, libellé en dessous ; les chiffres s'affichent   *
+ * côte à côte (retour à la ligne si besoin), l'ensemble centré.      *
+ * ------------------------------------------------------------------ */
+.key-figures {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem 3rem;
+  margin: 0 auto 1.5rem;
+}
+
+.key-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  /* hérite de la typo claire du site (Montserrat blanc, cf. body) */
+  color: #fff;
+}
+
+.key-figure__value {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 600;
+  line-height: 1.1;
+  /* chiffres à chasse fixe : la largeur ne saute pas pendant le comptage */
+  font-variant-numeric: tabular-nums;
+}
+
+.key-figure__label {
+  margin-top: 0.5rem;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: 400;
+  opacity: 0.75;
+}
+
+@media (max-width: 768px) {
+  .key-figures {
+    gap: 1.5rem 2rem;
   }
 }

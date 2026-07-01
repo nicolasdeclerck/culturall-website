@@ -1,0 +1,17 @@
+{# Section « Chiffres clés » : chiffre au-dessus, libellé en dessous ; les #}
+{# chiffres s'affichent côte à côte, l'ensemble centré. L'animation (compte #}
+{# 0 → valeur) est pilotée par CountUp.js, initialisé dans site.js sur les #}
+{# [data-countup]. Le texte rendu côté serveur (préfixe + valeur + suffixe) #}
+{# sert de repli sans JS. #}
+<div class="key-figures">
+  {% for figure in self.figures %}
+    <div class="key-figure">
+      <span class="key-figure__value"
+            data-countup
+            data-value="{{ figure.value|stringformat:'s' }}"
+            data-prefix="{{ figure.prefix|default:'' }}"
+            data-suffix="{{ figure.suffix|default:'' }}">{{ figure.prefix }}{{ figure.value }}{{ figure.suffix }}</span>
+      <span class="key-figure__label">{{ figure.label }}</span>
+    </div>
+  {% endfor %}
+</div>

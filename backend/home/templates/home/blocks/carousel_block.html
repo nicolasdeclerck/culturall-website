@@ -1,0 +1,30 @@
+{% load wagtailimages_tags %}
+{# Carrousel SwiperJS « thumbs gallery » : grande image + bande de miniatures #}
+{# synchronisée. L'init Swiper est dans site.js (boucle sur chaque .carousel-block, #}
+{# via des sélecteurs relatifs pour gérer plusieurs carrousels sur une même page). #}
+<div class="carousel-block" data-aos="fade-up">
+  <div class="swiper carousel-block__main">
+    <div class="swiper-wrapper">
+      {% for slide in self.slides %}
+        <div class="swiper-slide carousel-block__slide">
+          {% image slide.image fill-1920x1080 class="carousel-block__image" alt=slide.caption loading="lazy" %}
+          {% if slide.caption %}
+            <p class="carousel-block__caption">{{ slide.caption }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  </div>
+
+  <div class="swiper carousel-block__thumbs">
+    <div class="swiper-wrapper">
+      {% for slide in self.slides %}
+        <div class="swiper-slide carousel-block__thumb">
+          {% image slide.image fill-400x225 class="carousel-block__thumb-image" alt="" loading="lazy" %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
