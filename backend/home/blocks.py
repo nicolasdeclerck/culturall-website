@@ -260,7 +260,7 @@ class BannerBlock(blocks.StructBlock):
     text = blocks.RichTextBlock(
         label="Texte",
         required=False,
-        features=["bold", "italic", "link"],
+        features=["bold", "italic", "ol", "ul", "link"],
     )
     button_text = blocks.CharBlock(label="Libellé du bouton", required=False, max_length=80)
     button_page = blocks.PageChooserBlock(

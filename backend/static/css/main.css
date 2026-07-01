@@ -1259,7 +1259,8 @@ body {
   display: flex;
   justify-content: center;
   min-height: 360px;
-  padding: 3rem 2rem;
+  /* padding horizontal élargi : plus d'espace à gauche et à droite du contenu */
+  padding: 3rem clamp(2rem, 6vw, 6rem);
   background: rgba(0, 0, 0, 0.6);
 }
 
