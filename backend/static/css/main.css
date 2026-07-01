@@ -1542,7 +1542,7 @@ body {
   color: inherit;
   font: inherit;
   text-decoration: none;
-  padding: 1rem 0;
+  padding: 1.75rem 0;
   cursor: default;
 }
 
@@ -1559,8 +1559,9 @@ body {
 
 .ilist__title {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
   font-weight: 700;
+  line-height: 1.25;
 }
 
 /* Détail dépliable rendu SOUS le titre : replié par défaut, déplié sur l'item
@@ -1621,7 +1622,8 @@ body {
     display: grid;
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
     gap: 2.5rem;
-    align-items: start;
+    /* la liste (plus courte) se centre verticalement en regard du volet vidéo */
+    align-items: center;
   }
 
   .ilist__trigger {
@@ -1630,18 +1632,19 @@ body {
     transition: opacity 0.25s ease, padding-left 0.25s ease;
   }
 
-  /* Marqueur ancré sur la ligne du titre (et non au centre du déclencheur, qui
-     grandit quand le détail se déplie sous le titre). */
+  /* Chevron ancré sur la ligne du titre (et non au centre du déclencheur, qui
+     grandit quand le détail se déplie sous le titre). Masqué par défaut, il
+     apparaît sur l'item actif / survolé (qui s'indente alors de 2rem). */
   .ilist__trigger::before {
-    content: "";
+    content: "\276F";
     position: absolute;
     left: 0;
-    top: 1.75rem;
-    width: 0;
-    height: 2px;
-    background: currentColor;
+    top: 2.75rem;
+    font-size: 1.1rem;
+    line-height: 1;
+    opacity: 0;
     transform: translateY(-50%);
-    transition: width 0.25s ease;
+    transition: opacity 0.25s ease;
   }
 
   .ilist__trigger--active,
@@ -1652,7 +1655,7 @@ body {
 
   .ilist__trigger--active::before,
   .ilist__trigger:hover::before {
-    width: 1.25rem;
+    opacity: 1;
   }
 
   .ilist__trigger--link:hover .ilist__arrow,
