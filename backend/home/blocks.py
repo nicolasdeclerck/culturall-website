@@ -23,6 +23,78 @@ class IllustratedBlock(blocks.StructBlock):
         template = 'home/blocks/illustrated_block.html'
    
 
+class CarouselSlideBlock(blocks.StructBlock):
+    """Une diapositive du carrousel : une image et une légende optionnelle."""
+
+    image = ImageChooserBlock(label="Image")
+    caption = blocks.CharBlock(label="Légende", required=False, max_length=255)
+
+    class Meta:
+        icon = "image"
+        label = "Diapositive"
+
+
+class CarouselBlock(blocks.StructBlock):
+    """Carrousel d'images avec galerie de miniatures (« thumbs gallery »).
+
+    Reproduit l'exemple « Thumbs gallery » de la bibliothèque SwiperJS : une
+    grande image active occupe le haut du bloc ; sous elle, une bande de
+    miniatures cliquables reste synchronisée avec le carrousel principal (le
+    clic d'une miniature fait défiler la grande image, et inversement).
+    """
+
+    slides = blocks.ListBlock(CarouselSlideBlock(), label="Diapositives", min_num=1)
+
+    class Meta:
+        icon = "image"
+        label = "Carrousel (galerie miniatures)"
+        template = "home/blocks/carousel_block.html"
+
+
+class KeyFigureBlock(blocks.StructBlock):
+    """Un « chiffre clé » : une valeur (animée au défilement via CountUp.js) et
+    son libellé, avec préfixe/suffixe optionnels (ex. « + », « % », « k »)."""
+
+    value = blocks.DecimalBlock(
+        label="Valeur",
+        help_text="Le nombre vers lequel le compteur s'anime, ex. 1250 ou 98.5.",
+    )
+    prefix = blocks.CharBlock(
+        label="Préfixe",
+        required=False,
+        max_length=8,
+        help_text="Optionnel, affiché avant le chiffre (ex. « + », « € »).",
+    )
+    suffix = blocks.CharBlock(
+        label="Suffixe",
+        required=False,
+        max_length=8,
+        help_text="Optionnel, affiché après le chiffre (ex. « % », « k », « + »).",
+    )
+    label = blocks.CharBlock(
+        label="Libellé",
+        max_length=120,
+        help_text="Texte affiché à droite du chiffre (ex. « bénévoles »).",
+    )
+
+    class Meta:
+        icon = "decimal"
+        label = "Chiffre clé"
+
+
+class KeyFiguresBlock(blocks.StructBlock):
+    """Section « Chiffres clés » : plusieurs chiffres empilés et décalés en
+    escalier vers la droite, l'ensemble centré. Chaque chiffre s'anime (compte
+    de 0 à sa valeur) à son entrée dans le viewport — cf. init dans site.js."""
+
+    figures = blocks.ListBlock(KeyFigureBlock(), label="Chiffres", min_num=1)
+
+    class Meta:
+        icon = "decimal"
+        label = "Chiffres clés"
+        template = "home/blocks/key_figures_block.html"
+
+
 class HeadingBlock(blocks.StructBlock):
     text = blocks.CharBlock(label="Texte du titre", max_length=255)
 
@@ -188,7 +260,7 @@ class BannerBlock(blocks.StructBlock):
     text = blocks.RichTextBlock(
         label="Texte",
         required=False,
-        features=["bold", "italic", "link"],
+        features=["bold", "italic", "ol", "ul", "link"],
     )
     button_text = blocks.CharBlock(label="Libellé du bouton", required=False, max_length=80)
     button_page = blocks.PageChooserBlock(
@@ -249,6 +321,8 @@ class ColumnBlock(blocks.StreamBlock):
     ambient_video = AmbientVideoBlock()
     separator = SeparatorBlock()
     illustrated = IllustratedBlock()
+    carousel = CarouselBlock()
+    key_figures = KeyFiguresBlock()
 
     class Meta:
         label = "Colonne"

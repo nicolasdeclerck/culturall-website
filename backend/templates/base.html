@@ -22,11 +22,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="{% static 'css/aos.css' %}">
+  <link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   {# Socle JS : htmx (interactions serveur), site.js (composants Alpine), Alpine (réactivité). #}
   {# site.js doit précéder alpine.min.js pour enregistrer ses ≥composants avant l'init d'Alpine. #}
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
   <script src="{% static 'js/aos.js' %}" defer></script>
+  <script src="{% static 'js/swiper-bundle.min.js' %}" defer></script>
+  <script src="{% static 'js/countup.umd.js' %}" defer></script>
   <script src="{% static 'js/site.js' %}" defer></script>
   <script src="{% static 'js/alpine.min.js' %}" defer></script>
   {% if PLAUSIBLE_DOMAIN and PLAUSIBLE_SCRIPT_URL and not request.user.is_authenticated %}

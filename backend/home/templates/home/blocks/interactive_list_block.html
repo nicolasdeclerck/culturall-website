@@ -27,7 +27,7 @@
        }
      }"
      x-init="play(0)">
-  <ul class="ilist__items">
+  <ul class="ilist__items" data-aos="fade-right">
     {% for item in self.items %}
     <li class="ilist__item">
       {% if item.link_page %}
@@ -55,7 +55,7 @@
     {% endfor %}
   </ul>
 
-  <div class="ilist__detail" aria-live="polite">
+  <div class="ilist__detail" aria-live="polite" data-aos="fade-left">
     {% for item in self.items %}
     <article class="ilist__panel{% if forloop.first %} ilist__panel--active{% endif %}"
              :class="{ 'ilist__panel--active': active === {{ forloop.counter0 }} }">
